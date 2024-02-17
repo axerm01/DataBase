@@ -7,6 +7,9 @@ class Professor {
     private $course;
     private $department;
     private $phoneNumber;
+    private $sentMessages;
+    Private $receivedMessages;
+
 
     // Constructor
     public function __construct($firstName, $lastName, $email, $course, $department, $phoneNumber) {
@@ -16,6 +19,8 @@ class Professor {
         $this->course = $course;
         $this->department = $department;
         $this->phoneNumber = $phoneNumber;
+        $this->sentMessages = new MessageList();
+        $this->receivedMessages = new MessageList();
     }
 
     // Getters and Setters
@@ -65,6 +70,23 @@ class Professor {
 
     public function setPhoneNumber($phoneNumber) {
         $this->phoneNumber = $phoneNumber;
+    }
+
+
+    public function sendMesssage(Message $message) {
+        $this->sentMessages->addMessage($message);
+    }
+
+    public function receiveMessage(Message $message) {
+        $this->receivedMessages->addMessage($message);
+    }
+
+    public function getSentMessages() {
+        return $this->sentMessages->getMessages();
+    }
+
+    public function getReceivedMessages() {
+        return $this->receivedMessages->getMessages();
     }
 }
 

@@ -5,16 +5,16 @@ class Test {
     private $title;
     private $creationDate;
     private $showAnswers;
-    private $teacherEmail;
+    private $professorEmail;
     private $photo;
     private $questions; // Lista di oggetti Question
 
-    public function __construct($id, $title, $creationDate, $showAnswers, $teacherEmail) {
+    public function __construct($id, $title, $creationDate, $showAnswers, $professorEmail) {
         $this->id = $id;
         $this->title = $title;
         $this->creationDate = $creationDate;
         $this->showAnswers = $showAnswers;
-        $this->teacherEmail = $teacherEmail;
+        $this->professorEmail = $professorEmail;
         $this->questions = [];
     }
 
@@ -35,8 +35,8 @@ class Test {
         return $this->showAnswers;
     }
 
-    public function getTeacherEmail() {
-        return $this->teacherEmail;
+    public function getProfessorEmail() {
+        return $this->professorEmail;
     }
 
     public function getPhoto() {
@@ -64,8 +64,8 @@ class Test {
         $this->showAnswers = $showAnswers;
     }
 
-    public function setTeacherEmail($teacherEmail) {
-        $this->teacherEmail = $teacherEmail;
+    public function setProfessorEmail($professorEmail) {
+        $this->professorEmail = $professorEmail;
     }
 
     public function setPhoto($photo) {
@@ -74,7 +74,7 @@ class Test {
 
 
     public function addQuestion(Question $question) {
-        $this->questions[] = $question;
+        $this->questions[$question->getID()] = $question;
     }
 
     public function removeQuestion($questionID) {

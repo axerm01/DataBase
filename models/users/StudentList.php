@@ -9,7 +9,7 @@ class StudentList {
                 return false;
             }
         }
-        $this->students[] = $student;
+        $this->students[$student->getEmail()] = $student;
         return true;
     }
 
@@ -21,6 +21,10 @@ class StudentList {
             }
         }
         return false;
+    }
+
+    public function getStudents(){
+        return $this->students;
     }
 
     public function getStudentByEmail($email) {

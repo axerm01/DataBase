@@ -7,6 +7,9 @@ class Student {
     private $registrationNumber;
     private $enrollmentYear;
     private $phoneNumber;
+    private $sentMessages;
+    Private $receivedMessages;
+
 
     // Constructor
     public function __construct($firstName, $lastName, $email, $registrationNumber, $enrollmentYear, $phoneNumber) {
@@ -16,6 +19,8 @@ class Student {
         $this->registrationNumber = $registrationNumber;
         $this->enrollmentYear = $enrollmentYear;
         $this->phoneNumber = $phoneNumber;
+        $this->sentMessages = new MessageList();
+        $this->receivedMessages = new MessageList();
     }
 
     // Getters and Setters
@@ -65,6 +70,23 @@ class Student {
 
     public function setPhoneNumber($phoneNumber) {
         $this->phoneNumber = $phoneNumber;
+    }
+
+
+    public function sendMesssage(Message $message) {
+        $this->sentMessages->addMessage($message);
+    }
+
+    public function receiveMessage(Message $message) {
+        $this->receivedMessages->addMessage($message);
+    }
+
+    public function getSentMessages() {
+        return $this->sentMessages->getMessages();
+    }
+
+    public function getReceivedMessages() {
+        return $this->receivedMessages->getMessages();
     }
 }
 

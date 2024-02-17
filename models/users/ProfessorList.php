@@ -10,7 +10,7 @@ class ProfessorList {
                 return false;
             }
         }
-        $this->professors[] = $professor;
+        $this->professors[$professor->getEmail()] = $professor;
         return true;
     }
 

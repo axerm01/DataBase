@@ -10,7 +10,7 @@ class TestList {
                 return false;
             }
         }
-        $this->tests[] = $test;
+        $this->tests[$test->getId()] = $test;
         return true;
     }
 
