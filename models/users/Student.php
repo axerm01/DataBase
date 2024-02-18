@@ -8,7 +8,8 @@ class Student {
     private $enrollmentYear;
     private $phoneNumber;
     private $sentMessages;
-    Private $receivedMessages;
+    private $receivedMessages;
+    private $studentTestList;
 
 
     // Constructor
@@ -21,6 +22,7 @@ class Student {
         $this->phoneNumber = $phoneNumber;
         $this->sentMessages = new MessageList();
         $this->receivedMessages = new MessageList();
+        $this->studentTestList = [];
     }
 
     // Getters and Setters
@@ -72,7 +74,12 @@ class Student {
         $this->phoneNumber = $phoneNumber;
     }
 
+    public function getStudentTestList() {
+        return $this->studentTestList;
+    }
 
+
+    // Gestione dei messaggi
     public function sendMesssage(Message $message) {
         $this->sentMessages->addMessage($message);
     }
@@ -88,6 +95,35 @@ class Student {
     public function getReceivedMessages() {
         return $this->receivedMessages->getMessages();
     }
+
+    //Gstione dei test dello studente
+    // Metodo per aggiungere un StudentTest alla lista
+    public function addStudentTest(StudentTest $studentTest) {
+        $this->studentTestList[$studentTest->getTestID()] = $studentTest;
+    }
+
+    // Metodo per rimuovere uno StudentTest dalla lista
+    public function removeStudentTest($testID) {
+        foreach ($this->studentTestList as $key => $studentTest) {
+            if ($studentTest->getTestID() === $testID) {
+                unset($this->studentTestList[$key]);
+                $this->studentTestList = array_values($this->studentTestList); // Reindirizza gli indici
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Metodo per ottenere uno StudentTest dalla lista
+    public function getStudentTest($testID) {
+        foreach ($this->studentTestList as $studentTest) {
+            if ($studentTest->getTestID() === $testID) {
+                return $studentTest;
+            }
+        }
+        return null;
+    }
+
 }
 
 
