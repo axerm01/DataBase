@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrazione-SQL-Esercitazioni</title>
+    <link rel="shortcut icon" href="../image/Seal_Bologna.svg.png" type="image/x-icon">
+    <style>
+        /* Stile per il corpo della pagina */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #c2c2c2;
+            margin: 0;
+            padding: 0;
+            display: grid; /* Aggiunto il layout a griglia */
+            grid-template-columns: 1fr 1fr; /* Diviso il layout in due colonne */
+        }
+
+        /* Stile per l'intestazione */
+        header {
+            background-color: #be2525;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            grid-column: span 2; /* Fai occupare l'intestazione entrambe le colonne */
+        }
+
+        /* Stile per il contenitore del modulo di registrazione */
+        .login-container {
+            height: 100vh;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            grid-column: 2;
+        }
+
+        /* Stile per i campi di input */
+        input[type="email"],
+        input[type="password"] {
+            width: 80%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* Stile per il pulsante di registrazione */
+        button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Stile per il footer */
+        footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+            background-color: #be2525;
+            color: #fff;
+        }
+        .immagine {
+            position: fixed;
+            left: 0;
+            bottom: 110px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Studia con SQL</h1>
+    </header>
+
+    <div class="immagine">
+        <img src="../image/login.png" alt="grafica logo">
+    </div>
+
+    <div class="login-container">
+        <h2>Registrazione</h2>
+        <form action="registrazione.php" method="post">
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Registrati</button>
+        </form>
+    </div>
+    
+    <footer>
+        <p>Alma Mater Studiorum</p>
+        <h3>Università di Bologna</h3>
+    </footer>
+</body>
+</html>
