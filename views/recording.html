@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login-SQL-Esercitazioni</title>
-    <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
+    <title>Registrazione-SQL-Esercitazioni</title>
+    <link rel="shortcut icon" href="../image/Seal_Bologna.svg.png" type="image/x-icon">
     <style>
         /* Stile per il corpo della pagina */
         body {
@@ -25,7 +25,7 @@
             grid-column: span 2; /* Fai occupare l'intestazione entrambe le colonne */
         }
 
-        /* Stile per il contenitore del modulo di login */
+        /* Stile per il contenitore del modulo di registrazione */
         .login-container {
             height: 100vh;
             margin: 0 auto;
@@ -36,7 +36,7 @@
         }
 
         /* Stile per i campi di input */
-        input[type="text"],
+        input[type="email"],
         input[type="password"] {
             width: 80%;
             padding: 10px;
@@ -45,7 +45,7 @@
             border-radius: 5px;
         }
 
-        /* Stile per il pulsante di login */
+        /* Stile per il pulsante di registrazione */
         button {
             background-color: #333;
             color: #fff;
@@ -53,12 +53,6 @@
             padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
-        }
-        
-
-        /* Stile per il link "registrazione" */
-        .registrazione {
-            text-align: right;
         }
 
         /* Stile per il footer */
@@ -76,9 +70,41 @@
             position: fixed;
             left: 0;
             bottom: 110px;
-            
         }
     </style>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Aggiungi un gestore eventi al caricamento del documento HTML
+        document.querySelector("form").addEventListener("submit", function(event) {
+            // Impedisce il comportamento predefinito di invio del modulo
+            event.preventDefault();
+
+            // Ottieni il modulo di registrazione
+            var form = this;
+            
+            // Crea un oggetto FormData per raccogliere i dati del modulo
+            var formData = new FormData(form);
+            
+            // Crea una nuova richiesta XMLHttpRequest
+            var xhr = new XMLHttpRequest();
+            
+            // Imposta il metodo e l'URL della richiesta
+            xhr.open("POST", "process_recording.php");
+            
+            // Definisce la funzione di gestione per il caricamento della risposta
+            xhr.onload = function() {
+                // Analizza la risposta come oggetto JSON
+                var response = JSON.parse(xhr.responseText);
+                
+                // Visualizza il messaggio di risposta sulla pagina HTML
+                document.getElementById("message").innerText = response.message;
+            };
+            
+            // Invia la richiesta con i dati del modulo
+            xhr.send(formData);
+        });
+    });
+        </script>
 </head>
 
 <body>
@@ -91,15 +117,15 @@
     </div>
 
     <div class="login-container">
-        <h2>Accedi</h2>
-        <h5>Inserisci le credenziali istituzionali di Ateneo.</h5>
-        <form action="login.php" method="post">
-            <input type="text" name="username" placeholder="Username" required>
+        <h2>Registrazione</h2>
+        <form action="process_recording.php" method="post">
+            <input type="email" name="email" placeholder="Email" required>
             <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Accedi</button>
+
+            <input type="submit">
         </form>
-        <p class="registrazione"><a href="registrazione.html">Registrazione</a></p>
     </div>
+    <div id="message"></div>
     
     <footer>
         <p>Alma Mater Studiorum</p>
