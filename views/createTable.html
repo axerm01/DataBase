@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crea Tabella</title>
+    <link rel="shortcut icon" href="../image/Seal_Bologna.svg.png" type="image/x-icon">
+    <style>
+        /* Stile per il corpo della pagina */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff; /* Colora il body di bianco */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch; /* I contenitori occupano a pieno la larghezza della pagina */
+            height: 100vh;
+        }
+
+        /* Stile per l'intestazione */
+        header {
+            background-color: #be2525;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            position: fixed; /* L'intestazione è bloccata in alto */
+            width: 100%;
+            top: 0;
+            z-index: 1;
+        }
+
+        /* Stile per il contenitore principale */
+        .main-container {
+            background-color: #fff;
+            padding: 20px;
+            text-align: left;
+            width: 100%; /* Il contenitore principale adatta la sua larghezza in modo automatico */
+            flex-grow: 1; /* Il contenitore principale si ridimensiona in modo automatico anche in altezza */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Sposta tutta la tabella più a sinistra */
+            margin-top: 80px; /* Aggiunge spazio in alto per l'intestazione */
+        }
+
+        /* Stile per i bottoni */
+        button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 7px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 12px; /* Aumenta la dimensione del testo */
+            width: 90px; /* Tutti i pulsanti hanno la stessa dimensione */
+        }
+
+        /* Stile per il bottone "Invia" */
+        input[type="submit"] {
+            background-color: #333;
+            color: #fff;
+            padding: 7px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 14px; /* Aumenta la dimensione del testo */
+            width: 120px; /* Il bottone "Invia" dimensione */
+        }
+
+        /* Stile per il footer */
+        footer {
+            position: fixed; /* Posiziona il footer in modo che sia sempre in fondo alla pagina */
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+            background-color: #be2525;
+            color: #fff;
+        }
+
+        /* Stile per la tabella */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px; /* Aggiunge spazio tra il titolo della tabella e la tabella stessa */
+            table-layout: fixed; /* Fissa la larghezza delle celle */
+        }
+
+        /* Stile per le celle della tabella */
+        table td {
+            border: none; /* Rimuove il bordo delle celle */
+            padding: 5px; /* Riduce lo spazio tra le celle di riga in riga */
+            text-align: left;
+        }
+
+        /* Stile per i campi di input */
+        input[type="text"] {
+            border: 2px solid #333; /* Ingrossa il bordo dei campi di input */
+            padding: 5px;
+            width: 100%; /* Allinea il bordo destro di tutte le celle */
+        }
+    </style>
+    <script>
+        var attributeCounter = 1;
+        var rowCounter = 1; /* Le righe partono da 1 */
+
+        function addAttribute() {
+            var table = document.getElementById('table');
+            var headerRow = table.rows[0];
+            var newCell = headerRow.insertCell(-1);
+            newCell.innerHTML = attributeCounter + '. <input type="text" name="attribute">';
+            for (var i = 1; i < table.rows.length; i++) {
+                var cell = table.rows[i].insertCell(-1);
+                cell.innerHTML = '<input type="text" name="row">';
+            }
+            attributeCounter++;
+        }
+
+        function addRow() {
+            var table = document.getElementById('table');
+            var newRow = table.insertRow(-1);
+            var newCell = newRow.insertCell(0);
+            newCell.innerHTML = rowCounter;
+            for (var i = 1; i < table.rows[0].cells.length; i++) {
+                var cell = newRow.insertCell(i);
+                cell.innerHTML = '<input type="text" name="row">';
+            }
+            rowCounter++;
+        }
+
+        function deleteRow() {
+            var rowNum = prompt("Inserisci il numero della riga da eliminare:");
+            var table = document.getElementById('table');
+            if (rowNum >= 0 && rowNum < table.rows.length) {
+                table.deleteRow(rowNum);
+            }
+        }
+
+        function deleteColumn() {
+            var colNum = prompt("Inserisci il numero della colonna da eliminare:");
+            var table = document.getElementById('table');
+            if (colNum >= 0 && colNum < table.rows[0].cells.length) {
+                for (var i = 0; i < table.rows.length; i++) {
+                    table.rows[i].deleteCell(colNum);
+                }
+            }
+        }
+
+    </script>
+    <script>
+        document.getElementById('tableForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Impedisci il comportamento predefinito di invio del modulo
+    
+            // Raccogli i dati manualmente
+            var table = document.getElementById('table');
+            var rows = table.rows;
+            var data = [];
+    
+            // Scorrere tutte le righe della tabella tranne l'intestazione
+            for (var i = 1; i < rows.length; i++) {
+                var rowData = [];
+                var cells = rows[i].cells;
+                for (var j = 0; j < cells.length; j++) {
+                    rowData.push(cells[j].querySelector('input').value); // Ottieni il valore dell'input nella cella
+                }
+                data.push(rowData.join(',')); // Unisci i dati della riga in una stringa CSV
+            }
+    
+            // Scrivi i dati su un file CSV
+            var csvContent = data.join('\n');
+            var blob = new Blob([csvContent], { type: 'text/csv' });
+    
+            // Crea un link temporaneo per il download del file CSV
+            var link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = 'table_data.csv';
+            link.click();
+        });
+    </script>
+</head>
+
+<body>
+    <header>
+        <h1>Studia con SQL</h1>
+    </header>
+
+    <div class="main-container">
+        <div style="display: flex; align-items: center;margin-top: 50px;">
+            <h2 style="margin-right: 10px;">Crea Tabella</h2>
+            <button type="button" onclick="addAttribute()">Aggiungi attributo</button>
+            <button type="button" onclick="addRow()">Aggiungi riga</button>
+            <button type="button" onclick="deleteRow()">Elimina riga</button>
+            <button type="button" onclick="deleteColumn()">Elimina colonna</button>
+        </div>
+        <form id="tableForm" action="process_table.php" method="post">
+            <label for="title">Titolo:</label><br>
+            <input type="text" id="title" name="title"><br>
+            <table id="table">
+                <!-- La tabella inizia con una sola riga per i nomi degli attributi -->
+                <tr>
+                    <td>Nome attributi</td>
+                </tr>
+            </table>
+        </form>
+        
+        <a href="createTabble.html">Crea nuova tabella</a>
+    </div>
+
+    <footer>
+        <p>Alma Mater Studiorum</p>
+        <h3>Università di Bologna</h3>
+    </footer>
+</body>
+</html>
