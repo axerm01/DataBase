@@ -8,7 +8,9 @@ class Table {
     private $numRows;
     private $columns; // Un array di oggetti Column
 
-    public function __construct() {
+    public function __construct($id, $name) {
+        $this->id = $id;
+        $this->name = $name;
         $this->columns = array();
     }
 
@@ -76,6 +78,7 @@ class Table {
         }
         return false;
     }
+
 }
 
 

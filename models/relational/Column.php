@@ -5,7 +5,7 @@ class Column {
     private $name;
     private $type;
     private $isPK; // Is Primary Key
-    private $references; // Array di oggetti Column
+    private $references; // Array di Nomi delle colonne referenziate
 
     public function __construct($tableId, $name, $type, $isPrimaryKey = false) {
         $this->tableId = $tableId;
@@ -58,20 +58,27 @@ class Column {
     }
 
 
-    public function addReference(Column $column) {
-        $this->references[] = $column;
+    public function addReference( $columnName): void
+    {
+        $this->references[] = $columnName;
     }
 
-    public function removeReference($columnName) {
-        foreach ($this->references as $key => $column) {
-            if ($column->getName() === $columnName) {
-                unset($this->references[$key]);
+    public function removeReference($columnName): bool
+    {
+        foreach ($this->references as $column) {
+            if ($column === $columnName) {
+                unset($this->references[$column]);
                 // Reindex the array to maintain consistent indices
                 $this->references = array_values($this->references);
                 return true;
             }
         }
         return false;
+    }
+
+    public function createColumnOnDB($table_id, $name, $type, $isPK){
+        //Query per creaz tabella
+
     }
 }
 
