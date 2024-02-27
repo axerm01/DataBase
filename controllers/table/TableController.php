@@ -11,18 +11,33 @@ session_start();
 }*/
 
 include('../models/relational/Table.php');
+include('../models/relational/Column.php');
 
-if (($_SERVER["REQUEST_METHOD"] == "POST")){
-    $table_name = filter_input(INPUT_POST, 'table_name');
-    $prof_email = $_SESSION['email'];
-    $num_rows = filter_input(INPUT_POST, 'num_rows');
+    // Verifica se il contenuto ricevuto è JSON
+    $contentType = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
 
-    $table = new Table($table_name, $prof_email, $num_rows);
+    if ($contentType === "application/json") {
+        // Ricevi il contenuto grezzo
+        $content = trim(file_get_contents("php://input"));
+
+        // Decodifica il JSON ricevuto
+        $decodedData = json_decode($content, true);
+
+        // Crea un nuovo oggetto Table
+        $table = new Table($decodedData['tableName'], $decodedData['profEmail'], count($decodedData['rows']));
+
+        // Aggiungi le colonne alla tabella
+        foreach ($decodedData['columns'] as $columnData) {
+            $column = new Column($columnData['name'], $columnData['type'], $columnData['isPK']);
+            $table->addColumn($column);
+        }
+
+        $table->insertOnDB();
+
+    }
 
 
 
-
-}
 
 ?>
 

@@ -7,11 +7,10 @@ class Column {
     private $isPK; // Is Primary Key
     private $references; // Array di Nomi delle colonne referenziate
 
-    public function __construct($tableId, $name, $type, $isPrimaryKey = false) {
-        $this->tableId = $tableId;
+    public function __construct($name, $type, $isPrimaryKey) {
         $this->name = $name;
         $this->type = $type;
-        $this->isPrimaryKey = $isPrimaryKey;
+        $this->isPK = $isPrimaryKey;
         $this->references = []; // Inizializzazione come array vuoto
     }
 
@@ -76,8 +75,18 @@ class Column {
         return false;
     }
 
-    public function createColumnOnDB($table_id, $name, $type, $isPK){
-        //Query per creaz tabella
+    public function insertOnDB(){
+        global $con;
+        $q = ""; //Query insert into Attributo
+        $stmt = mysqli_prepare($con, $q);
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . mysqli_error($con));
+        }
+        mysqli_stmt_bind_param($stmt, 'ssi', $this->name, $this->type, $this->isPK);
+        if (!mysqli_stmt_execute($stmt)) {
+            die("Errore nell'esecuzione della query: " . mysqli_stmt_error($stmt));
+        }
+        mysqli_stmt_close($stmt);
 
     }
 }

@@ -14,18 +14,25 @@ class Table {
         $this->professorEmail = $professorEmail;
         $this->numRows = $numRows;
         $this->columns = array();
+    }
 
+    public function insertOnDB()
+    {
         global $con;
-        $q = "";
+        $q = ""; //Query insert into Tabella
         $stmt = mysqli_prepare($con, $q);
         if ($stmt === false) {
             die("Errore nella preparazione della query: " . mysqli_error($con));
         }
-        mysqli_stmt_bind_param($stmt, 'sssis', $name, $professorEmail, $numRows);
+        mysqli_stmt_bind_param($stmt, 'ssi', $this->name, $this->professorEmail, $this->numRows);
         if (!mysqli_stmt_execute($stmt)) {
             die("Errore nell'esecuzione della query: " . mysqli_stmt_error($stmt));
         }
         mysqli_stmt_close($stmt);
+
+        foreach ($this->columns as $column) {
+            $column->insertOnDB();
+        }
     }
 
     // Getters e Setters
