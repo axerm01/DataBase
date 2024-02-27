@@ -1,4 +1,5 @@
 <?php
+include('../controllers/connect.php');
 
 class Table {
     private $id;
@@ -8,10 +9,23 @@ class Table {
     private $numRows;
     private $columns; // Un array di oggetti Column
 
-    public function __construct($id, $name) {
-        $this->id = $id;
+    public function __construct($name, $professorEmail, $numRows) {
         $this->name = $name;
+        $this->professorEmail = $professorEmail;
+        $this->numRows = $numRows;
         $this->columns = array();
+
+        global $con;
+        $q = "";
+        $stmt = mysqli_prepare($con, $q);
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . mysqli_error($con));
+        }
+        mysqli_stmt_bind_param($stmt, 'sssis', $name, $professorEmail, $numRows);
+        if (!mysqli_stmt_execute($stmt)) {
+            die("Errore nell'esecuzione della query: " . mysqli_stmt_error($stmt));
+        }
+        mysqli_stmt_close($stmt);
     }
 
     // Getters e Setters

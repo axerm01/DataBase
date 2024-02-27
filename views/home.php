@@ -2,7 +2,7 @@
 session_start();
 
 // Assicurati che l'utente sia loggato e che il ruolo sia impostato
-if (!isset($_SESSION['role'])) {
+if (!isset($_SESSION['loggedin'])) {
     header('Location: login.php'); // Redirigi all'accesso se non loggato
     exit;
 }
@@ -11,8 +11,6 @@ $role = $_SESSION['role'];
 $actionSendMessage = ($role === 'student') ? 'new_student_message' : 'new_professor_message';
 $actionGetMessages = ($role === 'student') ? 'get_student_messages' : 'get_professor_messages';
 
-// Includi il controller per ottenere i messaggi
-include('../controllers/MessageController.php');
 ?>
 
 <!DOCTYPE html>
