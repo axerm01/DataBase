@@ -40,6 +40,23 @@ Telefono = TelefonoAtt
 WHERE Mail = MailAtt;
 END //
 
+CREATE PROCEDURE `CheckStudente` (
+    IN MailAtt VARCHAR(45),
+    IN PasswordAtt VARCHAR(16),
+    OUT Risultato BOOLEAN
+)
+BEGIN
+    SET Risultato = FALSE;
+    IF EXISTS (
+        SELECT *
+        FROM studente
+        WHERE Mail = MailAtt AND password = PasswordAtt
+    ) THEN
+        SET Risultato = TRUE;
+    END IF;
+END//
+
+  
 CREATE PROCEDURE `UpdateStudenteTel`(
 in MailAtt text,
 in Tel int)
