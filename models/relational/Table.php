@@ -35,6 +35,67 @@ class Table {
         }
     }
 
+    public function createNewTable()
+    {
+        global $con;
+        $q = $this->createTableQuery(); //Query create table
+        $stmt = mysqli_prepare($con, $q);
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . mysqli_error($con));
+        }
+        if (!mysqli_stmt_execute($stmt)) {
+            die("Errore nell'esecuzione della query: " . mysqli_stmt_error($stmt));
+        }
+        mysqli_stmt_close($stmt);
+    }
+
+    public function createTableQuery() {
+        $columnDefinitions = [];
+        foreach ($this->columns as $column) {
+            $colDef = "`" . $column->name . "` " . $column->type;
+            if ($column->isPK) {
+                $colDef .= " PRIMARY KEY";
+            }
+            $columnDefinitions[] = $colDef;
+        }
+
+        $columnDefinitionsString = implode(", ", $columnDefinitions);
+        $query = "CREATE TABLE `" . $this->name . "` (" . $columnDefinitionsString . ");";
+        return $query;
+    }
+
+    public function fillTableRow($rows) {
+        global $con;
+        mysqli_begin_transaction($con);
+
+        try {
+            foreach ($rows as $rowData) {
+                $valueList = [];
+                foreach ($rowData as $index => $value) {
+                    // Controlla il tipo di dato per ogni colonna e formatta il valore di conseguenza
+                    $type = $this->columns[$index]->type;
+                    if (strpos($type, 'smaillint') !== false || strpos($type, 'float') !== false || strpos($type, 'decimal') !== false || strpos($type, 'double') !== false) {
+                        // Tipi numerici: assumiamo che il valore sia già un numero valido
+                        $valueList[] = $value;
+                    } else {
+                        // Tipi non numerici: circonda il valore con virgolette singole e sanifica per evitare SQL Injection
+                        $valueList[] = "'" . mysqli_real_escape_string($con, $value) . "'";
+                    }
+                }
+
+                $q = "INSERT INTO " . $this->name . " VALUES(" . implode(", ", $valueList) . ")";
+                mysqli_query($con, $q);
+            }
+
+            mysqli_commit($con);
+        } catch (Exception $e) {
+            mysqli_rollback($con);
+            // Gestisci l'errore
+            echo "Errore: " . $e->getMessage();
+        }
+    }
+
+
     // Getters e Setters
     public function getId() {
         return $this->id;

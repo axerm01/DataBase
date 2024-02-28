@@ -33,6 +33,9 @@ include('../models/relational/Column.php');
         }
 
         $table->insertOnDB();
+        $table->createNewTable();
+        $table->fillTableRow($decodedData['rows']);
+
 
     }
 
