@@ -6,11 +6,12 @@ in CognomeAtt varchar(45),
 in MailAtt text,
 in CorsoAtt varchar(16),
 in DipartimentoAtt text,
-in TelefonoAtt int
+in TelefonoAtt int,
+in PasswordAtt varchar(16)  
 )
 BEGIN
-INSERT INTO docente (Nome, Cognome ,Mail ,Corso, Dipartimento, Telefono)
-VALUES (NomeAtt, CognomeAtt ,MailAtt ,CorsoAtt, DipartimentoAtt, TelefonoAtt);
+INSERT INTO docente (Nome, Cognome ,Mail ,Corso, Dipartimento, Telefono,Password)
+VALUES (NomeAtt, CognomeAtt ,MailAtt ,CorsoAtt, DipartimentoAtt, TelefonoAtt,PasswordAtt);
 END //
 
 CREATE PROCEDURE `DropDocente`(
