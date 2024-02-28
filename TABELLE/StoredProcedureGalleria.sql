@@ -1,5 +1,14 @@
 DELIMITER //
 
+CREATE PROCEDURE `CreateGalleria`(
+in IDTestAtt int,
+in FotoAtt varchar(45)
+)
+BEGIN
+INSERT INTO Galleria(IDTest,Foto)
+VALUES (IDTestAtt, FotoAtt);
+END //
+  
 CREATE PROCEDURE `ViewGalleria`(
 in IDTestAtt int
 )
