@@ -22,6 +22,23 @@ DELETE FROM docente
 WHERE Mail = MailParam;
 END //
 
+CREATE PROCEDURE `CheckDocente` (
+    IN MailAtt VARCHAR(45),
+    IN PasswordAtt VARCHAR(16),
+    OUT Risultato BOOLEAN
+)
+BEGIN
+    SET Risultato = FALSE;
+    IF EXISTS (
+        SELECT *
+        FROM Docente
+        WHERE Mail = MailAtt AND password = PasswordAtt
+    ) THEN
+        SET Risultato = TRUE;
+    END IF;
+END//
+
+  
 CREATE PROCEDURE `UpdateDocente`(
 in NomeAtt text,
 in CognomeAtt text,
