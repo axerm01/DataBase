@@ -147,6 +147,8 @@
                 </tr>
             </table>
             <input type="submit" value="Invia" onclick="submitForm()">
+            <input type="button" value="Scarica JSON" onclick="downloadJSON()">
+
         
             <a href="createTable.html">Crea nuova tabella</a>
     </div>
@@ -271,7 +273,7 @@
 
             // Invia i dati in formato JSON al file PHP
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'TableController.php', true);
+            xhr.open('POST', '../controllers/table/TableController.php', true);
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
@@ -279,7 +281,9 @@
                 }
             };
             xhr.send(JSON.stringify(formData));
+
         }
+        
     </script>
 </body>
 </html>
