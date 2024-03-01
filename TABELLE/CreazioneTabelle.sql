@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS `STUDENTE` (
   `Mail` VARCHAR(45) NOT NULL,
   `Matricola` VARCHAR(16) NOT NULL,
   `AnnoImm` YEAR NOT NULL,
+  `password` varchar(45) NOT NULL,
   `Telefono` INT DEFAULT NULL,
   PRIMARY KEY (`Mail`))
 ENGINE = InnoDB;
@@ -14,6 +15,7 @@ CREATE TABLE IF NOT EXISTS `DOCENTE` (
   `Mail` VARCHAR(45) NOT NULL,
   `Corso` VARCHAR(45) NOT NULL,
   `Dipartimento` VARCHAR(45) NOT NULL,
+  `password` varchar(45) NOT NULL,
   `Telefono` INT DEFAULT NULL,
   PRIMARY KEY (`Mail`))
 ENGINE = InnoDB;
