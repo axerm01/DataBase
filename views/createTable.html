@@ -172,14 +172,14 @@
             var select = document.createElement('select');
             select.name = 'attribute_type';
             var option1 = document.createElement('option');
-            option1.value = 'INT';
-            option1.text = 'INT';
+            option1.value = 'INTEGER';
+            option1.text = 'INTEGER';
             var option2 = document.createElement('option');
             option2.value = 'VARCHAR';
             option2.text = 'VARCHAR';
             var option3 = document.createElement('option');
-            option3.value = 'DATE';
-            option3.text = 'DATE';
+            option3.value = 'DATETIME';
+            option3.text = 'DATETIME';
             select.appendChild(option1);
             select.appendChild(option2);
             select.appendChild(option3);
@@ -252,7 +252,7 @@
                     type: attributeType,
                     PK: isPK
                 };
-                attributes.push(attribute); //aggiungo l'atributo
+                attributes.push(attribute); //aggiungo l'attributo
             }
 
             // inserisce in rows tutte le righe.

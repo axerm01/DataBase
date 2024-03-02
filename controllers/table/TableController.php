@@ -24,14 +24,15 @@ include('../models/relational/Column.php');
         $decodedData = json_decode($content, true);
 
         // Crea un nuovo oggetto Table
-        $table = new Table($decodedData['tableName'], $decodedData['profEmail'], count($decodedData['rows']));
+        $table = new Table($decodedData['title'], $_SESSION['email'], count($decodedData['rows']));
 
         // Aggiungi le colonne alla tabella
-        foreach ($decodedData['columns'] as $columnData) {
-            $column = new Column($columnData['name'], $columnData['type'], $columnData['isPK']);
+        foreach ($decodedData['attributes'] as $columnData) {
+            $column = new Column($columnData['attributeName'], $columnData['attributeType'], $columnData['isPK']);
             $table->addColumn($column);
         }
-
+        header('Location: ../login.html');
+        //
         $table->insertOnDB();
         $table->createNewTable();
         $table->fillTableRow($decodedData['rows']);

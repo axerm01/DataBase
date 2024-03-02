@@ -38,6 +38,8 @@ $actionGetMessages = ($role === 'student') ? 'get_student_messages' : 'get_profe
     <input type="submit" value="Visualizza Messaggi inviati">
 </form>
 
+<a href="../views/createTable.html">Crea nuova tabella</a>
+
 </body>
 </html>
 
