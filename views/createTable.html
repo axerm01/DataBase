@@ -139,7 +139,7 @@
         </div>
         
             <label for="title">Titolo:</label>
-            <input type="title" id="title" name="title"><br>
+            <input type="text" id="title" name="title"><br>
             <table id="table">
                 <!-- La tabella inizia con una sola riga per i nomi degli attributi -->
                 <tr>
@@ -147,7 +147,7 @@
                 </tr>
             </table>
             <input type="submit" value="Invia" onclick="submitForm()">
-            <input type="button" value="Scarica JSON" onclick="downloadJSON()">
+
 
         
             <a href="createTable.html">Crea nuova tabella</a>
@@ -175,8 +175,8 @@
             option1.value = 'INTEGER';
             option1.text = 'INTEGER';
             var option2 = document.createElement('option');
-            option2.value = 'VARCHAR';
-            option2.text = 'VARCHAR';
+            option2.value = 'VARCHAR(45)';
+            option2.text = 'VARCHAR(45)';
             var option3 = document.createElement('option');
             option3.value = 'DATETIME';
             option3.text = 'DATETIME';
@@ -242,7 +242,7 @@
 
             var table = document.getElementById('table');
             var headerRow = table.rows[0];
-            for (var i = 0; i < headerRow.cells.length; i++) {
+            for (var i = 1; i < headerRow.cells.length; i++) {
                 var attributeName = headerRow.cells[i].querySelector('input[type="text_attr"]').value;
                 var attributeType = headerRow.cells[i].querySelector('select[name="attribute_type"]').value;
                 var isPK = headerRow.cells[i].querySelector('input[name="pk"]').checked;
@@ -259,7 +259,7 @@
             for (var i = 1; i < table.rows.length; i++) {
                 var rowData = [];
                 // legge una riga come array di elementi e li inserisce in rows
-                for (var j = 0; j < table.rows[i].cells.length; j++) {
+                for (var j = 1; j < table.rows[i].cells.length; j++) {
                     rowData.push(table.rows[i].cells[j].querySelector('input[name="row"]').value);
                 }
                 rows.push(rowData);
@@ -281,6 +281,8 @@
                 }
             };
             xhr.send(JSON.stringify(formData));
+
+            console.log(formData);
 
         }
         

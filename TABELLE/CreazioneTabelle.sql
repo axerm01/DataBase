@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS `STUDENTE` (
   `Matricola` VARCHAR(16) NOT NULL,
   `AnnoImm` YEAR NOT NULL,
   `password` varchar(45) NOT NULL,
-  `Telefono` INT DEFAULT NULL,
+  `Telefono` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`Mail`))
 ENGINE = InnoDB;
 

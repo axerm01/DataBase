@@ -10,8 +10,8 @@ session_start();
     unset($_SESSION['table']);
 }*/
 
-include('../models/relational/Table.php');
-include('../models/relational/Column.php');
+include '../../models/relational/Table.php';
+include '../../models/relational/Column.php';
 
     // Verifica se il contenuto ricevuto è JSON
     $contentType = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
@@ -28,14 +28,13 @@ include('../models/relational/Column.php');
 
         // Aggiungi le colonne alla tabella
         foreach ($decodedData['attributes'] as $columnData) {
-            $column = new Column($columnData['attributeName'], $columnData['attributeType'], $columnData['isPK']);
+            $column = new Column($columnData['name'], $columnData['type'], $columnData['PK']);
             $table->addColumn($column);
         }
-        header('Location: ../login.html');
         //
         $table->insertOnDB();
         $table->createNewTable();
-        $table->fillTableRow($decodedData['rows']);
+        $table->fillTableRows($decodedData['rows']);
 
 
     }

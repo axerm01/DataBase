@@ -77,12 +77,13 @@ class Column {
 
     public function insertOnDB(){
         global $con;
-        $q = ""; //Query insert into Attributo
+        $isPK = (int) $this->isPK;
+        $q = "CALL CreateAttribute(?,?,?,?);";
         $stmt = mysqli_prepare($con, $q);
         if ($stmt === false) {
             die("Errore nella preparazione della query: " . mysqli_error($con));
         }
-        mysqli_stmt_bind_param($stmt, 'ssi', $this->name, $this->type, $this->isPK);
+        mysqli_stmt_bind_param($stmt, 'issi', $this->tableId, $this->name, $this->type, $isPK );
         if (!mysqli_stmt_execute($stmt)) {
             die("Errore nell'esecuzione della query: " . mysqli_stmt_error($stmt));
         }

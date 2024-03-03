@@ -1,14 +1,33 @@
 <?php
 session_start();
-// Da richiamare quando si termina l'inserimento di tutte le domande del test
+include('../utils/connect.php');
 
-if (($_SERVER["REQUEST_METHOD"] == "POST") && (isset($_SESSION['test']))) {
-    $test = unserialize($_SESSION['test']);
+if ($_SERVER["REQUEST_METHOD"] == "GET"){ // restituzione tabelle presenti
+    global $con;
+    $q = "CALL ViewAllTables(?)";
+    $stmt = $con->prepare($q);
+    if ($stmt === false) {
+        die("Errore nella preparazione della query: " . $con->error);
+    }
+    $stmt->bind_param('s',$_SESSION['email']);
+    if (!$stmt->execute()) {
+        die("Errore nell'esecuzione della query: " . $stmt->error);
+    }
 
-    //Query DB per creaz test, domande, risposte
+    $result = $stmt->get_result();
+    $tableNames = [];
+    while ($row = $result->fetch_assoc()) {
+        $tableNames[] = $row['Nome'];
+    }
 
-    unset($_SESSION['table']);
+    $stmt->close();
+
+    header('Content-Type: application/json');
+    echo json_encode($tableNames);
 }
+
+
+
 
 ?>
 

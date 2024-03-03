@@ -1,5 +1,5 @@
 <?php
-include('../controllers/connect.php');
+include('../../controllers/utils/connect.php');
 
 class Table {
     private $id;
@@ -18,19 +18,39 @@ class Table {
 
     public function insertOnDB()
     {
+
+        $this->creationDate = date('Y-m-d H:i:s');
         global $con;
-        $q = ""; //Query insert into Tabella
-        $stmt = mysqli_prepare($con, $q);
+        $q = 'CALL CreateTable(?,?,?,?);';
+        $stmt = $con->prepare($q);
         if ($stmt === false) {
-            die("Errore nella preparazione della query: " . mysqli_error($con));
+            die("Errore nella preparazione della query: " . $con->error);
         }
-        mysqli_stmt_bind_param($stmt, 'ssi', $this->name, $this->professorEmail, $this->numRows);
-        if (!mysqli_stmt_execute($stmt)) {
-            die("Errore nell'esecuzione della query: " . mysqli_stmt_error($stmt));
+        $stmt->bind_param('sssi',  $this->professorEmail, $this->name, $this->creationDate, $this->numRows);
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
         }
-        mysqli_stmt_close($stmt);
+        $stmt->close();
+
+        $q = 'SELECT ID FROM TABELLA WHERE DataCreazione = ?;';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('s',  $this->creationDate);
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $this->id = $row['ID'];
+
+        $stmt->close();
+
+
 
         foreach ($this->columns as $column) {
+            $column->setTableId($this->id);
             $column->insertOnDB();
         }
     }
@@ -39,6 +59,15 @@ class Table {
     {
         global $con;
         $q = $this->createTableQuery(); //Query create table
+
+            /*$js_code = 'console.log(' . json_encode($q, JSON_HEX_TAG) .
+                ');';
+            if (true) {
+                $js_code = '<script>' . $js_code . '</script>';
+            }
+            echo $js_code;*/
+
+
         $stmt = mysqli_prepare($con, $q);
         if ($stmt === false) {
             die("Errore nella preparazione della query: " . mysqli_error($con));
@@ -50,21 +79,32 @@ class Table {
     }
 
     public function createTableQuery() {
+        if (empty($this->columns)) {
+            throw new Exception("La lista delle colonne è vuota.");
+        }
+
         $columnDefinitions = [];
+        $primaryKeys = [];
         foreach ($this->columns as $column) {
-            $colDef = "`" . $column->name . "` " . $column->type;
-            if ($column->isPK) {
-                $colDef .= " PRIMARY KEY";
+            $colDef = "`" . $column->getName() . "` " . $column->getType();
+            if ($column->getIsPK()) {
+                $primaryKeys[] = "`" . $column->getName() . "`";
             }
             $columnDefinitions[] = $colDef;
         }
 
+        // Se ci sono più colonne PK, creiamo una PK composta
+        if (!empty($primaryKeys)) {
+            $columnDefinitions[] = "PRIMARY KEY (" . implode(", ", $primaryKeys) . ")";
+        }
+
         $columnDefinitionsString = implode(", ", $columnDefinitions);
-        $query = "CREATE TABLE `" . $this->name . "` (" . $columnDefinitionsString . ");";
+        $query = "CREATE TABLE IF NOT EXISTS `" . $this->name . "` (" . $columnDefinitionsString . ") ENGINE = InnoDB;";
         return $query;
     }
 
-    public function fillTableRow($rows) {
+
+    public function fillTableRows($rows) {
         global $con;
         mysqli_begin_transaction($con);
 
@@ -73,7 +113,7 @@ class Table {
                 $valueList = [];
                 foreach ($rowData as $index => $value) {
                     // Controlla il tipo di dato per ogni colonna e formatta il valore di conseguenza
-                    $type = $this->columns[$index]->type;
+                    $type = $this->columns[$index]->getType();
                     if (strpos($type, 'smaillint') !== false || strpos($type, 'float') !== false || strpos($type, 'decimal') !== false || strpos($type, 'double') !== false) {
                         // Tipi numerici: assumiamo che il valore sia già un numero valido
                         $valueList[] = $value;

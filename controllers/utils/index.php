@@ -12,10 +12,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Preparazione e binding della query
     if($role == 'professor'){
-        $stmt = $con->prepare("SELECT password FROM Professor WHERE email = ?");
+        $stmt = $con->prepare("SELECT password FROM Docente WHERE mail = ?");
     }
     else if($role == 'student'){
-        $stmt = $con->prepare("SELECT password FROM Student WHERE email = ?");
+        $stmt = $con->prepare("SELECT password FROM Studente WHERE mail = ?");
     }
 
     $stmt->bind_param("s", $email);
@@ -33,7 +33,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION["email"] = $email;
             $_SESSION["role"] = $role;
 
-            header('Location: ../views/home.php');
+            if($role == 'professor'){
+                header('Location: ../../views/prof_home.html');
+            }
+            else if ($role == 'student'){
+                header('Location: ../../views/student_home.html');
+            }
+
         } else {
             echo "Invalid password.";
         }

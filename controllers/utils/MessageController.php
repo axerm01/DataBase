@@ -10,7 +10,7 @@ if(isset($_SESSION['email']) && isset($_SESSION['role'])){
     $role = $_SESSION['role'];
 }
 else {
-    header('Location: login.php'); // Sostituisci 'login.php' con il percorso effettivo della tua pagina di login
+    header('Location: ../views/login.html'); // Sostituisci 'login.php' con il percorso effettivo della tua pagina di login
     exit();
 }
 
