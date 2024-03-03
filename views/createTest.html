@@ -3,70 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login-ESQL-Esercitazioni</title>
+    <title>Create Test - ESQL -</title>
     <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
     <style>
-        /* Stile per il corpo della pagina */
+        /* Styles for the page */
         body {
             font-family: Arial, sans-serif;
-            background-color: #fff; /* Colora il body di bianco */
+            background-color: #fff;
             margin: 0;
             padding: 0;
             display: flex;
             flex-direction: column;
-            align-items: stretch; /* I contenitori occupano a pieno la larghezza della pagina */
-            height: 100vh;
+            align-items: stretch;
+            height: 100%;
+            width: 100%;
         }
 
-        /* Stile per l'intestazione */
+        /* Styles for the header */
         header {
             background-color: #be2525;
             color: #fff;
             text-align: center;
             padding: 20px;
-            grid-column: span 2; /* Fai occupare l'intestazione entrambe le colonne */
+            grid-column: span 2;
+            width: 100%;
         }
 
-        /* Stile per il contenitore principale */
+        /* Styles for the main container */
         .main-container { 
-            height: 100vh;
-            margin: 0 auto;
+            height: 100%;
+            width: 100%;
             padding: 20px;
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* Stile per i campi di input */
-        input[type="text"],
-        input[type="password"]
-        {
-            width: 80%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        /* Stile per i bottoni */
-        button {
-            background-color: #333;
-            color: #fff;
-            border: none;
-            padding: 7px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-left: 10px;
-            font-size: 12px; /* Aumenta la dimensione del testo */
-            width: 90px; /* Tutti i pulsanti hanno la stessa dimensione */
-        }
-        
-
-        /* Stile per il link "registrazione" */
-        .registrazione {
-            text-align: right;
-        }
-
-        /* Stile per il footer */
+        /* Styles for the footer */
         footer {
             left: 0;
             bottom: 0;
@@ -76,133 +48,300 @@
             background-color: #be2525;
             color: #fff;
         }
-        /* Stile per i campi di input */
-        input[type="title"] {
-            border: 2px solid #333; /* Ingrossa il bordo dei campi di input */
-            padding: 5px;
-            width: 25%; /* Allinea il bordo destro di tutte le celle */
+
+        /* Styles for input fields */
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
+
+        /* Styles for buttons */
+        button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 12px;
+            width: 150px;
+        }
+
+        /* Styles for the registration link */
+        .registrazione {
+            text-align: right;
+        }
+
+        /* Styles for input fields */
+        input[type="title"] {
+            border: 2px solid #333;
+            padding: 5px;
+            width: 25%;
+        }
+
+        /* Styles for questions */
+        .question {
+            margin-top: 20px;
+            border: 1px solid #ccc; /* Add border around the question */
+            border-radius: 5px; /* Add rounded corners for the question box */
+            padding: 15px; /* Add padding inside the question box */
+            background-color: #f9f9f9; /* Set background color for the question box */
+            margin-right: 10px;
+        }
+        /* Styles for question input */
+        .question-input {
+            width: 30%; /* Make the input field occupy the full width of its container */
+            padding: 10px; /* Add padding for better visual appeal */
+            margin-top: 15px; /* Add some spacing below the input */
+            border: 1px solid #ccc; /* Add a border for clarity */
+            border-radius: 5px; /* Add rounded corners for a softer look */
+            box-sizing: border-box; /* Include padding and border in the width calculation */
+            font-size: 16px; /* Increase font size for better readability */
+            background-color: #f9f9f9; /* Add a light background color */
+            color: #333; /* Set text color */
+        }
+        .question input[type="text"] {
+            width: 70%;
+        }
+
+        /* Styles for answers */
+        .answer {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        /* Styles for answer input */
+        .answer input[type="text"] {
+            flex: 1;
+            margin-right: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* Styles for answer checkbox */
+        .answer input[type="checkbox"] {
+            margin-right: 5px;
+            transform: scale(1.5); 
+            margin-left: 10px;
+        }
+
+        /* Styles for add answer button */
+        .add-answer-button {
+            background-color: #007bff;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        /* Styles for "Elimina Quesito" button */
+        .delete-question-button {
+            background-color: #a51b1bc3;
+            cursor: pointer;
+            font-size: 12px;
+            width: 80px;
+        }
+
+        /* Styles for delete answer button */
+        .delete-answer-button {
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        /* Styles for MySQL code textarea */
+        .code-textarea {
+            width: 100%; /* Make the textarea occupy the full width of its container */
+            height: 100px; /* Set the height as needed */
+            padding: 10px; /* Add padding for better visual appeal */
+            margin-top: 15px; /* Add some spacing above the textarea */
+            border: 1px solid #ccc; /* Add a border for clarity */
+            border-radius: 5px; /* Add rounded corners for a softer look */
+            box-sizing: border-box; /* Include padding and border in the width calculation */
+            font-size: 16px; /* Set font size */
+            background-color: #f9f9f9; /* Add a light background color */
+            color: #333; /* Set text color */
+        }
+        /* Styles for inizial checkbox */
+        input[type="checkbox"] {
+            border-radius: 25%;
+            transform: scale(1.5); 
+        }
+        
+
     </style>
 </head>
 
 <body>
+
+
+
     <header>
         <h1>Studia con ESQL</h1>
     </header>
     <div class="main-container">
         <div style="display: flex; align-items: center;">
-            <p style="margin-right: 10px; font-size: 1.3em; font-weight: bold;">
-                Crea Test</p>
-            <button type="button" onclick="addTable()">Aggiungi Tabella</button>
-            <button type="button" onclick="deleteTable()">Elimina Tabella</button>
-            <button type="button" onclick="addQuestion()">Aggiungi Quesito</button>
-            <button type="button" onclick="deleteQuestion()">Elimina Quesito</button>
+            <p style="margin-right: 10px; font-size: 28px; font-weight: bold;">Crea Tabella</p>
+            <button type="button" onclick="addCodeQuestion()">Aggiungi Quesito Codice</button>
+            <button type="button" onclick="addMCQuestion()">Aggiungi Quesito Risposta Multipla</button>
         </div>
-        <label for="title">Titolo Test:</label>
-        <input type="text" id="title" name="title"><br>
-        <p id="tableSelector"></p>
-
+        <label for="title" style="font-size: 22px; font-weight: bolder;">Titolo Test:</label>
+        <input type="title" id="title" name="title"><br>
+        <p style="font-size: 18px; font-weight: bold; color: #484141b8;"> Permesso visualizzione risposte
+            <input type="checkbox" class="styled-checkbox">
+            <span class="checkmark"></span>
+          </p>
+        <div id="questionsContainer">
+            <!-- Questions will be dynamically added here -->
+        </div>
     </div>
-    <footer>
-        <p>Alma Mater Studiorum</p>
-        <h3>Università di Bologna</h3>
-    </footer>
+    
+
+
+
 
     <script>
-     // Metodo per aggiungere una tabella
-function addTable() {
-    // Effettua una richiesta AJAX per ottenere i nomi delle tabelle dal server
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', '../controllers/test/TestController.php', true);
-    xhr.onload = function() {
-        if (xhr.status == 200) {
-            // Parse della risposta JSON
-            var tableNames = JSON.parse(xhr.responseText);
-            // Aggiungi il menu a tendina con i nomi delle tabelle
-            createTableDropdown(tableNames);
-        } else {
-            console.error('Errore nella richiesta');
+        let questionCount = 0;
+
+        function addMCQuestion() {
+            questionCount++;
+
+            const container = document.getElementById('questionsContainer');
+
+            const questionDiv = document.createElement('div');
+            questionDiv.classList.add('question');
+
+            const questionLabel = document.createElement('label');
+            questionLabel.textContent = 'D.' + questionCount + ': ';
+            questionDiv.appendChild(questionLabel);
+
+            const questionInput = document.createElement('input');
+            questionInput.type = 'text';
+            questionInput.name = 'question' + questionCount;
+            questionInput.placeholder = 'Scrivi la Domanda';
+            questionInput.classList.add('question-input');
+            questionDiv.appendChild(questionInput);
+
+            const deleteQuestionButton = document.createElement('button');
+            deleteQuestionButton.textContent = 'Elimina Quesito';
+            deleteQuestionButton.classList.add('delete-question-button');
+            deleteQuestionButton.onclick = function() {
+                container.removeChild(questionDiv);
+            };
+            questionDiv.appendChild(deleteQuestionButton);
+            
+            const answersContainer = document.createElement('div');
+            answersContainer.classList.add('answers-container');
+            questionDiv.appendChild(answersContainer);
+
+            const addAnswerButton = document.createElement('button');
+            addAnswerButton.textContent = 'Aggiungi Risposta';
+            addAnswerButton.classList.add('add-answer-button');
+            addAnswerButton.onclick = function() {
+                addAnswer(answersContainer);
+            };
+            questionDiv.appendChild(addAnswerButton);
+
+            container.appendChild(questionDiv);
         }
-    };
-    xhr.send();
-}
 
-// Funzione per creare il menu a tendina con i nomi delle tabelle
-function createTableDropdown(tableNames) {
-    // Recupera il div che contiene il menu a tendina delle tabelle
-    var tableSelector = document.getElementById('tableSelector');
+        function addAnswer(container) {
+            const answerDiv = document.createElement('div');
+            answerDiv.classList.add('answer');
 
-    // Rimuove eventuali elementi precedenti nel menu a tendina
-    tableSelector.innerHTML = '';
+            const answerInput = document.createElement('input');
+            answerInput.type = 'text';
+            answerInput.name = 'answer' + questionCount + '_' + (container.children.length + 1);
+            answerInput.placeholder = 'Inserisci Risposta';
+            answerInput.classList.add('answer-input');
+            answerDiv.appendChild(answerInput);
 
-    // Crea il menu a tendina
-    var selectElement = document.createElement('select');
-    selectElement.name = 'table';
+            const correctCheckbox = document.createElement('input');
+            correctCheckbox.type = 'checkbox';
+            correctCheckbox.name = 'correct' + questionCount + '_' + (container.children.length + 1);
+            correctCheckbox.classList.add('correct-checkbox');
+            answerDiv.appendChild(correctCheckbox);
 
-    // Aggiungi un'opzione vuota come placeholder
-    var defaultOption = document.createElement('option');
-    defaultOption.text = 'Seleziona una tabella';
-    defaultOption.disabled = true;
-    defaultOption.selected = true;
-    selectElement.appendChild(defaultOption);
+            const deleteAnswerButton = document.createElement('button');
+            deleteAnswerButton.textContent = 'Elimina';
+            deleteAnswerButton.classList.add('delete-answer-button');
+            deleteAnswerButton.onclick = function() {
+                container.removeChild(answerDiv);
+            };
+            answerDiv.appendChild(deleteAnswerButton);
 
-    // Aggiungi le opzioni per ogni nome di tabella
-    for (var i = 0; i < tableNames.length; i++) {
-        var option = document.createElement('option');
-        option.text = tableNames[i];
-        selectElement.add(option);
-    }
-
-    // Aggiungi il menu a tendina al div del selettore della tabella
-    tableSelector.appendChild(selectElement);
-}
-    // Metodo per eliminare una tabella selezionata
-    function deleteTable() {
-        // Recupera il selettore della tabella
-        var tableSelector = document.getElementById('tableSelector');
-        
-        // Rimuovi la tabella selezionata
-        tableSelector.removeChild(tableSelector.lastChild);
-    }
-
-    // Funzione per aggiungere un contenitore per un quesito
-    function addQuestion() {
-        // Crea un nuovo contenitore div
-        var questionContainer = document.createElement('div');
-        
-        // Aggiungi uno spazio per digitare la domanda
-        var questionInput = document.createElement('input');
-        questionInput.type = 'text';
-        questionInput.placeholder = 'Inserisci la domanda';
-        
-        // Aggiungi la possibilità di inserire una o più risposte con checkbox
-        var answerInput = document.createElement('input');
-        answerInput.type = 'checkbox';
-        var answerLabel = document.createElement('label');
-        answerLabel.textContent = 'Risposta corretta';
-        var answerTextInput = document.createElement('input');
-        answerTextInput.type = 'text';
-        answerTextInput.placeholder = 'Inserisci una risposta';
-        
-        // Aggiungi gli elementi creati al contenitore
-        questionContainer.appendChild(questionInput);
-        questionContainer.appendChild(answerInput);
-        questionContainer.appendChild(answerLabel);
-        questionContainer.appendChild(answerTextInput);
-        
-        // Aggiungi il nuovo contenitore al DOM
-        document.body.appendChild(questionContainer);
-    }
-
-    // Funzione per eliminare un quesito
-    function deleteQuestion() {
-        // Rimuovi l'ultimo contenitore di quesito aggiunto
-        var questions = document.querySelectorAll('div[question]');
-        if (questions.length > 0) {
-            questions[questions.length - 1].remove();
+            container.appendChild(answerDiv);
         }
-    }
+
+        function addCodeQuestion() {
+            questionCount++;
+
+            const container = document.getElementById('questionsContainer');
+
+            const questionDiv = document.createElement('div');
+            questionDiv.classList.add('question');
+
+            const questionLabel = document.createElement('label');
+            questionLabel.textContent = 'D.' + questionCount + ' Code: ';
+            questionDiv.appendChild(questionLabel);
+
+            const questionInput = document.createElement('input');
+            questionInput.type = 'text';
+            questionInput.name = 'question' + questionCount;
+            questionInput.placeholder = 'Scrivi la Domanda';
+            questionInput.classList.add('question-input');
+            questionDiv.appendChild(questionInput);
+
+            const deleteQuestionButton = document.createElement('button');
+            deleteQuestionButton.textContent = 'Elimina Quesito';
+            deleteQuestionButton.classList.add('delete-question-button');
+            deleteQuestionButton.onclick = function() {
+                container.removeChild(questionDiv);
+            };
+            questionDiv.appendChild(deleteQuestionButton);
+            
+            const addCodeAnswerButton = document.createElement('button');
+            addCodeAnswerButton.textContent = 'Aggiungi altra risposta MySQL';
+            addCodeAnswerButton.classList.add('add-answer-button');
+            addCodeAnswerButton.onclick = function() {
+                addCodeAnswer(questionDiv);
+            };
+            questionDiv.appendChild(addCodeAnswerButton);
+
+            container.appendChild(questionDiv);
+        }
+
+        function addCodeAnswer(container) {
+            const codeAnswerDiv = document.createElement('div');
+            codeAnswerDiv.classList.add('code-answer');
+
+            const codeTextarea = document.createElement('textarea');
+            codeTextarea.name = 'code' + questionCount + '_' + (container.querySelectorAll('.code-answer').length + 1);
+            codeTextarea.placeholder = 'Inserisci codice MySQL';
+            codeTextarea.classList.add('code-textarea');
+            codeAnswerDiv.appendChild(codeTextarea);
+
+            const deleteAnswerButton = document.createElement('button');
+            deleteAnswerButton.textContent = 'Elimina';
+            deleteAnswerButton.classList.add('delete-answer-button');
+            deleteAnswerButton.onclick = function() {
+                container.removeChild(codeAnswerDiv);
+            };
+            codeAnswerDiv.appendChild(deleteAnswerButton);
+
+            container.appendChild(codeAnswerDiv);
+        }
 
     </script>
 </body>
+<footer>
+    <p>Alma Mater Studiorum</p>
+    <h3>Università di Bologna</h3>
+</footer>
 </html>

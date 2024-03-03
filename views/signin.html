@@ -125,7 +125,7 @@
             <input type="text" name="registration_year" placeholder="Anno Immatricolazione" required>
             <input type="text" name="course" placeholder="Corso" required>
             <input type="text" name="department" placeholder="Dipartimento" required>
-            <input name="phone" placeholder="phone">
+            <input type="number" name="phone" placeholder="Telefono">
             
             <input type="submit" value="invio">
             
@@ -145,10 +145,10 @@
 
         // Determina quali campi mostrare in base al ruolo selezionato
         switch(role) {
-            case "docente":
+            case "professor":
                 fieldsToShow = ["email", "password", "name", "surname", "course", "department","phone"];
                 break;
-            case "studente":
+            case "student":
             fieldsToShow = ["email", "password", "name", "surname", "matricola", "registration_year", "phone"];
             break;
             default:
@@ -157,7 +157,7 @@
         }
 
         // Nascondi tutti i campi di input
-        var allFields = document.querySelectorAll('input[type="email"], input[type="password"], input[type="name"], input[type="surname"], input[type="matricola"], input[type="registration_year"], input[type="course"], input[type="department"], input[type="phone"]');
+        var allFields = document.querySelectorAll('input[name="email"], input[name="password"], input[name="name"], input[name="surname"], input[name="matricola"], input[name="registration_year"], input[name="course"], input[name="department"], input[name="phone"]');
         allFields.forEach(function(field) {
             field.style.display = "none";
         });
@@ -172,7 +172,7 @@
     });
     // Nascondi tutti i campi di input all'avvio della pagina
     window.addEventListener('DOMContentLoaded', function() {
-        var allFields = document.querySelectorAll('input[type="email"], input[type="password"], input[type="name"], input[type="surname"], input[type="matricola"], input[type="registration_year"], input[type="course"], input[type="department"], input[type="phone"]');
+        var allFields = document.querySelectorAll('input[name="email"], input[name="password"], input[name="name"], input[name="surname"], input[name="matricola"], input[name="registration_year"], input[name="course"], input[name="department"], input[name="phone"]');
         allFields.forEach(function(field) {
             field.style.display = "none";
         });

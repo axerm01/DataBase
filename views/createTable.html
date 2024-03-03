@@ -51,14 +51,25 @@
             background-color: #333;
             color: #fff;
             border: none;
-            padding: 7px 15px;
+            padding: 8px 15px;
             border-radius: 5px;
             cursor: pointer;
             margin-left: 10px;
             font-size: 12px; /* Aumenta la dimensione del testo */
-            width: 90px; /* Tutti i pulsanti hanno la stessa dimensione */
+            width: 110px; /* Tutti i pulsanti hanno la stessa dimensione */
         }
-
+        /* Style for delete buttons */
+        button[type="button"][onclick="deleteRow(this)"],
+        button[type="button"][onclick="deleteColumn(this)"] {
+            background-color: #d4091ebe; /* Change background color */
+            color: #fff; /* Change text color */
+            padding: 5px 5px; /* Adjust padding */
+            border-radius: 100%; /* Make it circular */
+            font-size: 10px; /* Adjust font size */
+            margin-left: 5px; /* Adjust spacing */
+            height: 20px;
+            width: 20px;
+        }
         /* Stile per il bottone "Invia" */
         input[type="submit"] {
             background-color: #333;
@@ -101,7 +112,7 @@
         input[type="text"] {
             border: 2px solid #333; /* Ingrossa il bordo dei campi di input */
             padding: 5px;
-            width: 80%; /* Allinea il bordo destro di tutte le celle */
+            width: 50%;
             margin-left: 20px;
         }
         select {
@@ -133,12 +144,10 @@
             <p style="margin-right: 10px; font-size: 1.3em; font-weight: bold;">
                 Crea Tabella</p>
             <button type="button" onclick="addAttribute()">Aggiungi attributo</button>
-            <button type="button" onclick="addRow()">Aggiungi riga</button>
-            <button type="button" onclick="deleteRow()">Elimina riga</button>
-            <button type="button" onclick="deleteColumn()">Elimina colonna</button>
-        </div>
+            <button type="button" onclick="addRow()">Aggiungi una riga</button>
+            </div>
         
-            <label for="title">Titolo:</label>
+            <label for="title" >Titolo:</label>
             <input type="text" id="title" name="title"><br>
             <table id="table">
                 <!-- La tabella inizia con una sola riga per i nomi degli attributi -->
@@ -196,6 +205,8 @@
             label.appendChild(document.createTextNode('PK'));
             newCell.appendChild(checkbox);
             newCell.appendChild(label);
+            // Inserisce bottone eliminazione
+            newCell.innerHTML += '<button type="button" onclick="deleteColumn(this)">X</button>';
 
             for (var i = 1; i < table.rows.length; i++) {
                 var cell = table.rows[i].insertCell(-1);
@@ -209,6 +220,9 @@
             var newRow = table.insertRow(-1);
             var newCell = newRow.insertCell(0);
             newCell.innerHTML = rowCounter;
+
+            newCell.innerHTML += '<button type="button" onclick="deleteRow(this)">X</button>';
+
             for (var i = 1; i < table.rows[0].cells.length; i++) {
                 var cell = newRow.insertCell(i);
                 cell.innerHTML = '<input type="text" name="row">';
@@ -216,21 +230,16 @@
             rowCounter++;
         }
 
-        function deleteRow() {
-            var rowNum = prompt("Inserisci il numero della riga da eliminare:");
-            var table = document.getElementById('table');
-            if (rowNum >= 0 && rowNum < table.rows.length) {
-                table.deleteRow(rowNum);
-            }
+        function deleteRow(button) {
+            var row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
         }
 
-        function deleteColumn() {
-            var colNum = prompt("Inserisci il numero della colonna da eliminare:");
+        function deleteColumn(button) {
+            var cellIndex = button.parentNode.cellIndex;
             var table = document.getElementById('table');
-            if (colNum >= 0 && colNum < table.rows[0].cells.length) {
-                for (var i = 0; i < table.rows.length; i++) {
-                    table.rows[i].deleteCell(colNum);
-                }
+            for (var i = 0; i < table.rows.length; i++) {
+                table.rows[i].deleteCell(cellIndex);
             }
         }
 
