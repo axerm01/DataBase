@@ -3,11 +3,13 @@ DELIMITER //
 CREATE PROCEDURE `CreateTest`(
 in TitoloAtt varchar(45),
 in VisualizzRisposteAtt boolean,
-in MailDocenteAtt varchar(45)
-)
+in MailDocenteAtt varchar(45),
+out lastID INT)
 BEGIN
 INSERT INTO test (Titolo,DataCreazione,VisualizzaRisposte,MailDocente)
 VALUES (TitoloAtt,DATETIME,VisualizzaRisposteAtt,MailDocenteAtt);
+
+SET lastID = LAST_INSERT_ID();
 END //
 
 CREATE PROCEDURE `UpdateVisualizzaRisposteTest`(

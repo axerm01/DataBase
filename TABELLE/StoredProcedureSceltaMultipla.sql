@@ -1,13 +1,14 @@
 DELIMITER //
 CREATE PROCEDURE `CreateSceltaMultipla`(
 in DescrizioneAtt varchar(45),
+in IDAtt int,
 in IDTestAtt int,
 in NumRisposteAtt int,
 in DifficoltaAtt int
 )
 BEGIN
-INSERT INTO Scelta_Multipla (Descrizione,IDTest,NumRisposte,Difficolta)
-VALUES (DescrizioneAtt,IDTestAtt,NumRisposteAtt,DifficoltaAtt);
+INSERT INTO Scelta_Multipla (Descrizione,ID,IDTest,NumRisposte,Difficolta)
+VALUES (DescrizioneAtt,IDAtt,IDTestAtt,NumRisposteAtt,DifficoltaAtt);
 END //
 
 CREATE PROCEDURE `DropSceltaMultipla`(

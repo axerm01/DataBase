@@ -21,7 +21,7 @@ class Table {
 
         $this->creationDate = date('Y-m-d H:i:s');
         global $con;
-        $q = 'CALL CreateTable(?,?,?,?);';
+        $q = 'CALL CreateTable(?,?,?,?,@lastID);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
             die("Errore nella preparazione della query: " . $con->error);
@@ -30,24 +30,11 @@ class Table {
         if (!$stmt->execute()) {
             die("Errore nell'esecuzione della query: " . $stmt->error);
         }
-        $stmt->close();
 
-        $q = 'SELECT ID FROM TABELLA WHERE DataCreazione = ?;';
-        $stmt = $con->prepare($q);
-        if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
-        }
-        $stmt->bind_param('s',  $this->creationDate);
-        if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
-        }
-        $result = $stmt->get_result();
+        $result = $con->query("SELECT @lastID as lastID");
         $row = $result->fetch_assoc();
-        $this->id = $row['ID'];
-
+        $this->id = $row['lastID'];
         $stmt->close();
-
-
 
         foreach ($this->columns as $column) {
             $column->setTableId($this->id);

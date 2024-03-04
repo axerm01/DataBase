@@ -1,12 +1,14 @@
 DELIMITER //
 CREATE PROCEDURE `CreateScelta`(
 in TestoAtt varchar(45),
+in IDAtt int,
 in IDTestAtt int,
-in IDScMulAtt int
+in IDScMulAtt int,
+in IsCorrect boolean
 )
 BEGIN
-INSERT INTO scelta (Testo,IDTest,IDScMul)
-VALUES (TestoAtt,IDTestAtt,IDScMulAtt);
+INSERT INTO scelta (Testo,ID,IDTest,IDScMul,IsCorrect)
+VALUES (TestoAtt,ID,IDTestAtt,IDScMulAtt,IsCorrect);
 END //
 
 CREATE PROCEDURE `DropScelta`(

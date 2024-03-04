@@ -4,10 +4,13 @@ CREATE PROCEDURE `CreateTable`(
 in MailAtt varchar(45),
 in NomeAtt varchar(45),
 in DataAtt datetime,
-in NumRigheAtt smallint)
+in NumRigheAtt smallint,
+out lastID INT)
 BEGIN
     INSERT INTO tabella (MailProfessore, Nome, DataCreazione, NumRighe)
     VALUES (MailAtt, NomeAtt, DataAtt, NumRigheAtt);
+
+    SET lastID = LAST_INSERT_ID();
 END//
 
 CREATE PROCEDURE `DropTable`(

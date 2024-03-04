@@ -1,4 +1,5 @@
 <?php
+include('../../controllers/utils/connect.php');
 
 class MultipleChoiceQuestion extends Question {
     private $description;
@@ -7,16 +8,34 @@ class MultipleChoiceQuestion extends Question {
     private $answers; // Lista di oggetti Answer
 
 
-    public function __construct($IDTest, $ID, $description, $difficulty, $numAnswers) {
-        parent::__construct($ID, $IDTest);
+    public function __construct($description, $difficulty, $numAnswers) {
         $this->description = $description;
         $this->difficulty = $difficulty;
         $this->numAnswers = $numAnswers;
         $this->answers = [];
     }
 
-    // Getter e setter per description, difficulty, numAnswers
+    public function insertOnDB()
+    {
+        global $con;
+        $q = 'CALL CreateSceltaMultipla(?,?,?,?,?);';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('siiis', $this->description,$this->ID, $this->IDTest, $this->numAnswers, $this->difficulty);
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+        $stmt->close();
 
+        foreach ($this->answers as $answers) {
+            $answers->setIDTest($this->IDTest);
+            $answers->insertOnDB();
+        }
+    }
+
+    // Getter e setter per description, difficulty, numAnswers
     public function getDescription() {
         return $this->description;
     }

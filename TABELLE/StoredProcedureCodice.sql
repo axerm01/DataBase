@@ -1,11 +1,12 @@
 DELIMITER //
 CREATE PROCEDURE `CreateCodice`(
 in IDTestAtt int,
+in IDAtt int,
 in OutputAtt varchar(45)
 )
 BEGIN
-INSERT INTO Codice (IDTest,Output)
-VALUES (IDTestAtt,OutputAtt);
+INSERT INTO Codice (ID,IDTest,Output)
+VALUES (IDAtt,IDTestAtt,OutputAtt);
 END //
 
 CREATE PROCEDURE `DropCodice`(

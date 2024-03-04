@@ -5,11 +5,6 @@ class Question {
     protected $ID;
     protected $IDTest;
 
-    public function __construct($ID, $IDTest) {
-        $this->ID = $ID;
-        $this->IDTest = $IDTest;
-    }
-
     public function getID() {
         return $this->ID;
     }
