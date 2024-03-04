@@ -1,7 +1,7 @@
 <?php
 // Includi il file di configurazione del database 
 ///////////////////modifica con il file giusto 
-include 'db_config.php';
+include 'connect.php';
 include "recording.php";
 
 // Controlla se il modulo è stato inviato
@@ -27,27 +27,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Cripta la password
     $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
-
-
-
-
-
-//////////////////////// Gioele controlla da qui in poi se manda bene i dati al Database... 
     // Crea una connessione al database
-    $conn = new mysqli($servername, $db_username, $db_password, $dbname);
+    global $con;
 
     // Controlla la connessione
-    if ($conn->connect_error) {
-        die("Connessione fallita: " . $conn->connect_error);
+    if ($con->connect_error) {
+        die("Connessione fallita: " . $con->connect_error);
     }
 
-    $stmt = $conn->prepare("INSERT INTO users (email, password) VALUES (?, ?)");
-    $stmt->bind_param("ss", $email, $password_hash);
-
-
-
-
-
+    if($_POST['role'] == 'student'){
+        $stmt = $con->prepare("CALL CreateStudente (?,?,?,?,?,?,?)");
+        $stmt->bind_param("sssssss", $_POST['name'], $_POST['surname'], $email, $_POST['matricola'], $_POST['registration_year'], $_POST['phone'], $password_hash);
+    }
+    else if ($_POST['role'] == 'professor') {
+        $stmt = $con->prepare("CALL CreateDocente (?,?,?,?,?,?,?)");
+        $stmt->bind_param("sssssis", $_POST['name'], $_POST['surname'], $email, $_POST['course'], $_POST['department'], $_POST['phone'], $password_hash);
+    }
 
     // Pezzo di codice che dovrebe restituire un riscontro
     if ($stmt->execute()) {
@@ -56,9 +51,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $messaggio = "Si è verificato un errore durante la registrazione.";
     }
     // Restituisci il messaggio come risposta JSON
-    echo json_encode(["message" => $message]);
+    echo json_encode(["message" => $messaggio]);
 
     // Chiudi la connessione
-    $conn->close();
+    $con->close();
 }
 ?>
