@@ -1,6 +1,6 @@
 DELIMITER //
 
-CREATE PROCEDURE `CreateReferenze`(
+CREATE PROCEDURE `CreateReference`(
 in IDT1Att int,
 in IDT2Att int,
 in NomeAttributo1Att varchar(45),
@@ -11,7 +11,7 @@ INSERT INTO referenze (IDT1, NomeAttributo1, IDT2, NomeAttributo2)
 VALUES (IDT1Att, NomeAttributo1Att, IDT2Att, NomeAttributo2Att);
 END //
 
-CREATE PROCEDURE `DropReferenze`(
+CREATE PROCEDURE `DropReference`(
 in IDT1Att int,
 in IDT2Att int,
 in NomeAttributo1Att varchar(45),
@@ -28,7 +28,7 @@ NomeAttributo2 = NomeAttributo2Att
 );
 END //
 
-CREATE PROCEDURE `ViewReferenze`(
+CREATE PROCEDURE `ViewReference`(
 in IDT1Att int,
 in IDT2Att int,
 in NomeAttributo1Att varchar(45),
