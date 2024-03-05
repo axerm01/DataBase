@@ -187,16 +187,24 @@
     </header>
     <div class="main-container">
         <div style="display: flex; align-items: center;">
-            <p style="margin-right: 10px; font-size: 28px; font-weight: bold;">Crea Tabella</p>
+            <p style="margin-right: 10px; font-size: 28px; font-weight: bold;">Crea Test</p>
             <button type="button" onclick="addCodeQuestion()">Aggiungi Quesito Codice</button>
             <button type="button" onclick="addMCQuestion()">Aggiungi Quesito Risposta Multipla</button>
         </div>
         <label for="title" style="font-size: 22px; font-weight: bolder;">Titolo Test:</label>
         <input type="text" id="title" name="title"><br>
+        <!--il permesso di visualizzazione deve essere fuori da qui. (anche) quando vedo l'elenco dei test gia creati-->
         <p style="font-size: 18px; font-weight: bold; color: #484141b8;"> Permesso visualizzione risposte
             <input type="checkbox" class="styled-checkbox">
             <span class="checkmark"></span>
-          </p>
+        </p>
+        
+        <button type="button" onclick="addMenu()">Seleziona Tabelle Necessarie</button>
+    
+        <div id="menuContainer">
+            <!-- Div per il menu a tendina, inizialmente vuoto -->
+        </div>
+       
         <div id="questionsContainer">
             <!-- Questions will be dynamically added here -->
         </div>
@@ -204,7 +212,41 @@
     
 
 
+    <!-- Includi jQuery per semplificare la gestione delle richieste AJAX -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
+    <script>
+        // Variabile per memorizzare il nome della tabella selezionata
+        var selectedTable = "";
+
+        // Definisci la funzione JavaScript che viene chiamata quando il bottone viene premuto
+        function addMenu() {
+            // Effettua una richiesta AJAX per ottenere i nomi delle tabelle dal file PHP
+            $.getJSON("get_tables.php", function(data){
+                // Crea il menu a tendina
+                var select = $("<select id='tabelle' name='tabelle'></select>");
+                // Itera attraverso l'array ricevuto e aggiungi le opzioni al menu a tendina
+                $.each(data, function(index, value) {
+                    select.append("<option value='" + value + "'>" + value + "</option>");
+                });
+                // Inserisci il menu a tendina nel contenitore
+                $("#menuContainer").empty().append(select);
+
+                // Aggiungi un gestore per l'evento di cambio al menu a tendina
+                select.change(function() {
+                    // Aggiorna la variabile selectedTable con il valore selezionato
+                    selectedTable = $(this).val();
+                    // Invia i dati al file PHP quando viene selezionata una tabella
+                    sendDate();
+                });
+            });
+        }
+        // Funzione per inviare la variabile selectedTable al file PHP
+        function sendDate() {
+            // Effettua una richiesta AJAX per inviare i dati al file PHP
+            $.post("file_php_di_destinazione.php", { tabella: selectedTable });
+        }
+    </script>
 
     <script>
         let questionCount = 0;

@@ -147,20 +147,36 @@
         switch(role) {
             case "professor":
                 fieldsToShow = ["email", "password", "name", "surname", "course", "department","phone"];
+                var matricolaField = document.querySelector('input[name="matricola"]');
+                if (matricolaField) {
+                    matricolaField.remove();
+                }
+                var registration_yearField = document.querySelector('input[name="registration_year"]');
+                if (registration_yearField) {
+                    registration_yearField.remove();
+                }
                 break;
             case "student":
-            fieldsToShow = ["email", "password", "name", "surname", "matricola", "registration_year", "phone"];
-            break;
+                fieldsToShow = ["email", "password", "name", "surname", "matricola", "registration_year", "phone"];
+                var courseField = document.querySelector('input[name="course"]');
+                if (courseField) {
+                    courseField.remove();
+                }
+                var departmentField = document.querySelector('input[name="department"]');
+                if (departmentField) {
+                    departmentField.remove();
+                }
+                break;
             default:
                 // Selezionato "Scegli il tuo ruolo" o altro, nascondi tutti i campi
                 fieldsToShow = [];
         }
 
-        // Nascondi tutti i campi di input
+        /*// Nascondi tutti i campi di input
         var allFields = document.querySelectorAll('input[name="email"], input[name="password"], input[name="name"], input[name="surname"], input[name="matricola"], input[name="registration_year"], input[name="course"], input[name="department"], input[name="phone"]');
         allFields.forEach(function(field) {
             field.style.display = "none";
-        });
+        });*/
 
         // Mostra solo i campi necessari per il ruolo selezionato
         fieldsToShow.forEach(function(role) {
