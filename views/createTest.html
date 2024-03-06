@@ -48,6 +48,46 @@
             background-color: #be2525;
             color: #fff;
         }
+        /* Stili per i menu a tendina */
+        .dropdown-menu {
+            display: none;
+            margin-top: 6px;
+            width: 80px; /* Aggiungi larghezza */
+            padding: 8px; /* Aggiungi padding */
+            border: 2px solid #ccc; /* Aggiungi bordo */
+            border-radius: 5px; /* Aggiungi bordi arrotondati */
+            margin-right: 5px;
+        }
+        .dropdown-menu1 {
+            margin-top: 6px;
+            width: 80px; /* Aggiungi larghezza */
+            padding: 8px; /* Aggiungi padding */
+            border: 2px solid #ccc; /* Aggiungi bordo */
+            border-radius: 5px; /* Aggiungi bordi arrotondati */
+            margin-right: 5px;
+        }
+
+        /* Stili per il menu a tendina attivo */
+        .dropdown-menu.active {
+            display: block;
+        }
+
+        /* Stili per il testo del menu a tendina */
+        .dropdown-menu option {
+            font-size: 16px; /* Aggiungi dimensione del carattere */
+        }
+
+        /* Stili per la freccia */
+        .separator::before {
+            content: "\21D2"; /* Codice unicode per una freccia unilaterale verso destra */
+            font-size: 32px;
+            margin-right: 5px;
+        }
+        /* Aggiunta di stili per il contenitore del layout dei menu e della freccia */
+        .flex-container {
+            display: flex;
+            align-items: center;
+        }
 
         /* Styles for input fields */
         input[type="text"] {
@@ -137,6 +177,12 @@
             cursor: pointer;
             font-size: 12px;
         }
+        /*Styles for check botton*/
+        .add-check-button {
+            background-color: #15c11e;
+            cursor: pointer;
+            font-size: 12px;
+        }
         /* Styles for "Elimina Quesito" button */
         .delete-question-button {
             background-color: #a51b1bc3;
@@ -194,15 +240,57 @@
         <label for="title" style="font-size: 22px; font-weight: bolder;">Titolo Test:</label>
         <input type="text" id="title" name="title"><br>
         <!--il permesso di visualizzazione deve essere fuori da qui. (anche) quando vedo l'elenco dei test gia creati-->
-        <p style="font-size: 18px; font-weight: bold; color: #484141b8;"> Permesso visualizzione risposte
+        <!--<p style="font-size: 18px; font-weight: bold; color: #484141b8;"> Permesso visualizzione risposte
             <input type="checkbox" class="styled-checkbox">
             <span class="checkmark"></span>
-        </p>
+        </p> -->
         
         <button type="button" onclick="addMenu()">Seleziona Tabelle Necessarie</button>
     
         <div id="menuContainer">
             <!-- Div per il menu a tendina, inizialmente vuoto -->
+        </div>
+
+        <div class="flex-container">
+            <!-- Aggiungi il menu a tendina per il primo gruppo -->
+            <div class="dropdown-container">
+                <select id="menu1" class="dropdown-menu1" onchange="showDropdown('menu1', ['menu2', 'menu3'])">
+                    <option value="">Seleziona opzione</option>
+                    <option value="menu1.opz1">Menu 1.Opzione 1</option>
+                    <option value="menu1.opz2">Menu 1.Opzione 2</option>
+                </select>
+            </div>
+
+            <!-- Aggiungi il menu a tendina per il secondo gruppo -->
+            <div class="dropdown-container">
+                <select id="menu2" class="dropdown-menu">
+                    <option value="">Seleziona opzione</option>
+                    <option value="menu2.opz1">Menu 2.Opzione 1</option>
+                    <option value="menu2.opz2">Menu 2.Opzione 2</option>
+                </select>
+            </div>
+        
+            <!-- Separatore -->
+            <div class="separator"></div>
+        
+
+            <!-- Aggiungi il menu a tendina per il terzo gruppo -->
+            <div class="dropdown-container">
+                <select id="menu3" class="dropdown-menu" onchange="showDropdown('menu3', ['menu2', 'menu3', 'menu4'])">
+                    <option value="">Seleziona opzione</option>
+                    <option value="menu3.opz1">Menu 3.Opzione 1</option>
+                    <option value="menu3.opz2">Menu 3.Opzione 2</option>
+                </select>
+            </div>
+            
+            <!-- Aggiungi il menu a tendina per il quarto gruppo -->
+            <div class="dropdown-container">
+                <select id="menu4" class="dropdown-menu">
+                    <option value="">Seleziona opzione</option>
+                    <option value="menu4.opz1">Menu 4.Opzione 1</option>
+                    <option value="menu4.opz2">Menu 4.Opzione 2</option>
+                </select>
+            </div>
         </div>
        
         <div id="questionsContainer">
@@ -210,8 +298,32 @@
         </div>
     </div>
     
-
-
+    <script>
+        // Funzione per mostrare il menu a tendina successivo
+        function showDropdown(currentDropdown, nextDropdownIds) {
+          // Nascondi tutti i menu a tendina successivi
+          var dropdowns = document.getElementsByClassName("dropdown-menu");
+          for (var i = 0; i < dropdowns.length; i++) {
+            dropdowns[i].style.display = "none";
+          }
+          // Mostra i menu a tendina successivi specificati
+          if (nextDropdownIds) {
+            if (Array.isArray(nextDropdownIds)) {
+              for (var j = 0; j < nextDropdownIds.length; j++) {
+                var nextDropdown = document.getElementById(nextDropdownIds[j]);
+                if (nextDropdown) {
+                  nextDropdown.style.display = "block";
+                }
+              }
+            } else {
+              var nextDropdown = document.getElementById(nextDropdownIds);
+              if (nextDropdown) {
+                nextDropdown.style.display = "block";
+              }
+            }
+          }
+        }
+      </script>
     <!-- Includi jQuery per semplificare la gestione delle richieste AJAX -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -222,7 +334,7 @@
         // Definisci la funzione JavaScript che viene chiamata quando il bottone viene premuto
         function addMenu() {
             // Effettua una richiesta AJAX per ottenere i nomi delle tabelle dal file PHP
-            $.getJSON("get_tables.php", function(data){
+            $.getJSON("../controllers/test/TestController.php", function(data){
                 // Crea il menu a tendina
                 var select = $("<select id='tabelle' name='tabelle'></select>");
                 // Itera attraverso l'array ricevuto e aggiungi le opzioni al menu a tendina
@@ -244,7 +356,7 @@
         // Funzione per inviare la variabile selectedTable al file PHP
         function sendDate() {
             // Effettua una richiesta AJAX per inviare i dati al file PHP
-            $.post("file_php_di_destinazione.php", { tabella: selectedTable });
+            $.post("../controllers/test/TestController.php", { tabella: selectedTable });
         }
     </script>
 
@@ -260,7 +372,7 @@
             questionDiv.classList.add('question');
 
             const questionLabel = document.createElement('label');
-            questionLabel.textContent = 'D.' + questionCount + ': ';
+            //questionLabel.textContent = 'D.' + questionCount + ': ';
             questionDiv.appendChild(questionLabel);
 
             const questionInput = document.createElement('input');
@@ -330,7 +442,7 @@
             questionDiv.classList.add('question');
 
             const questionLabel = document.createElement('label');
-            questionLabel.textContent = 'D.' + questionCount + ' Code: ';
+            //questionLabel.textContent = 'D.' + questionCount + ' Code: ';
             questionDiv.appendChild(questionLabel);
 
             const questionInput = document.createElement('input');
@@ -348,18 +460,67 @@
             };
             questionDiv.appendChild(deleteQuestionButton);
             
-            const addCodeAnswerButton = document.createElement('button');
+            
+            /*const addCodeAnswerButton = document.createElement('button');
             addCodeAnswerButton.textContent = 'Aggiungi altra risposta MySQL';
             addCodeAnswerButton.classList.add('add-answer-button');
             addCodeAnswerButton.onclick = function() {
                 addCodeAnswer(questionDiv);
             };
+            questionDiv.appendChild(addCodeAnswerButton);*/
+
+           // Adding MySQL code textarea
+            const codeTextarea = document.createElement('textarea');
+            codeTextarea.name = 'code' + questionCount;
+            codeTextarea.placeholder = 'Inserisci codice MySQL';
+            codeTextarea.classList.add('code-textarea');
+            questionDiv.appendChild(codeTextarea);
+            
+            const addCodeAnswerButton = document.createElement('button');
+            addCodeAnswerButton.textContent = 'Verifica Codice';
+            addCodeAnswerButton.classList.add('add-check-button');
+            addCodeAnswerButton.onclick = function() {
+                codeCheck();
+            };
             questionDiv.appendChild(addCodeAnswerButton);
 
             container.appendChild(questionDiv);
         }
+        function codeCheck() {
+            // Ottenere il codice MySQL inserito dall'utente
+            const code = document.querySelector('.code-textarea').value;
 
-        function addCodeAnswer(container) {
+            // Effettuare una chiamata AJAX per inviare il codice al server
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '../controllers/test/TestController.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    // Analizzare la risposta
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.length > 0) {
+                        const table = createTable(response); //
+                        document.body.appendChild(table);
+                        // Il codice è valido
+                        alert('Il codice è valido!');
+                    } else {
+                        // Il codice non è valido
+                        alert('Il codice non è valido!');
+                    }
+                } else {
+                    // Gestione degli errori
+                    alert('Errore durante la verifica del codice.');
+                }
+            };
+            xhr.onerror = function() {
+                // Gestione degli errori di rete
+                alert('Errore di rete durante la verifica del codice.');
+            };
+            // Invia il codice al server come payload JSON
+            xhr.send(JSON.stringify({ code: code }));
+        }
+
+        /*function addCodeAnswer(container) {
             const codeAnswerDiv = document.createElement('div');
             codeAnswerDiv.classList.add('code-answer');
 
@@ -378,7 +539,8 @@
             codeAnswerDiv.appendChild(deleteAnswerButton);
 
             container.appendChild(codeAnswerDiv);
-        }
+        }*/
+        //Non necessario altre risposte possibili perche si verifica sull output
 
     </script>
 </body>
