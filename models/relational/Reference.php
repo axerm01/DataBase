@@ -1,4 +1,5 @@
 <?php
+include('../../controllers/utils/connect.php');
 
 class Reference
 {
@@ -13,6 +14,22 @@ class Reference
         $this->tab2 = $tab2;
         $this->att1 = $att1;
         $this->att2 = $att2;
+    }
+
+    public function insertOnDB()
+    {
+        global $con;
+        $q = 'CALL CreateReference(?,?,?,?);';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('iiii', $this->tab1, $this->tab2, $this->att1,  $this->att2);
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+
+        $stmt->close();
     }
 
 

@@ -7,11 +7,20 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
     $data = 'no data';
     switch ($action) {
-        case 'get_tables': // GET
+        case 'test_query': //restituisce il risultato della query inserita dal docente per trovare la risposta di una code question
+            $query = filter_input(INPUT_GET, 'query');
+            $result = $this->testQuery($query);
+            break;
+
+        case 'get_tests': // GET di tutti i test
+            $data = $this->getAllTests();
+            break;
+
+        case 'get_tables': // GET delle tabelle create da un docente
             $data = $this->getAllTables();
             break;
 
-        case 'get_table_columns': // GET
+        case 'get_table_columns': // GET delle colonne di una tabella indicata
             $id = filter_input(INPUT_GET, 'tableId');
             $data = $this->getTableColumns($id);
             break;
@@ -42,6 +51,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $test->addTable($tableID);
         }
         $test->linkTablesToTest($decodedData['tables']);
+
+        // Sezione dedicata al salvataggio delle referenze relative al Test
+        foreach ($decodedData['references'] as $referenceData){
+            $reference = new Reference($referenceData['tab1'], $referenceData['tab2'], $referenceData['att1'], $referenceData['att2']);
+            $test->addRef($reference);
+        }
 
         // Sezione dedicata al salvataggio delle domande relative al Test
         foreach ($decodedData['questions'] as $questionData){
@@ -123,6 +138,50 @@ function getTableColumns($tableId)
 
     return $data;
 
+}
+
+function testQuery($q){
+    global $con;
+    $stmt = $con->prepare($q);
+    if ($stmt === false) {
+        die("Errore nella preparazione della query: " . $con->error);
+    }
+    if (!$stmt->execute()) {
+        die("Errore nell'esecuzione della query: " . $stmt->error);
+    }
+
+    $result = $stmt->get_result();
+    $data = [];
+
+    while ($row = $result->fetch_assoc()) {
+        $data[] = $row;  // Aggiunge ogni riga all'array $data
+    }
+    $stmt->close();
+
+    return $data;
+}
+
+function getAllTests($prof_email){
+    global $con;
+    $q = 'CALL ViewAllTest(?);';
+    $stmt = $con->prepare($q);
+    if ($stmt === false) {
+        die("Errore nella preparazione della query: " . $con->error);
+    }
+    $stmt->bind_param('s', $prof_email );
+    if (!$stmt->execute()) {
+        die("Errore nell'esecuzione della query: " . $stmt->error);
+    }
+
+    $result = $stmt->get_result();
+    $data = [];
+
+    while ($row = $result->fetch_assoc()) {
+        $data[] = $row;  // Aggiunge ogni riga all'array $data
+    }
+    $stmt->close();
+
+    return $data;
 }
 
 

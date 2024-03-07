@@ -24,8 +24,9 @@ class CodeQuestion extends Question {
 
         $stmt->close();
     }
-    // Getter e setter per output
 
+
+    // Getter e setter per output
     public function getOutput() {
         return $this->output;
     }

@@ -40,6 +40,10 @@ class Test {
         $this->id = $row['lastID'];
         $stmt->close();
 
+        foreach ($this->references as $reference) {
+            $reference->insertOnDB();
+        }
+
         foreach ($this->questions as $question) {
             $question->setIDTest($this->id);
             $question->insertOnDB();
@@ -189,6 +193,30 @@ class Test {
         foreach ($this->tables as $table) {
             if ($table === $tableID) {
                 return $table;
+            }
+        }
+        return null;
+    }
+
+    public function addRef(Reference $reference) {
+        $this->references[] = $reference;
+    }
+
+    public function removeRef($tab1, $tab2, $att1, $att2) {
+        foreach ($this->references as $key => $reference) {
+            if (($reference->getTab1() === $tab1)&&($reference->getTab2() === $tab2)&&($reference->getAtt1() === $att1)&&($reference->getAtt2() === $att2)) {
+                unset($this->references[$key]);
+                $this->references = array_values($this->references);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function getRef($tab1, $tab2, $att1, $att2) {
+        foreach ($this->references as $reference) {
+            if (($reference->getTab1() === $tab1)&&($reference->getTab2() === $tab2)&&($reference->getAtt1() === $att1)&&($reference->getAtt2() === $att2)) {
+                return $reference;
             }
         }
         return null;
