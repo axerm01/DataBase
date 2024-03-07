@@ -20,6 +20,8 @@ class Question {
     public function setIDTest($IDTest) {
         $this->IDTest = $IDTest;
     }
+
+    public function insertOnDB(){}
 }
 
 

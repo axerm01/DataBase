@@ -29,9 +29,9 @@ class MultipleChoiceQuestion extends Question {
         }
         $stmt->close();
 
-        foreach ($this->answers as $answers) {
-            $answers->setIDTest($this->IDTest);
-            $answers->insertOnDB();
+        foreach ($this->answers as $answer) {
+            $answer->setIDTest($this->IDTest);
+            $answer->insertOnDB();
         }
     }
 

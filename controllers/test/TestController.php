@@ -2,29 +2,25 @@
 session_start();
 include('../utils/connect.php');
 
-if ($_SERVER["REQUEST_METHOD"] == "GET"){ // restituzione tabelle presenti
-    global $con;
-    $q = "CALL ViewAllTables(?)";
-    $stmt = $con->prepare($q);
-    if ($stmt === false) {
-        die("Errore nella preparazione della query: " . $con->error);
-    }
-    $stmt->bind_param('s',$_SESSION['email']);
-    if (!$stmt->execute()) {
-        die("Errore nell'esecuzione della query: " . $stmt->error);
-    }
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    $action = filter_input(INPUT_GET, 'action');
 
-    $result = $stmt->get_result();
-    $tableNames = [];
-    while ($row = $result->fetch_assoc()) {
-        $tableNames[] = $row['Nome'];
+    $data = 'no data';
+    switch ($action) {
+        case 'get_tables': // GET
+            $data = $this->getAllTables();
+            break;
+
+        case 'get_table_columns': // GET
+            $id = filter_input(INPUT_GET, 'tableId');
+            $data = $this->getTableColumns($id);
+            break;
     }
 
-    $stmt->close();
-
-    header('Content-Type: application/json');
-    echo json_encode($tableNames);
+    header('Content-Type: application/json');  // Imposta l'header per il contenuto JSON
+    echo json_encode($data);  // Converte l'array $data in JSON e lo invia
 }
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 // Verifica se il contenuto ricevuto è JSON
@@ -39,20 +35,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $creationDate = date('Y-m-d H:i:s');
         $test = new Test($decodedData['title'],$creationDate, $decodedData['show_answers'], $_SESSION['email']);
-        $ID = 0;
+        $qID = 0;
+
+        // Sezione dedicata al salvataggio delle tabelle relative al Test
+        foreach ($decodedData['tables'] as $tableID){
+            $test->addTable($tableID);
+        }
+        $test->linkTablesToTest($decodedData['tables']);
+
+        // Sezione dedicata al salvataggio delle domande relative al Test
         foreach ($decodedData['questions'] as $questionData){
-            $ID = $ID+1;
+            $qID = $qID+1;
             if($questionData['type'] == 'code'){
                 $question = new CodeQuestion($questionData['output']);
-                $question->setID($ID);
+                $question->setID($qID);
             }
             else if($questionData['type'] == 'mc'){
                 $question = new MultipleChoiceQuestion($questionData['description'], $questionData['diff'], count($questionData['answers']));
-                $question->setID($ID);
+                $question->setID($qID);
                 $IDAnswer = 0;
                 foreach ($decodedData['answers'] as $answersData){
                     $IDAnswer = $IDAnswer+1;
-                    $answer = new Answer($IDAnswer,$ID,$decodedData['text'],$decodedData['isCorrect']);
+                    $answer = new Answer($IDAnswer,$qID,$decodedData['text'],$decodedData['isCorrect']);
                     $question->addAnswer($answer);
                 }
 
@@ -66,6 +70,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
     }
+}
+
+function getAllTables()
+{
+    global $con;
+    $q = 'CALL ViewAllTables(?);';
+    $stmt = $con->prepare($q);
+    if ($stmt === false) {
+        die("Errore nella preparazione della query: " . $con->error);
+    }
+    $stmt->bind_param('s', $_SESSION['email']);
+    if (!$stmt->execute()) {
+        die("Errore nell'esecuzione della query: " . $stmt->error);
+    }
+
+    $result = $stmt->get_result();
+    $data = [];
+
+    while ($row = $result->fetch_assoc()) {
+        $data[] = [
+            'IDTabella' => $row['IDTabella'],
+            'Nome' => $row['Nome']
+        ];
+    }
+    $stmt->close();
+
+    return $data;
+
+}
+
+function getTableColumns($tableId)
+{
+    global $con;
+    $q = 'CALL ViewAllAttributes(?);';
+    $stmt = $con->prepare($q);
+    if ($stmt === false) {
+        die("Errore nella preparazione della query: " . $con->error);
+    }
+    $stmt->bind_param('s', $tableId );
+    if (!$stmt->execute()) {
+        die("Errore nell'esecuzione della query: " . $stmt->error);
+    }
+
+    $result = $stmt->get_result();
+    $data = [];
+
+    while ($row = $result->fetch_assoc()) {
+        $data[] = $row;  // Aggiunge ogni riga all'array $data
+    }
+    $stmt->close();
+
+    return $data;
+
 }
 
 

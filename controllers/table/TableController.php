@@ -8,25 +8,6 @@ include '../utils/connect.php';
     // Verifica se il contenuto ricevuto è JSON
     $contentType = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
 
-if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    $action = filter_input(INPUT_GET, 'action');
-
-    $data = '';
-    switch ($action) {
-        case 'get_tables': // GET
-            $data = $this->getAllTables();
-            break;
-
-        case 'get_table_columns': // GET
-            $id = filter_input(INPUT_GET, 'tableId');
-            $data = $this->getTableColumns($id);
-            break;
-    }
-
-    header('Content-Type: application/json');  // Imposta l'header per il contenuto JSON
-    echo json_encode($data);  // Converte l'array $data in JSON e lo invia
-}
-
     if (($_SERVER["REQUEST_METHOD"] == "POST")&&($contentType === "application/json")) {
         // Ricevi il contenuto grezzo
         $content = trim(file_get_contents("php://input"));
@@ -55,58 +36,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
     }
 
-function getAllTables()
-{
-    global $con;
-    $q = 'CALL ViewAllTables(?);';
-    $stmt = $con->prepare($q);
-    if ($stmt === false) {
-        die("Errore nella preparazione della query: " . $con->error);
-    }
-    $stmt->bind_param('s', $_SESSION['email']);
-    if (!$stmt->execute()) {
-        die("Errore nell'esecuzione della query: " . $stmt->error);
-    }
-
-    $result = $stmt->get_result();
-    $data = [];
-
-    while ($row = $result->fetch_assoc()) {
-        $data[] = [
-            'IDTabella' => $row['IDTabella'],
-            'Nome' => $row['Nome']
-        ];
-    }
-    $stmt->close();
-
-    return $data;
-
-}
-
-function getTableColumns($tableId)
-{
-    global $con;
-    $q = 'CALL ViewAllAttributes(?);';
-    $stmt = $con->prepare($q);
-    if ($stmt === false) {
-        die("Errore nella preparazione della query: " . $con->error);
-    }
-    $stmt->bind_param('s', $tableId );
-    if (!$stmt->execute()) {
-        die("Errore nell'esecuzione della query: " . $stmt->error);
-    }
-
-    $result = $stmt->get_result();
-    $data = [];
-
-    while ($row = $result->fetch_assoc()) {
-        $data[] = $row;  // Aggiunge ogni riga all'array $data
-    }
-    $stmt->close();
-
-    return $data;
-
-}
 
     function addReference($tab1, $att1, $tab2, $att2){
         global $con;
