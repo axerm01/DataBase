@@ -106,7 +106,7 @@
             padding: 8px 15px;
             border-radius: 5px;
             cursor: pointer;
-            margin-left: 10px;
+            margin: 6px;
             font-size: 12px;
             width: 150px;
         }
@@ -234,8 +234,8 @@
     <div class="main-container">
         <div style="display: flex; align-items: center;">
             <p style="margin-right: 10px; font-size: 28px; font-weight: bold;">Crea Test</p>
-            <button type="button" onclick="addCodeQuestion()">Aggiungi Quesito Codice</button>
-            <button type="button" onclick="addMCQuestion()">Aggiungi Quesito Risposta Multipla</button>
+            <button  onclick="addCodeQuestion()">Aggiungi Quesito Codice</button>
+            <button  onclick="addMCQuestion()">Aggiungi Quesito Risposta Multipla</button>
         </div>
         <label for="title" style="font-size: 22px; font-weight: bolder;">Titolo Test:</label>
         <input type="text" id="title" name="title"><br>
@@ -245,85 +245,82 @@
             <span class="checkmark"></span>
         </p> -->
         
-        <button type="button" onclick="addMenu()">Seleziona Tabelle Necessarie</button>
-    
+        <button onclick="addMenu()">Seleziona Tabelle Necessarie</button>
         <div id="menuContainer">
             <!-- Div per il menu a tendina, inizialmente vuoto -->
         </div>
 
-        <div class="flex-container">
-            <!-- Aggiungi il menu a tendina per il primo gruppo -->
-            <div class="dropdown-container">
-                <select id="menu1" class="dropdown-menu1" onchange="showDropdown('menu1', ['menu2', 'menu3'])">
-                    <option value="">Seleziona opzione</option>
-                    <option value="menu1.opz1">Menu 1.Opzione 1</option>
-                    <option value="menu1.opz2">Menu 1.Opzione 2</option>
-                </select>
-            </div>
-
-            <!-- Aggiungi il menu a tendina per il secondo gruppo -->
-            <div class="dropdown-container">
-                <select id="menu2" class="dropdown-menu">
-                    <option value="">Seleziona opzione</option>
-                    <option value="menu2.opz1">Menu 2.Opzione 1</option>
-                    <option value="menu2.opz2">Menu 2.Opzione 2</option>
-                </select>
-            </div>
-        
-            <!-- Separatore -->
-            <div class="separator"></div>
-        
-
-            <!-- Aggiungi il menu a tendina per il terzo gruppo -->
-            <div class="dropdown-container">
-                <select id="menu3" class="dropdown-menu" onchange="showDropdown('menu3', ['menu2', 'menu3', 'menu4'])">
-                    <option value="">Seleziona opzione</option>
-                    <option value="menu3.opz1">Menu 3.Opzione 1</option>
-                    <option value="menu3.opz2">Menu 3.Opzione 2</option>
-                </select>
-            </div>
-            
-            <!-- Aggiungi il menu a tendina per il quarto gruppo -->
-            <div class="dropdown-container">
-                <select id="menu4" class="dropdown-menu">
-                    <option value="">Seleziona opzione</option>
-                    <option value="menu4.opz1">Menu 4.Opzione 1</option>
-                    <option value="menu4.opz2">Menu 4.Opzione 2</option>
-                </select>
-            </div>
+        <button onclick="addConstraints()">Aggiungi Vincoli integrità</button>
+        <div id="constraintsContainer">
+            <!-- Qui verranno aggiunti i menu a tendina -->
         </div>
-       
+
         <div id="questionsContainer">
             <!-- Questions will be dynamically added here -->
         </div>
     </div>
     
     <script>
-        // Funzione per mostrare il menu a tendina successivo
-        function showDropdown(currentDropdown, nextDropdownIds) {
-          // Nascondi tutti i menu a tendina successivi
-          var dropdowns = document.getElementsByClassName("dropdown-menu");
-          for (var i = 0; i < dropdowns.length; i++) {
-            dropdowns[i].style.display = "none";
-          }
-          // Mostra i menu a tendina successivi specificati
-          if (nextDropdownIds) {
-            if (Array.isArray(nextDropdownIds)) {
-              for (var j = 0; j < nextDropdownIds.length; j++) {
-                var nextDropdown = document.getElementById(nextDropdownIds[j]);
-                if (nextDropdown) {
-                  nextDropdown.style.display = "block";
+
+        function addConstraints() {
+            const container = document.getElementById('constraintsContainer');
+            const dropdownsDiv = document.createElement('div');
+            dropdownsDiv.classList.add('flex-container');
+
+            // Genera un identificativo unico per questo gruppo di dropdown
+            const uniqueId = 'group-' + document.querySelectorAll('.flex-container').length;
+
+            // Crea un elemento per la freccia (inizialmente nascosto)
+            const arrow = document.createElement('span');
+            arrow.id = uniqueId + '-arrow';
+            //arrow.innerHTML = '&#x2192;'; // Codice HTML per una freccia verso destra
+            arrow.style.display = 'none'; // Nasconde inizialmente la freccia
+            arrow.classList.add('separator'); // Aggiungi classi per lo stile se necessario
+
+            // Crea i 4 menu a tendina
+            for (let i = 1; i <= 4; i++) {
+                const select = document.createElement('select');
+                select.id = uniqueId + '-menu' + i; // Assegna un ID unico
+                select.classList.add(i === 1 ? 'dropdown-menu1' : 'dropdown-menu');
+                if (i !== 4) {
+                    select.style.display = i === 1 ? 'block' : 'none'; // Mostra solo il primo menu a tendina
                 }
-              }
-            } else {
-              var nextDropdown = document.getElementById(nextDropdownIds);
-              if (nextDropdown) {
-                nextDropdown.style.display = "block";
-              }
+                select.innerHTML = `
+                    <option value="">Seleziona opzione</option>
+                    <option value="menu${i}.opz1">Menu ${i}.Opzione 1</option>
+                    <option value="menu${i}.opz2">Menu ${i}.Opzione 2</option>
+                `;
+                if (i === 1) {
+                    select.onchange = function() { 
+                        showDropdown(uniqueId + '-menu1', [uniqueId + '-menu2']); 
+                        showDropdown(uniqueId + '-menu2', [uniqueId + '-menu3']); 
+                        document.getElementById(uniqueId + '-arrow').style.display = 'inline-block'; // Mostra la freccia
+                    };
+                }  else if (i === 3) {
+                    select.onchange = function() { showDropdown(uniqueId + '-menu3', [uniqueId + '-menu4']); };
+                }
+
+                dropdownsDiv.appendChild(select);
+                if (i === 2) { // Posiziona la freccia tra il secondo e il terzo menu a tendina
+                    dropdownsDiv.appendChild(arrow);
+                }
             }
-          }
+
+            // Applica la logica per mostrare/nascondere i dropdown basati sulla selezione
+            function showDropdown(currentDropdownId, nextDropdownIds) {
+                nextDropdownIds.forEach(id => {
+                    const dropdown = document.getElementById(id);
+                    if (dropdown) dropdown.style.display = 'block';
+                });
+            }
+
+            container.appendChild(dropdownsDiv);
         }
+
       </script>
+
+
+
     <!-- Includi jQuery per semplificare la gestione delle richieste AJAX -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -334,7 +331,7 @@
         // Definisci la funzione JavaScript che viene chiamata quando il bottone viene premuto
         function addMenu() {
             // Effettua una richiesta AJAX per ottenere i nomi delle tabelle dal file PHP
-            $.getJSON("../controllers/test/TestController.php", function(data){
+            $.getJSON("../controllers/test/TestController.php?action=get_tables", function(data){
                 // Crea il menu a tendina
                 var select = $("<select id='tabelle' name='tabelle'></select>");
                 // Itera attraverso l'array ricevuto e aggiungi le opzioni al menu a tendina

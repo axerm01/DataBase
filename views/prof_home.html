@@ -25,6 +25,7 @@
             text-align: center;
             padding: 20px;
             width: 100%;
+            position: relative;
         }
 
         /* Stile per il contenitore principale */
@@ -37,18 +38,28 @@
             flex-grow: 0;
             display: flex;
             flex-direction: column;
-            
+            }
+
+        .button-container{
+            flex-grow: 0;
+            display: flex;
+            flex-direction: row; /* Modifica da column a row */
+            justify-content: center; /* Aggiunto per centrare i bottoni orizzontalmente */
+            flex-wrap: wrap; /* Aggiunto per permettere ai bottoni di andare a capo se non c'è abbastanza spazio */
+        
         }
 
-        /* Stile per i bottoni */
+        /* Styles for buttons */
         button {
             background-color: #333;
             color: #fff;
             border: none;
-            padding: 10px 20px;
+            padding: 8px 15px;
             border-radius: 5px;
             cursor: pointer;
-            margin: 10px;
+            margin: 6px;
+            font-size: 12px;
+            width: 150px;
         }
 
         /* Stile per il footer */
@@ -61,20 +72,66 @@
             background-color: #be2525;
             color: #fff;
         }
+        .indietro {
+            /* Posizionare l'elemento in basso a destra nell'header */
+            position: absolute;
+            bottom: 5px;
+            right: 50px;
+            /* Ridimensiona l'immagine contenuta in .indietro a 15x15 pixel */
+            width: 20px;
+            height: 20px;
+        }
+
+        .indietro a {
+            /* Assicurati che l'ancora non abbia margini o padding per evitare spazi extra */
+            display: block;
+            margin: 0;
+            padding: 0;
+            /* Ridimensiona il link alla grandezza dell'immagine per evitare aree cliccabili non desiderate */
+            width: 100%;
+            height: 100%;
+        }
+
+        .indietro img {
+            /* Forza l'immagine a estendersi completamente all'interno del suo contenitore */
+            width: 100%;
+            height: 100%;
+            display: block; /* Rimuove lo spazio extra sotto l'immagine che potrebbe apparire */
+        }
+        .testo-indietro {
+            position: absolute;
+            /* Posizionare il testo in basso sotto l'immagine */
+            bottom: 0; /* o il valore desiderato per la spaziatura dal fondo */
+            right: 0; /* per allineare con l'immagine sopra */
+            /* Stile opzionale per il testo */
+            color: #ffffff; /* o qualsiasi colore desideri */
+            font-size: 5px; /* o qualsiasi dimensione desideri */
+        }
     </style>
 </head>
 
 <body>
     <header>
         <h1>Studia con ESQL</h1>
+        <div class="indietro">
+            <!-- Usa "javascript:history.back()" come href per tornare indietro -->
+            <a href="javascript:history.back()">
+                <img src="image/arrow.png" alt="Torna indietro" style="width: 15px; height: 15px;">
+            </a>
+            <span class="testo-indietro">Indietro</span>
+        </div>   
     </header>
 
     <div class="main-container">
         <h2>Home Docente</h2>
-        <button onclick="window.location.href='createTable.html'">Crea Tabella</button>
-        <button onclick="window.location.href='createTest.html'">Crea Test</button>
-        <button onclick="window.location.href='messageIndex.php'">Messaggi</button>
-    </div>
+            <div class="button-container">
+                <button onclick="window.location.href='createTable.html'">Crea Tabella</button>
+                <button onclick="window.location.href='viewTable.html'">Visualizza Tabelle</button>
+                <button onclick="window.location.href='createTest.html'">Crea Test</button>
+                <button onclick="window.location.href='viewTest.html'">Visualizza Test</button>
+                <button onclick="window.location.href='messageIndex.php'">Messaggi</button>
+            </div>
+        </div>
 
     <footer>
         <p>Alma Mater Studiorum</p>

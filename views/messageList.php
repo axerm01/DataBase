@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Lista Messaggi</title>
+    <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
     <!-- Qui puoi inserire eventuali stili CSS o link a fogli di stile esterni -->
 </head>
 <body>

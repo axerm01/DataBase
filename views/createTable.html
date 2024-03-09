@@ -245,52 +245,72 @@
             var title = document.getElementById('title').value;
             var attributes = [];
             var rows = [];
+             // Utilizza fetch o XMLHttpRequest per inviare una richiesta al tuo script PHP
+            fetch('verifica_titolo.php', {
+                method: 'POST', // o 'GET'
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `title=${encodeURIComponent(title)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.esiste) {
+                    alert("Il titolo inserito esiste già. Scegline un altro.");
+                } else {
+                    // Procedi con l'invio del form
+                    var table = document.getElementById('table');
+                        var headerRow = table.rows[0];
+                        for (var i = 1; i < headerRow.cells.length; i++) {
+                            var attributeName = headerRow.cells[i].querySelector('input[type="text_attr"]').value;
+                            var attributeType = headerRow.cells[i].querySelector('select[name="attribute_type"]').value;
+                            var isPK = headerRow.cells[i].querySelector('input[name="pk"]').checked;
 
-            var table = document.getElementById('table');
-            var headerRow = table.rows[0];
-            for (var i = 1; i < headerRow.cells.length; i++) {
-                var attributeName = headerRow.cells[i].querySelector('input[type="text_attr"]').value;
-                var attributeType = headerRow.cells[i].querySelector('select[name="attribute_type"]').value;
-                var isPK = headerRow.cells[i].querySelector('input[name="pk"]').checked;
+                            var attribute = {
+                                name: attributeName,
+                                type: attributeType,
+                                PK: isPK
+                            };
+                            attributes.push(attribute); //aggiungo l'attributo
+                        }
 
-                var attribute = {
-                    name: attributeName,
-                    type: attributeType,
-                    PK: isPK
-                };
-                attributes.push(attribute); //aggiungo l'attributo
-            }
+                        // inserisce in rows tutte le righe.
+                        for (var i = 1; i < table.rows.length; i++) {
+                            var rowData = [];
+                            // legge una riga come array di elementi e li inserisce in rows
+                            for (var j = 1; j < table.rows[i].cells.length; j++) {
+                                rowData.push(table.rows[i].cells[j].querySelector('input[name="row"]').value);
+                            }
+                            rows.push(rowData);
+                        }
 
-            // inserisce in rows tutte le righe.
-            for (var i = 1; i < table.rows.length; i++) {
-                var rowData = [];
-                // legge una riga come array di elementi e li inserisce in rows
-                for (var j = 1; j < table.rows[i].cells.length; j++) {
-                    rowData.push(table.rows[i].cells[j].querySelector('input[name="row"]').value);
+                        var formData = {
+                            title: title,
+                            attributes: attributes,
+                            rows: rows
+                        };
+
+                        // Invia i dati in formato JSON al file PHP
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('POST', '../controllers/table/TableController.php', true);
+                        xhr.setRequestHeader('Content-Type', 'application/json');
+                        xhr.onreadystatechange = function () {
+                            if (xhr.readyState === 4 && xhr.status === 200) {
+                                console.log(xhr.responseText); // Puoi gestire la risposta qui...
+                            }
+                        };
+                        xhr.send(JSON.stringify(formData));
+
+                        console.log(formData);
                 }
-                rows.push(rowData);
-            }
-
-            var formData = {
-                title: title,
-                attributes: attributes,
-                rows: rows
-            };
-
-            // Invia i dati in formato JSON al file PHP
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', '../controllers/table/TableController.php', true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    console.log(xhr.responseText); // Puoi gestire la risposta qui...
-                }
-            };
-            xhr.send(JSON.stringify(formData));
-
-            console.log(formData);
-
+            })
+            .catch((error) => {
+                console.error('Errore:', error);
+            });
         }
+            
+
+            
         
     </script>
 </body>
