@@ -1,8 +1,6 @@
 <?php
 session_start();
 
-include '../../models/relational/Table.php';
-include '../../models/relational/Column.php';
 include '../utils/connect.php';
 
     // Verifica se il contenuto ricevuto è JSON
@@ -24,31 +22,11 @@ include '../utils/connect.php';
             $table->addColumn($column);
         }
 
-        foreach ($decodedData['references'] as $columnRef) {
-            $reference = new Reference($columnRef['tab1'], $columnRef['tab2'], $columnRef['attr1'], $columnRef['attr2']);
-            $this->addReference();
-        }
-
         $table->insertOnDB();
         $table->createNewTable();
         $table->fillTableRows($decodedData['rows']);
 
 
-    }
-
-
-    function addReference($tab1, $att1, $tab2, $att2){
-        global $con;
-        $q = 'CALL CreateReference(?,?,?,?);';
-        $stmt = $con->prepare($q);
-        if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
-        }
-        $stmt->bind_param('iiss', $tab1, $tab2, $att1, $att2 );
-        if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
-        }
-        $stmt->close();
     }
 
 

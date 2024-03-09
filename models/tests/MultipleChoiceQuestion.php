@@ -2,14 +2,13 @@
 include('../../controllers/utils/connect.php');
 
 class MultipleChoiceQuestion extends Question {
-    private $description;
     private $difficulty;
     private $numAnswers;
     private $answers; // Lista di oggetti Answer
 
 
     public function __construct($description, $difficulty, $numAnswers) {
-        $this->description = $description;
+        parent::__construct($description);
         $this->difficulty = $difficulty;
         $this->numAnswers = $numAnswers;
         $this->answers = [];

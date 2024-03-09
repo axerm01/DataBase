@@ -5,7 +5,8 @@ include('../../controllers/utils/connect.php');
 class CodeQuestion extends Question {
     private $output;
 
-    public function __construct($output) {
+    public function __construct($text, $output) {
+        parent::__construct($text);
         $this->output = $output;
     }
 

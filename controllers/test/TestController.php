@@ -9,20 +9,21 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     switch ($action) {
         case 'test_query': //restituisce il risultato della query inserita dal docente per trovare la risposta di una code question
             $query = filter_input(INPUT_GET, 'query');
-            $result = $this->testQuery($query);
+            $result = testQuery($query);
             break;
 
-        case 'get_tests': // GET di tutti i test
-            $data = $this->getAllTests();
+        case 'get_tests': // GET di tutti i test di un certo professore la cui mail è passata da FE
+            $prof_email = filter_input(INPUT_GET, 'prof_email');
+            $data = getAllTests($prof_email);
             break;
 
-        case 'get_tables': // GET delle tabelle create da un docente
-            $data = $this->getAllTables();
+        case 'get_tables': // GET delle tabelle create da un docente, restituisce id tabella e nome
+            $data = getAllTables();
             break;
 
         case 'get_table_columns': // GET delle colonne di una tabella indicata
             $id = filter_input(INPUT_GET, 'tableId');
-            $data = $this->getTableColumns($id);
+            $data = getTableColumns($id);
             break;
     }
 
@@ -62,11 +63,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         foreach ($decodedData['questions'] as $questionData){
             $qID = $qID+1;
             if($questionData['type'] == 'code'){
-                $question = new CodeQuestion($questionData['output']);
+                $question = new CodeQuestion($questionData['text'], $questionData['output']);
                 $question->setID($qID);
             }
             else if($questionData['type'] == 'mc'){
-                $question = new MultipleChoiceQuestion($questionData['description'], $questionData['diff'], count($questionData['answers']));
+                $question = new MultipleChoiceQuestion($questionData['text'], $questionData['diff'], count($questionData['answers']));
                 $question->setID($qID);
                 $IDAnswer = 0;
                 foreach ($decodedData['answers'] as $answersData){
@@ -77,7 +78,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
             }
-
             $test->addQuestion($question);
         }
 
@@ -87,7 +87,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-function getAllTables()
+function getAllTables() //restituisce id tabella e nome
 {
     global $con;
     $q = 'CALL ViewAllTables(?);';

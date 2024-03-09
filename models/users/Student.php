@@ -124,6 +124,13 @@ class Student {
         return null;
     }
 
+    public static function getStudent($email)
+    {
+        $student = '';
+        //Query per select Student
+        return $student;
+    }
+
 }
 
 
