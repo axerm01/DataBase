@@ -5,73 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Docente</title>
     <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
     <style>
-        /* Stile per il corpo della pagina */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #c2c2c2;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: auto;
-        }
-
-        /* Stile per l'intestazione */
-        header {
-            background-color: #be2525;
-            color: #fff;
-            text-align: center;
-            padding: 20px;
-            width: 100%;
-            position: relative;
-        }
-
-        /* Stile per il contenitore principale */
-        .main-container {
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            text-align: center;
-            width: 80%;
-            flex-grow: 0;
-            display: flex;
-            flex-direction: column;
-            }
-
-        .button-container{
-            flex-grow: 0;
-            display: flex;
-            flex-direction: row; /* Modifica da column a row */
-            justify-content: center; /* Aggiunto per centrare i bottoni orizzontalmente */
-            flex-wrap: wrap; /* Aggiunto per permettere ai bottoni di andare a capo se non c'è abbastanza spazio */
         
-        }
-
-        /* Styles for buttons */
-        button {
-            background-color: #333;
-            color: #fff;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 6px;
-            font-size: 12px;
-            width: 150px;
-        }
-
-        /* Stile per il footer */
-        footer {
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            text-align: center;
-            padding: 10px;
-            background-color: #be2525;
-            color: #fff;
-        }
+/* Stile per link freccia indietro pagina precedente */
         .indietro {
             /* Posizionare l'elemento in basso a destra nell'header */
             position: absolute;
@@ -122,9 +59,9 @@
         </div>   
     </header>
 
-    <div class="main-container">
+    <div class="home-container">
         <h2>Home Docente</h2>
-            <div class="button-container">
+            <div class="button_home">
                 <button onclick="window.location.href='createTable.html'">Crea Tabella</button>
                 <button onclick="window.location.href='viewTable.html'">Visualizza Tabelle</button>
                 <button onclick="window.location.href='createTest.html'">Crea Test</button>

@@ -1,0 +1,226 @@
+/* Stili per il corpo della pagina */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #c2c2c2;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+.signin_body {
+    font-family: Arial, sans-serif;
+    background-color: #c2c2c2;
+    margin: 0;
+    padding: 0;
+    display: grid; /* Aggiunto il layout a griglia */
+    grid-template-columns: 1fr 1fr; /* Diviso il layout in due colonne */
+    height: 100%;
+    width: 100%;
+}
+
+/* Stili per l'intestazione */
+header {
+    background-color: #be2525;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    width: 100%;
+    position: relative;
+}
+.signin_header {
+    background-color: #be2525;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    grid-column: span 2; /* Fai occupare l'intestazione entrambe le colonne */
+}
+
+/* Stili per il contenitore principale */
+.main-container { 
+    height: 100%;
+    width: 100%;
+    padding: 20px;
+    background-color: #fff;
+}
+.home-container {
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    width: 80%;
+    flex-grow: 0;
+    display: flex;
+    flex-direction: column;
+}
+.signin-container {/* Stile modulo di registrazione */
+    height: 100vh;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    grid-column: 2;
+}
+
+
+/* Stile per il footer */
+footer {
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    background-color: #be2525;
+    color: #fff;
+}
+.signin_footer {
+    position: relative;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    background-color: #be2525;
+    color: #fff;
+    grid-column: span 2;
+}
+
+/* Styles for buttons */
+button {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 6px;
+    font-size: 12px;
+    width: 150px;
+}
+.button_home{
+    flex-grow: 0;
+    display: flex;
+    flex-direction: row; /* Modifica da column a row */
+    justify-content: center; /* Aggiunto per centrare i bottoni orizzontalmente */
+    flex-wrap: wrap; /* Aggiunto per permettere ai bottoni di andare a capo se non c'è abbastanza spazio */
+
+}
+/* Stile bottone tondo per eliminare le righe e le colonne in creazione tabella */
+button[type="delete"][onclick="deleteRow(this)"],
+button[type="delete"][onclick="deleteColumn(this)"] {
+    background-color: #d4091ebe; /* Change background color */
+    color: #fff; /* Change text color */
+    padding: 5px 5px; /* Adjust padding */
+    border-radius: 100%; /* Make it circular */
+    font-size: 10px; /* Adjust font size */
+    margin-left: 5px; /* Adjust spacing */
+    height: 20px;
+    width: 20px;
+}
+
+
+/* Stile per i campi di input */
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="date"],
+input[type="number"]
+{
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Stile per il pulsante di registrazione */
+input[type="submit"] {
+    background-color: #333;
+    color: #fff;
+    padding: 7px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    font-size: 14px; /* Aumenta la dimensione del testo */
+    width: 120px; /* Il bottone "Invia" dimensione */
+}
+
+
+
+
+
+
+.image {
+    position: absolute;
+    margin-top: 300px;
+    text-align: left;
+}
+/* Stile per il link */
+.link {
+    text-align: right;
+}
+/* Stile per il menu a discesa del ruolo */
+select[name="role"] {
+    width: 50%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff; /* Colore di sfondo */
+    color: #333; /* Colore del testo */
+    font-size: 16px; /* Dimensione del testo */
+    font-family: Arial, sans-serif; /* Famiglia di caratteri */
+}
+/* Stile per le opzioni nel menu a discesa del ruolo */
+select[name="role"] option {
+    background-color: #fff; /* Colore di sfondo */
+    color: #333; /* Colore del testo */
+}
+
+
+
+
+/**************************************************************************************************/
+/* Stili per i menu a tendina */
+.dropdown-menu {
+    display: none;
+    margin-top: 6px;
+    width: 150px; /* Aggiungi larghezza */
+    padding: 8px; /* Aggiungi padding */
+    border: 2px solid #ccc; /* Aggiungi bordo */
+    border-radius: 5px; /* Aggiungi bordi arrotondati */
+    margin-right: 5px;
+}
+.dropdown-menu1 {
+    margin-top: 6px;
+    width: 150px; /* Aggiungi larghezza */
+    padding: 8px; /* Aggiungi padding */
+    border: 2px solid #ccc; /* Aggiungi bordo */
+    border-radius: 5px; /* Aggiungi bordi arrotondati */
+    margin-right: 5px;
+}
+
+/* Stili per il menu a tendina attivo */
+.dropdown-menu.active {
+    display: block;
+}
+
+/* Stili per il testo del menu a tendina */
+.dropdown-menu option {
+    font-size: 16px; /* Aggiungi dimensione del carattere */
+}
+
+/* Stili per la freccia */
+.separator::before {
+    content: "\21D2"; /* Codice unicode per una freccia unilaterale verso destra */
+    font-size: 32px;
+    margin-right: 5px;
+}
+/* Aggiunta di stili per il contenitore del layout dei menu e della freccia */
+.flex-container {
+    display: flex;
+    align-items: center;
+}
+

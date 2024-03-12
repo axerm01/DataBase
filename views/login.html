@@ -3,115 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login-SQL-Esercitazioni</title>
+    <title>Login-ESQL-Esercitazioni</title>
     <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
-    <style>
-        /* Stile per il corpo della pagina */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #c2c2c2;
-            margin: 0;
-            padding: 0;
-            display: grid; /* Aggiunto il layout a griglia */
-            grid-template-columns: 1fr 1fr; /* Diviso il layout in due colonne */
-            height: 100%;
-            width: 100%;
-        }
-
-        /* Stile per l'intestazione */
-        header {
-            background-color: #be2525;
-            color: #fff;
-            text-align: center;
-            padding: 20px;
-            grid-column: span 2; /* Fai occupare l'intestazione entrambe le colonne */
-        }
-
-        /* Stile per il contenitore del modulo di login */
-        .login-container {
-            height: 70vh;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            grid-column: 2;
-        }
-
-        /* Stile per i campi di input */
-        input[type="text"],
-        input[type="password"]
-        {
-            width: 80%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        /* Stile per il pulsante di login */
-        button {
-            background-color: #333;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        
-
-        /* Stile per il link "registrazione" */
-        .registrazione {
-            text-align: right;
-        }
-
-        /* Stile per il footer */
-        footer {
-            position: fixed;
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            text-align: center;
-            padding: 10px;
-            background-color: #be2525;
-            color: #fff;
-        }
-        .immagine {
-            position: fixed;
-            left: 0;
-            bottom: 110px;
-            
-        }
-        /* Stile per il menu a discesa del ruolo */
-        select[name="role"] {
-            width: 50%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #fff; /* Colore di sfondo */
-            color: #333; /* Colore del testo */
-            font-size: 16px; /* Dimensione del testo */
-            font-family: Arial, sans-serif; /* Famiglia di caratteri */
-        }
-
-        /* Stile per le opzioni nel menu a discesa del ruolo */
-        select[name="role"] option {
-            background-color: #fff; /* Colore di sfondo */
-            color: #333; /* Colore del testo */
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
-    <header>
+<body class="signin_body">
+    <header class="signin_header">
         <h1>Studia con ESQL</h1>
     </header>
 
-    <div class="immagine">
-        <img src="image/login.png" alt="grafica logo">
-    </div>
-
-    <div class="login-container">
+    <div class="signin-container">
         <h2>Accedi</h2>
         <h5>Inserisci le credenziali istituzionali di Ateneo.</h5>
         <form action="../controllers/utils/index.php" method="post">
@@ -124,10 +26,12 @@
             </select><br>
             <button type="submit">Accedi</button>
         </form>
-        <p class="registrazione"><a href="signin.html">Registrati</a></p>
+        <p class="link"><a href="signin.html">Registrati</a></p>
     </div>
-    
-    <footer>
+    <div class="image">
+        <img src="image/login.png" alt="grafica logo">
+    </div>
+    <footer class="signin_footer">
         <p>Alma Mater Studiorum</p>
         <h3>Università di Bologna</h3>
     </footer>

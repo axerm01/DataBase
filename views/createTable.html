@@ -5,84 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crea Tabella</title>
     <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
     <style>
-        /* Stile per il corpo della pagina */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #fff; /* Colora il body di bianco */
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: stretch; /* I contenitori occupano a pieno la larghezza della pagina */
-            height: 100vh;
-        }
-
-        /* Stile per l'intestazione */
-        header {
-            background-color: #be2525;
-            color: #fff;
-            text-align: center;
-            padding: 10px;
-        }
-
-        /* Stile per il contenitore principale */
-        .main-container { 
-            height: 100vh;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-       /* Stile per il footer */
-        footer {
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            text-align: center;
-            padding: 10px;
-            background-color: #be2525;
-            color: #fff;
-        }
-
-        /* Stile per i bottoni */
-        button {
-            background-color: #333;
-            color: #fff;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-left: 10px;
-            font-size: 12px; /* Aumenta la dimensione del testo */
-            width: 110px; /* Tutti i pulsanti hanno la stessa dimensione */
-        }
-        /* Style for delete buttons */
-        button[type="button"][onclick="deleteRow(this)"],
-        button[type="button"][onclick="deleteColumn(this)"] {
-            background-color: #d4091ebe; /* Change background color */
-            color: #fff; /* Change text color */
-            padding: 5px 5px; /* Adjust padding */
-            border-radius: 100%; /* Make it circular */
-            font-size: 10px; /* Adjust font size */
-            margin-left: 5px; /* Adjust spacing */
-            height: 20px;
-            width: 20px;
-        }
-        /* Stile per il bottone "Invia" */
-        input[type="submit"] {
-            background-color: #333;
-            color: #fff;
-            padding: 7px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 20px;
-            font-size: 14px; /* Aumenta la dimensione del testo */
-            width: 120px; /* Il bottone "Invia" dimensione */
-        }
-
-        
         /* Stile per la tabella */
         table {
             border-collapse: collapse;
@@ -203,7 +127,7 @@
             newCell.appendChild(checkbox);
             newCell.appendChild(label);
             // Inserisce bottone eliminazione
-            newCell.innerHTML += '<button type="button" onclick="deleteColumn(this)">X</button>';
+            newCell.innerHTML += '<button type="delete" onclick="deleteColumn(this)">X</button>';
 
             for (var i = 1; i < table.rows.length; i++) {
                 var cell = table.rows[i].insertCell(-1);
@@ -218,7 +142,7 @@
             var newCell = newRow.insertCell(0);
             newCell.innerHTML = rowCounter;
 
-            newCell.innerHTML += '<button type="button" onclick="deleteRow(this)">X</button>';
+            newCell.innerHTML += '<button type="delete" onclick="deleteRow(this)">X</button>';
 
             for (var i = 1; i < table.rows[0].cells.length; i++) {
                 var cell = newRow.insertCell(i);
@@ -308,10 +232,6 @@
                 console.error('Errore:', error);
             });
         }
-            
-
-            
-        
     </script>
 </body>
 </html>

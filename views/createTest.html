@@ -5,124 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Test - ESQL -</title>
     <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
     <style>
-        /* Styles for the page */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #fff;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            height: 100%;
-            width: 100%;
-        }
-
-        /* Styles for the header */
-        header {
-            background-color: #be2525;
-            color: #fff;
-            text-align: center;
-            padding: 20px;
-            grid-column: span 2;
-            width: 100%;
-        }
-
-        /* Styles for the main container */
-        .main-container { 
-            height: 100%;
-            width: 100%;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Styles for the footer */
-        footer {
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            text-align: center;
-            padding: 10px;
-            background-color: #be2525;
-            color: #fff;
-        }
-        /* Stili per i menu a tendina */
-        .dropdown-menu {
-            display: none;
-            margin-top: 6px;
-            width: 80px; /* Aggiungi larghezza */
-            padding: 8px; /* Aggiungi padding */
-            border: 2px solid #ccc; /* Aggiungi bordo */
-            border-radius: 5px; /* Aggiungi bordi arrotondati */
-            margin-right: 5px;
-        }
-        .dropdown-menu1 {
-            margin-top: 6px;
-            width: 80px; /* Aggiungi larghezza */
-            padding: 8px; /* Aggiungi padding */
-            border: 2px solid #ccc; /* Aggiungi bordo */
-            border-radius: 5px; /* Aggiungi bordi arrotondati */
-            margin-right: 5px;
-        }
-
-        /* Stili per il menu a tendina attivo */
-        .dropdown-menu.active {
-            display: block;
-        }
-
-        /* Stili per il testo del menu a tendina */
-        .dropdown-menu option {
-            font-size: 16px; /* Aggiungi dimensione del carattere */
-        }
-
-        /* Stili per la freccia */
-        .separator::before {
-            content: "\21D2"; /* Codice unicode per una freccia unilaterale verso destra */
-            font-size: 32px;
-            margin-right: 5px;
-        }
-        /* Aggiunta di stili per il contenitore del layout dei menu e della freccia */
-        .flex-container {
-            display: flex;
-            align-items: center;
-        }
-
-        /* Styles for input fields */
-        input[type="text"] {
-            width: 80%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        /* Styles for buttons */
-        button {
-            background-color: #333;
-            color: #fff;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 6px;
-            font-size: 12px;
-            width: 150px;
-        }
-
-        /* Styles for the registration link */
-        .registrazione {
-            text-align: right;
-        }
-
-        /* Styles for input fields */
-        input[type="title"] {
-            border: 2px solid #333;
-            padding: 5px;
-            width: 25%;
-        }
-
         /* Styles for questions */
         .question {
             margin-top: 20px;
@@ -225,9 +109,6 @@
 </head>
 
 <body>
-
-
-
     <header>
         <h1>Studia con ESQL</h1>
     </header>
@@ -249,20 +130,80 @@
         <div id="menuContainer">
             <!-- Div per il menu a tendina, inizialmente vuoto -->
         </div>
+        <div id="tableContainer">
+            
+        </div>
 
         <button onclick="addConstraints()">Aggiungi Vincoli integrità</button>
         <div id="constraintsContainer">
             <!-- Qui verranno aggiunti i menu a tendina -->
         </div>
-
+        
         <div id="questionsContainer">
             <!-- Questions will be dynamically added here -->
         </div>
     </div>
     
-    <script>
 
-        function addConstraints() {
+    <!-- Includi jQuery per semplificare la gestione delle richieste AJAX -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        // Variabile per memorizzare il nome della tabella selezionata
+        var selectedTable = "";
+        var tables = []; // Array per tenere traccia delle scelte
+    
+        // Definisci la funzione JavaScript che viene chiamata quando il bottone viene premuto
+        function addMenu() {
+            // Effettua una richiesta AJAX per ottenere i nomi delle tabelle dal file PHP
+            $.getJSON("SimulatoreTestController.php", function(data) {
+                // Crea il menu a tendina con lo stesso stile di addConstraints
+                var select = $("<select class='dropdown-menu1' name='tabelle'></select>"); // Usa 'dropdown-menu1' per il primo menu
+                // Aggiungi un'opzione di placeholder disabilitata e selezionata di default
+                select.append("<option value='' disabled selected>Selezione tabella</option>");
+                // Itera attraverso l'array ricevuto e aggiungi le opzioni al menu a tendina
+                $.each(data, function(index, value) {
+                    select.append("<option value='" + value.id + "'>" + value.name + "</option>");
+                });
+                // Inserisci il menu a tendina nel contenitore
+                $("#menuContainer").append(select);
+
+                // Aggiungi un gestore per l'evento di cambio al menu a tendina
+                select.change(function() {
+                    // Nasconde il menu a tendina dopo la selezione
+                    $(this).hide();
+                    // Esegue le azioni necessarie in base alla selezione
+                    var selectedTable = {
+                        id: $(this).val(),
+                        name: $(this).find("option:selected").text()
+                    };
+                    tables.push(selectedTable); // Memorizza le tabelle selezionate
+                    console.log("Tabella selezionata: ", selectedTable);
+                    sendDate(selectedTable); // Invia i dati della tabella selezionata
+                });
+            });
+        }
+        // Funzione per inviare la variabile selectedTable al file PHP
+        function sendDate(selectedTable) {
+            // AJAX request to send data to the PHP file and receive table data
+            $.post("SimulatoreInvioDati.php", selectedTable, function(response) {
+                console.log("Data received from the server: ", response);
+                // Assuming the response is an array of objects, where each object represents a table row
+                var table = $("<table></table>"); // Create a table element
+                table.append("<tr><th>ID</th><th>Name</th></tr>"); // Add table header
+
+                // Add rows to the table based on received data
+                $.each(response, function(index, row) {
+                    table.append("<tr><td>" + row.id + "</td><td>" + row.name + "</td></tr>");
+                });
+
+                // Clear previous table container and add the new table
+                $("#tableContainer").append(table);
+            }, "json"); // Expecting response in JSON format
+        }
+    
+
+        /*function addConstraints() {
             const container = document.getElementById('constraintsContainer');
             const dropdownsDiv = document.createElement('div');
             dropdownsDiv.classList.add('flex-container');
@@ -315,46 +256,82 @@
             }
 
             container.appendChild(dropdownsDiv);
+        }*/
+        function addConstraints() {
+        const container = document.getElementById('constraintsContainer');
+        const dropdownsDiv = document.createElement('div');
+        dropdownsDiv.classList.add('flex-container');
+
+        // Genera un identificativo unico per questo gruppo di dropdown
+        const uniqueId = 'group-' + document.querySelectorAll('.flex-container').length;
+
+        // Prepara le opzioni per il menu-1 basate sull'array tables
+        let optionsForMenu1 = tables.map(table => `<option value="${table.id}">${table.name}</option>`).join('');
+
+        // Crea il primo menu a tendina (menu-1) con le opzioni preparate
+        const menu1 = document.createElement('select');
+        menu1.id = uniqueId + '-menu1';
+        menu1.classList.add('dropdown-menu1');
+        menu1.innerHTML = `<option value="" disabled selected>Selezione tabella</option>` + optionsForMenu1;
+        dropdownsDiv.appendChild(menu1);
+
+        // Crea un elemento per la freccia (inizialmente nascosto)
+        const arrow = document.createElement('span');
+        arrow.id = uniqueId + '-arrow';
+        //arrow.innerHTML = '&#x2192;'; // Codice HTML per una freccia verso destra
+        arrow.style.display = 'none'; // Nasconde inizialmente la freccia
+        arrow.classList.add('separator'); // Aggiungi classi per lo stile se necessario
+
+        // Crea gli altri menu a tendina (menu-2, menu-3, e menu-4)
+        // Nota: Per questo esempio, sono lasciati vuoti e saranno popolati dinamicamente
+        for (let i = 2; i <= 4; i++) {
+            const select = document.createElement('select');
+            select.id = uniqueId + '-menu' + i;
+            select.classList.add('dropdown-menu');
+            select.style.display = 'none'; // Nascondi inizialmente questi menu
+            dropdownsDiv.appendChild(select);
+            if (i === 2) { // Posiziona la freccia tra il secondo e il terzo menu a tendina
+                dropdownsDiv.appendChild(arrow);
+            }
         }
+        
+        // Aggiungi la logica per popolare e mostrare menu-2 e menu-3 basata sulla selezione in menu-1
+        menu1.onchange = function() {
+            // Trova la tabella selezionata e le altre tabelle
+            const selectedTableId = this.value;
+            const otherTablesOptions = tables
+                .filter(table => table.id !== selectedTableId) // Escludi la tabella selezionata in menu-1
+                .map(table => `<option value="${table.id}">${table.name}</option>`)
+                .join('');
 
-      </script>
+            // Fai una richiesta AJAX per ottenere i nomi delle colonne per la tabella selezionata
+            $.post("SimulatoreInvioDatiColonne.php", { action: 'getColumns', tableId: selectedTableId }, function(columns) {
+                // Popola menu-2 con i nomi delle colonne ricevuti
+                const menu2 = document.getElementById(uniqueId + '-menu2');
+                menu2.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>`+ columns.map(col => `<option value="${col}">${col}</option>`).join('');
+                menu2.style.display = 'block';
+            }, "json");
 
+            document.getElementById(uniqueId + '-arrow').style.display = 'inline-block'; // Mostra la freccia
 
+            // Popola e mostra menu-3 con tutte le tabelle tranne quella selezionata in menu-1
+            const menu3 = document.getElementById(uniqueId + '-menu3');
+            menu3.innerHTML = `<option value="" disabled selected>Selezione tabella</option>` + otherTablesOptions;
+            menu3.style.display = 'block';
+            //Fai una richiesta AJAX per ottenere i nomi delle colonne per la tabella selezionata
+            $.post("SimulatoreInvioDatiColonne.php", { action: 'getColumns', tableId: selectedTableId }, function(columns) {
+                // Popola menu-4 con i nomi delle colonne ricevuti
+                const menu4 = document.getElementById(uniqueId + '-menu4');
+                menu4.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>`+ columns.map(col => `<option value="${col}">${col}</option>`).join('');
+                menu4.style.display = 'block';
+            }, "json");
+            
+        };
 
-    <!-- Includi jQuery per semplificare la gestione delle richieste AJAX -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        // Aggiungi il div dei menu a tendina al container
+        container.appendChild(dropdownsDiv);
+    }
 
-    <script>
-        // Variabile per memorizzare il nome della tabella selezionata
-        var selectedTable = "";
-
-        // Definisci la funzione JavaScript che viene chiamata quando il bottone viene premuto
-        function addMenu() {
-            // Effettua una richiesta AJAX per ottenere i nomi delle tabelle dal file PHP
-            $.getJSON("../controllers/test/TestController.php?action=get_tables", function(data){
-                // Crea il menu a tendina
-                var select = $("<select id='tabelle' name='tabelle'></select>");
-                // Itera attraverso l'array ricevuto e aggiungi le opzioni al menu a tendina
-                $.each(data, function(index, value) {
-                    select.append("<option value='" + value + "'>" + value + "</option>");
-                });
-                // Inserisci il menu a tendina nel contenitore
-                $("#menuContainer").empty().append(select);
-
-                // Aggiungi un gestore per l'evento di cambio al menu a tendina
-                select.change(function() {
-                    // Aggiorna la variabile selectedTable con il valore selezionato
-                    selectedTable = $(this).val();
-                    // Invia i dati al file PHP quando viene selezionata una tabella
-                    sendDate();
-                });
-            });
-        }
-        // Funzione per inviare la variabile selectedTable al file PHP
-        function sendDate() {
-            // Effettua una richiesta AJAX per inviare i dati al file PHP
-            $.post("../controllers/test/TestController.php", { tabella: selectedTable });
-        }
     </script>
 
     <script>
