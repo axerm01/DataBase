@@ -64,7 +64,7 @@
         /*Styles for check botton*/
         .add-check-button {
             background-color: #15c11e;
-            cursor: pointer;
+            cursor: pointer; 
             font-size: 12px;
         }
         /* Styles for "Elimina Quesito" button */
@@ -73,6 +73,14 @@
             cursor: pointer;
             font-size: 12px;
             width: 80px;
+        }
+        .delete-button {
+            background-color: #a51b1bc3;
+            cursor: pointer; /*modifica il cursore del mouse quando va sopra*/
+            font-size: 10px;
+            width: 70px;
+            padding: 5px;
+            margin-left: 25px;
         }
 
         /* Styles for delete answer button */
@@ -103,6 +111,27 @@
             border-radius: 25%;
             transform: scale(1.5); 
         }
+
+        .table-container {
+            display: inline-block;
+            flex-wrap: nowrap;
+            margin-top: 20px;
+            font-size: small;
+            justify-content: center;
+        }
+        table {
+            display: inline-table; /* Mantiene le tabelle in linea */
+            border-collapse: collapse; /* Per una migliore visualizzazione delle tabelle */
+        }
+
+        th, td {
+            border: 1px solid #ddd; /* Stile dei bordi */
+            padding: 5px; /* Padding delle celle */
+        }
+
+        th {
+            background-color: #f2f2f2; /* Colore di sfondo delle celle dell'intestazione */
+        }
         
 
     </style>
@@ -113,11 +142,7 @@
         <h1>Studia con ESQL</h1>
     </header>
     <div class="main-container">
-        <div style="display: flex; align-items: center;">
-            <p style="margin-right: 10px; font-size: 28px; font-weight: bold;">Crea Test</p>
-            <button  onclick="addCodeQuestion()">Aggiungi Quesito Codice</button>
-            <button  onclick="addMCQuestion()">Aggiungi Quesito Risposta Multipla</button>
-        </div>
+        <p style="margin-right: 10px; font-size: 28px; font-weight: bold;">Crea Test</p>
         <label for="title" style="font-size: 22px; font-weight: bolder;">Titolo Test:</label>
         <input type="text" id="title" name="title"><br>
         <!--il permesso di visualizzazione deve essere fuori da qui. (anche) quando vedo l'elenco dei test gia creati-->
@@ -130,18 +155,22 @@
         <div id="menuContainer">
             <!-- Div per il menu a tendina, inizialmente vuoto -->
         </div>
-        <div id="tableContainer">
-            
-        </div>
-
+        
+        <br>
         <button onclick="addConstraints()">Aggiungi Vincoli integrità</button>
         <div id="constraintsContainer">
             <!-- Qui verranno aggiunti i menu a tendina -->
         </div>
-        
-        <div id="questionsContainer">
-            <!-- Questions will be dynamically added here -->
+        <div style="display: flex; align-items: center;"></div>
+            <button  onclick="addCodeQuestion()">Aggiungi Quesito Codice</button>
+            <button  onclick="addMCQuestion()">Aggiungi Quesito Risposta Multipla</button>
         </div>
+        <div id="questionsContainer">
+            <div id="questions-mc" class="question-mc">   </div>
+            <div id="questions-code" class="question-code" >    </div>
+        </div>
+
+        <button id="submitTestButton">Crea Test</button>
     </div>
     
 
@@ -156,15 +185,16 @@
         // Definisci la funzione JavaScript che viene chiamata quando il bottone viene premuto
         function addMenu() {
             // Effettua una richiesta AJAX per ottenere i nomi delle tabelle dal file PHP
-            $.getJSON("SimulatoreTestController.php", function(data) {
+            $.getJSON("ConnessioneProvaAle/SimulatoreTestController.php", function(data) {
                 // Crea il menu a tendina con lo stesso stile di addConstraints
-                var select = $("<select class='dropdown-menu1' name='tabelle'></select>"); // Usa 'dropdown-menu1' per il primo menu
+                var select = $("<select class='dropdown-table' name='tabelle'></select>"); // Usa 'dropdown-table' per il primo menu
                 // Aggiungi un'opzione di placeholder disabilitata e selezionata di default
-                select.append("<option value='' disabled selected>Selezione tabella</option>");
+                select.append("<option value='' disabled selected>Sel.Tabella</option>");
                 // Itera attraverso l'array ricevuto e aggiungi le opzioni al menu a tendina
                 $.each(data, function(index, value) {
                     select.append("<option value='" + value.id + "'>" + value.name + "</option>");
                 });
+
                 // Inserisci il menu a tendina nel contenitore
                 $("#menuContainer").append(select);
 
@@ -178,28 +208,77 @@
                         name: $(this).find("option:selected").text()
                     };
                     tables.push(selectedTable); // Memorizza le tabelle selezionate
+                    updateMenuTable1();
                     console.log("Tabella selezionata: ", selectedTable);
-                    sendDate(selectedTable); // Invia i dati della tabella selezionata
+                    requestData(selectedTable); // Invia i dati della tabella selezionata
+                    // Crea e aggiungi il bottone di eliminazione per questa specifica tabella selezionata
+                    //deleteTable(selectedTable.id);
+
                 });
+            }).fail(function(jqxhr, textStatus, error) {
+                var err = textStatus + ", " + error;
+                console.log("Request Failed: " + err);
             });
         }
+        function deleteTable(tableId) {
+            const deleteButton = $("<button class='delete-button'>Elimina Tabella</button>");
+            deleteButton.click(function() {
+                // Rimuovi la tabella dall'array tables
+                tables = tables.filter(table => table.id !== tableId);
+                // Aggiorna il menu a tendina delle tabelle
+                updateMenuTable1();
+
+                // Rimuovi la rappresentazione visiva della tabella dal DOM
+                $("#table-" + tableId).remove(); // Usa l'ID univoco per rimuovere la tabella
+                $(this).remove(); // Assumendo che il bottone sia all'interno di un contenitore parent
+                
+            });
+
+            // Qui dovresti aggiungere il bottone al DOM, ad esempio appenderlo
+            // al contenitore della tabella selezionata o in un altro posto appropriato
+            // Ad esempio, se mostri le tabelle selezionate in #selectedTablesContainer:
+            $("#menuContainer").append(deleteButton);
+        }
+
+
         // Funzione per inviare la variabile selectedTable al file PHP
-        function sendDate(selectedTable) {
+        function requestData(selectedTable) {
             // AJAX request to send data to the PHP file and receive table data
-            $.post("SimulatoreInvioDati.php", selectedTable, function(response) {
+            $.post("ConnessioneProvaAle/SimulatoreInvioDati.php", selectedTable, function(response) {
                 console.log("Data received from the server: ", response);
+                // Crea un contenitore per la tabella e il bottone di eliminazione
+                var tableContainer = $("<div class='table-container'></div>").attr("id", "container-" + selectedTable.id);
+        
+                // Crea il bottone di eliminazione
+                var deleteButton = $("<button class='delete-button'>Elimina Tabella</button>");
+                deleteButton.click(function() {
+                    // Rimuovi la tabella e il bottone dall'array tables e dal DOM
+                    tables = tables.filter(table => table.id !== selectedTable.id);
+                    tableContainer.remove(); // Rimuovi il contenitore che include la tabella e il bottone
+                    updateMenuTable1();// Aggiorna il menu a tendina delle tabelle
+                });
+                // Aggiungi il bottone di eliminazione al contenitore della tabella
+                tableContainer.append(deleteButton);
+                tableContainer.append($("<br>"));
                 // Assuming the response is an array of objects, where each object represents a table row
-                var table = $("<table></table>"); // Create a table element
-                table.append("<tr><th>ID</th><th>Name</th></tr>"); // Add table header
+                // Create a table element
+                var viewTable = $("<table></table>").attr("id", "table-" + selectedTable.id); 
+                // Usa l'ID della tabella per creare un ID univoco per l'elemento table
+                viewTable.append("<tr><th>ID</th><th>Name</th></tr>"); // Add table header
 
                 // Add rows to the table based on received data
                 $.each(response, function(index, row) {
-                    table.append("<tr><td>" + row.id + "</td><td>" + row.name + "</td></tr>");
+                    viewTable.append("<tr><td>" + row.id + "</td><td>" + row.name + "</td></tr>");
                 });
 
                 // Clear previous table container and add the new table
-                $("#tableContainer").append(table);
-            }, "json"); // Expecting response in JSON format
+                    tableContainer.append(viewTable);
+                    $("#menuContainer").append(tableContainer);
+                // Expecting response in JSON format
+            }, "json").fail(function(jqxhr, textStatus, error) {
+                var err = textStatus + ", " + error;
+                console.log("Request Failed: " + err);
+            });
         }
     
 
@@ -264,94 +343,122 @@
 
         // Genera un identificativo unico per questo gruppo di dropdown
         const uniqueId = 'group-' + document.querySelectorAll('.flex-container').length;
+        dropdownsDiv.id = uniqueId; // Assegna un ID univoco al container dei dropdown
 
-        // Prepara le opzioni per il menu-1 basate sull'array tables
-        let optionsForMenu1 = tables.map(table => `<option value="${table.id}">${table.name}</option>`).join('');
+        let optionsForMenuTable1 = tables.map(table => `<option value="${table.id}">${table.name}</option>`).join('');
 
-        // Crea il primo menu a tendina (menu-1) con le opzioni preparate
-        const menu1 = document.createElement('select');
-        menu1.id = uniqueId + '-menu1';
-        menu1.classList.add('dropdown-menu1');
-        menu1.innerHTML = `<option value="" disabled selected>Selezione tabella</option>` + optionsForMenu1;
-        dropdownsDiv.appendChild(menu1);
+        const menuTable1 = document.createElement('select');
+        menuTable1.id = uniqueId + '-menuTable1';
+        menuTable1.classList.add('dropdown-table');
+        menuTable1.innerHTML = `<option value="" disabled selected>Sel.Tabella</option>` + optionsForMenuTable1;
+        dropdownsDiv.appendChild(menuTable1);
 
-        // Crea un elemento per la freccia (inizialmente nascosto)
+        // Crea gli altri menu a tendina
+        const menuAttribute1 = document.createElement('select');
+        menuAttribute1.id = uniqueId + '-menuAttribute1';
+        menuAttribute1.classList.add('dropdown-attribute');
+        dropdownsDiv.appendChild(menuAttribute1); // Aggiunto al DOM qui
+
         const arrow = document.createElement('span');
         arrow.id = uniqueId + '-arrow';
-        //arrow.innerHTML = '&#x2192;'; // Codice HTML per una freccia verso destra
-        arrow.style.display = 'none'; // Nasconde inizialmente la freccia
-        arrow.classList.add('separator'); // Aggiungi classi per lo stile se necessario
+        arrow.style.display = 'none';
+        arrow.classList.add('separator');
+        dropdownsDiv.appendChild(arrow);     // Assicurati che la freccia sia aggiunta al container
 
-        // Crea gli altri menu a tendina (menu-2, menu-3, e menu-4)
-        // Nota: Per questo esempio, sono lasciati vuoti e saranno popolati dinamicamente
-        for (let i = 2; i <= 4; i++) {
-            const select = document.createElement('select');
-            select.id = uniqueId + '-menu' + i;
-            select.classList.add('dropdown-menu');
-            select.style.display = 'none'; // Nascondi inizialmente questi menu
-            dropdownsDiv.appendChild(select);
-            if (i === 2) { // Posiziona la freccia tra il secondo e il terzo menu a tendina
-                dropdownsDiv.appendChild(arrow);
-            }
-        }
-        
-        // Aggiungi la logica per popolare e mostrare menu-2 e menu-3 basata sulla selezione in menu-1
-        menu1.onchange = function() {
-            // Trova la tabella selezionata e le altre tabelle
+        const menuTable2 = document.createElement('select');
+        menuTable2.id = uniqueId + '-menuTable2';
+        menuTable2.classList.add('dropdown-table');
+        dropdownsDiv.appendChild(menuTable2); // Aggiunto al DOM qui
+
+        const menuAttribute2 = document.createElement('select');
+        menuAttribute2.id = uniqueId + '-menuAttribute2';
+        menuAttribute2.classList.add('dropdown-attribute');
+        dropdownsDiv.appendChild(menuAttribute2); // Aggiunto al DOM qui
+
+        // Gestore dell'evento onchange per menu1
+        menuTable1.onchange = function() {
             const selectedTableId = this.value;
             const otherTablesOptions = tables
-                .filter(table => table.id !== selectedTableId) // Escludi la tabella selezionata in menu-1
+                .filter(table => table.id !== selectedTableId)
                 .map(table => `<option value="${table.id}">${table.name}</option>`)
                 .join('');
 
-            // Fai una richiesta AJAX per ottenere i nomi delle colonne per la tabella selezionata
-            $.post("SimulatoreInvioDatiColonne.php", { action: 'getColumns', tableId: selectedTableId }, function(columns) {
-                // Popola menu-2 con i nomi delle colonne ricevuti
-                const menu2 = document.getElementById(uniqueId + '-menu2');
-                menu2.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>`+ columns.map(col => `<option value="${col}">${col}</option>`).join('');
-                menu2.style.display = 'block';
+            $.post("ConnessioneProvaAle/SimulatoreInvioDatiColonne.php", { action: 'getColumns', tableId: selectedTableId }, function(columns) {
+                menuAttribute1.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>` + columns.map(col => `<option value="${col}">${col}</option>`).join('');
+                menuAttribute1.style.display = 'block';
+                arrow.style.display = 'inline-block';
             }, "json");
 
-            document.getElementById(uniqueId + '-arrow').style.display = 'inline-block'; // Mostra la freccia
-
-            // Popola e mostra menu-3 con tutte le tabelle tranne quella selezionata in menu-1
-            const menu3 = document.getElementById(uniqueId + '-menu3');
-            menu3.innerHTML = `<option value="" disabled selected>Selezione tabella</option>` + otherTablesOptions;
-            menu3.style.display = 'block';
-            //Fai una richiesta AJAX per ottenere i nomi delle colonne per la tabella selezionata
-            $.post("SimulatoreInvioDatiColonne.php", { action: 'getColumns', tableId: selectedTableId }, function(columns) {
-                // Popola menu-4 con i nomi delle colonne ricevuti
-                const menu4 = document.getElementById(uniqueId + '-menu4');
-                menu4.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>`+ columns.map(col => `<option value="${col}">${col}</option>`).join('');
-                menu4.style.display = 'block';
-            }, "json");
-            
+            menuTable2.innerHTML = `<option value="" disabled selected>Sel.Tabella</option>` + otherTablesOptions;
+            menuTable2.style.display = 'block';
         };
 
-        // Aggiungi il div dei menu a tendina al container
+        // Ora, poiché menuTable2 è già parte del DOM, puoi aggiungere il gestore dell'evento onchange direttamente
+        menuTable2.onchange = function() {
+            const selectedTableId = this.value;
+
+            $.post("ConnessioneProvaAle/SimulatoreInvioDatiColonne.php", { action: 'getColumns', tableId: selectedTableId }, function(columns) {
+                menuAttribute2.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>` + columns.map(col => `<option value="${col}">${col}</option>`).join('');
+                menuAttribute2.style.display = 'block';
+            }, "json");
+        };
+        // Aggiunta del bottone di eliminazione al DIV contenitore dei dropdown
+        deleteConstraint(uniqueId, dropdownsDiv, container);
+        // Infine, aggiungi il div dei menu a tendina al container
         container.appendChild(dropdownsDiv);
     }
+    function updateMenuTable1() {
+        // Trova il container del menu 1 e lo svuota
+        const menuTable1 = document.getElementById('group-0-menuTable1');
+        if (!menuTable1) return; // Se il menu 1 non esiste, esce dalla funzione
+        menuTable1.innerHTML = "<option value='' disabled selected>Sel.Tabella</option>"; // Reset
+
+        // Popola di nuovo il menu con le tabelle aggiornate
+        tables.forEach(table => {
+            const option = document.createElement('option');
+            option.value = table.id;
+            option.textContent = table.name;
+            menuTable1.appendChild(option);
+        });
+    }
+    function deleteConstraint(uniqueId, dropdownsDiv, container) {
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Elimina Vincolo';
+        deleteButton.className = 'delete-button';
+        deleteButton.onclick = function() {
+            // Rimuovi la riga/menu dal DOM
+            container.removeChild(dropdownsDiv);
+            // Assumi che ogni vincolo corrisponda a una tabella e voglia rimuovere quella tabella dall'array tables
+            // Questo passaggio richiede che tu abbia una corrispondenza tra l'ID del gruppo di vincoli e l'ID della tabella
+            // Qui manca la logica per identificare la tabella corrispondente, quindi adattalo alle tue esigenze
+            // tables = tables.filter(t => t.id !== someId);
+            updateMenuTable1(); // Aggiorna il menu delle tabelle dopo la rimozione
+        };
+
+        dropdownsDiv.appendChild(deleteButton); // Aggiunge il bottone di eliminazione al div dei dropdown
+    }
+
 
     </script>
 
     <script>
-        let questionCount = 0;
-
+        let questionMCCount = 0;
+        let questionCodeCount = 0;
         function addMCQuestion() {
-            questionCount++;
+            questionMCCount++;
 
-            const container = document.getElementById('questionsContainer');
+            const container = document.getElementById('questions-mc');
 
             const questionDiv = document.createElement('div');
             questionDiv.classList.add('question');
 
             const questionLabel = document.createElement('label');
-            //questionLabel.textContent = 'D.' + questionCount + ': ';
+            //questionLabel.textContent = 'D.' + questionMCCount + ': ';
             questionDiv.appendChild(questionLabel);
 
             const questionInput = document.createElement('input');
             questionInput.type = 'text';
-            questionInput.name = 'question' + questionCount;
+            questionInput.name = 'question' + questionMCCount;
             questionInput.placeholder = 'Scrivi la Domanda';
             questionInput.classList.add('question-input');
             questionDiv.appendChild(questionInput);
@@ -385,14 +492,14 @@
 
             const answerInput = document.createElement('input');
             answerInput.type = 'text';
-            answerInput.name = 'answer' + questionCount + '_' + (container.children.length + 1);
+            answerInput.name = 'answer' + questionMCCount + '_' + (container.children.length + 1);
             answerInput.placeholder = 'Inserisci Risposta';
             answerInput.classList.add('answer-input');
             answerDiv.appendChild(answerInput);
 
             const correctCheckbox = document.createElement('input');
             correctCheckbox.type = 'checkbox';
-            correctCheckbox.name = 'correct' + questionCount + '_' + (container.children.length + 1);
+            correctCheckbox.name = 'correct' + questionMCCount + '_' + (container.children.length + 1);
             correctCheckbox.classList.add('correct-checkbox');
             answerDiv.appendChild(correctCheckbox);
 
@@ -408,20 +515,20 @@
         }
 
         function addCodeQuestion() {
-            questionCount++;
+            questionCodeCount++;
 
-            const container = document.getElementById('questionsContainer');
+            const container = document.getElementById('questions-code');
 
             const questionDiv = document.createElement('div');
             questionDiv.classList.add('question');
 
             const questionLabel = document.createElement('label');
-            //questionLabel.textContent = 'D.' + questionCount + ' Code: ';
+            //questionLabel.textContent = 'D.' + questionCodeCount + ' Code: ';
             questionDiv.appendChild(questionLabel);
 
             const questionInput = document.createElement('input');
             questionInput.type = 'text';
-            questionInput.name = 'question' + questionCount;
+            questionInput.name = 'question' + questionCodeCount;
             questionInput.placeholder = 'Scrivi la Domanda';
             questionInput.classList.add('question-input');
             questionDiv.appendChild(questionInput);
@@ -445,7 +552,7 @@
 
            // Adding MySQL code textarea
             const codeTextarea = document.createElement('textarea');
-            codeTextarea.name = 'code' + questionCount;
+            codeTextarea.name = 'code' + questionCodeCount;
             codeTextarea.placeholder = 'Inserisci codice MySQL';
             codeTextarea.classList.add('code-textarea');
             questionDiv.appendChild(codeTextarea);
@@ -494,28 +601,73 @@
             xhr.send(JSON.stringify({ code: code }));
         }
 
-        /*function addCodeAnswer(container) {
-            const codeAnswerDiv = document.createElement('div');
-            codeAnswerDiv.classList.add('code-answer');
 
-            const codeTextarea = document.createElement('textarea');
-            codeTextarea.name = 'code' + questionCount + '_' + (container.querySelectorAll('.code-answer').length + 1);
-            codeTextarea.placeholder = 'Inserisci codice MySQL';
-            codeTextarea.classList.add('code-textarea');
-            codeAnswerDiv.appendChild(codeTextarea);
-
-            const deleteAnswerButton = document.createElement('button');
-            deleteAnswerButton.textContent = 'Elimina';
-            deleteAnswerButton.classList.add('delete-answer-button');
-            deleteAnswerButton.onclick = function() {
-                container.removeChild(codeAnswerDiv);
+    
+        function pickupData() {
+            var sendDataTest = {
+                title: $('#title').val(),
+                QuestionMC: [], // Questo sarà riempito con i dati delle domande a risposta multipla
+                questionCode: [], // Questo sarà riempito con le domande sul codice SQL
+                tables: tables, // Assumo che 'tables' sia già un array di oggetti come mostrato
+                constraints: [] // Questo dovrà essere riempito con i vincoli definiti
             };
-            codeAnswerDiv.appendChild(deleteAnswerButton);
+            // Raccogliere domande a risposta multipla
+            $('.question-mc').each(function() {
+                    var questionText = $(this).find('.question-input').val(); 
+                    var answers = [];
+                    $(this).find('.answer').each(function() {
+                        var answerText = $(this).find('.answer-input').val();
+                        var isCorrect = $(this).find('.correct-checkbox').is(':checked');
+                        answers.push({text: answerText, isCorrect: isCorrect});
+                    });
+                    sendDataTest.QuestionMC.push({questionText: questionText, answers: answers});
+                });
 
-            container.appendChild(codeAnswerDiv);
-        }*/
-        //Non necessario altre risposte possibili perche si verifica sull output
+                // Raccogliere domande di codice
+                $('.question-code').each(function() {
+                    var questionText = $(this).find('.question-input').val(); 
+                    var sqlCode = $(this).find('.code-textarea').val(); 
+                    sendDataTest.questionCode.push({questionText: questionText, sqlCode: sqlCode});
+                });
+                // Raccogliere dati dei vincoli
+                $('.flex-container').each(function() {
+                    var constraintData = {
+                        table1: $(this).find('#menuTable1.dropdown-table').val(), // Assumi di avere menu con classi specifiche o data-attributes
+                        attribute1: $(this).find('menuAttribute1.dropdown-table').val(),
+                        table2: $(this).find('menuTable2.dropdown-table').val(),
+                        attribute2: $(this).find('menuAttribute2.dropdown-table').val()
+                    };
+                    sendDataTest.constraints.push(constraintData);
+                });
+            return sendDataTest;
+        }
 
+        function submitFormTest() {
+            var sendDataTest = pickupData();
+        // Invio dei dati al file PHP tramite AJAX
+        $.ajax({
+            type: 'POST',
+            url: 'xxx.php',
+            data: JSON.stringify(sendDataTest),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function(response) {
+                console.log("Risposta del server:", response);
+                // Gestire la risposta del server qui
+            },
+            error: function(xhr, status, error) {
+                console.error("Errore durante l'invio dei dati:", status, error);
+                // Gestire eventuali errori qui
+            }
+        });
+        }
+        // Chiama la funzione definita sopra quando il bottone viene cliccato
+        $('#submitTestButton').click(function(e) {
+            e.preventDefault(); // Previene il comportamento di sottomissione standard del form
+            var dataToSend = pickupData();
+            // Qui puoi inviare `dataToSend` al tuo server usando AJAX
+            console.log(dataToSend); // Stampa i dati raccolti per debug
+        });
     </script>
 </body>
 <footer>
