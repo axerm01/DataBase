@@ -185,7 +185,7 @@
         // Definisci la funzione JavaScript che viene chiamata quando il bottone viene premuto
         function addMenu() {
             // Effettua una richiesta AJAX per ottenere i nomi delle tabelle dal file PHP
-            $.getJSON("ConnessioneProvaAle/SimulatoreTestController.php", function(data) {
+            $.getJSON("../controllers/test/TestController.php", function(data) {
                 // Crea il menu a tendina con lo stesso stile di addConstraints
                 var select = $("<select class='dropdown-table' name='tabelle'></select>"); // Usa 'dropdown-table' per il primo menu
                 // Aggiungi un'opzione di placeholder disabilitata e selezionata di default

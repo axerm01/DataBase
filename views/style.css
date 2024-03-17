@@ -92,13 +92,17 @@ button {
     background-color: #333;
     color: #fff;
     border: none;
-    padding: 8px 15px;
+    padding: 8px 20px;
     border-radius: 5px;
     cursor: pointer;
     margin: 6px;
     font-size: 12px;
-    width: 150px;
+    transition: background-color 0.3s; /* Effetto di transizione per il cambio di colore di sfondo */
 }
+button:hover {
+    background-color: #212121; /* Cambia il colore di sfondo quando il mouse passa sopra il bottone */
+  }
+
 .button_home{
     flex-grow: 0;
     display: flex;
@@ -139,12 +143,11 @@ input[type="number"]
 input[type="submit"] {
     background-color: #333;
     color: #fff;
-    padding: 7px 15px;
+    padding: 7px 25px;
     border-radius: 5px;
     cursor: pointer;
     margin-top: 20px;
     font-size: 14px; /* Aumenta la dimensione del testo */
-    width: 120px; /* Il bottone "Invia" dimensione */
 }
 
 
