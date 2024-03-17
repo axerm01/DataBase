@@ -2,7 +2,6 @@
 // Includi il file di configurazione del database 
 ///////////////////modifica con il file giusto 
 include 'connect.php';
-include "recording.php";
 
 // Controlla se il modulo è stato inviato
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -24,8 +23,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "La password può contenere solo lettere e numeri e deve avere almeno una lettera maiuscola!";
         exit;
     }
-    // Cripta la password
-    $password_hash = password_hash($password, PASSWORD_DEFAULT);
+
+    // Cripta la password - valutare se usare questa funzione.
+    //$password_hash = password_hash($password, PASSWORD_DEFAULT);
 
     // Crea una connessione al database
     global $con;
@@ -37,11 +37,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if($_POST['role'] == 'student'){
         $stmt = $con->prepare("CALL CreateStudente (?,?,?,?,?,?,?)");
-        $stmt->bind_param("sssssss", $_POST['name'], $_POST['surname'], $email, $_POST['matricola'], $_POST['registration_year'], $_POST['phone'], $password_hash);
+        //$stmt->bind_param("sssssss", $_POST['name'], $_POST['surname'], $email, $_POST['matricola'], $_POST['registration_year'], $_POST['phone'], $password_hash);
+        $stmt->bind_param("sssssss", $_POST['name'], $_POST['surname'], $email, $_POST['matricola'], $_POST['registration_year'], $_POST['phone'], $password);
     }
     else if ($_POST['role'] == 'professor') {
         $stmt = $con->prepare("CALL CreateDocente (?,?,?,?,?,?,?)");
-        $stmt->bind_param("sssssis", $_POST['name'], $_POST['surname'], $email, $_POST['course'], $_POST['department'], $_POST['phone'], $password_hash);
+        //$stmt->bind_param("sssssis", $_POST['name'], $_POST['surname'], $email, $_POST['course'], $_POST['department'], $_POST['phone'], $password_hash);
+        $stmt->bind_param("sssssis", $_POST['name'], $_POST['surname'], $email, $_POST['course'], $_POST['department'], $_POST['phone'], $password);
     }
 
     // Pezzo di codice che dovrebe restituire un riscontro
