@@ -166,99 +166,75 @@
 
         // Funzione per inviare i dati del form in formato JSON
         function submitForm() {
-            var title = document.getElementById('title').value;
-            var attributes = [];
-            var rows = [];
-             // Utilizza fetch o XMLHttpRequest per inviare una richiesta al tuo script PHP
-            fetch('verifica_titolo.php', {
-                method: 'POST', // o 'GET'
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `title=${encodeURIComponent(title)}`
-            })
-            .then(response => response.json())
-            .then(data => {
+        var title = $('#title').val(); // Utilizzo di jQuery per ottenere il valore
+        var attributes = [];
+        var rows = [];
+        // Prima invia una richiesta GET per verificare il titolo
+        $.ajax({
+            type: 'GET', // Cambiato in GET
+            url: '../controllers/table/TableController.php', // URL dello script PHP per la verifica del titolo
+            data: { title: title }, // Parametri inviati nella stringa di query URL
+            success: function(data) {
                 if(data.esiste) {
                     alert("Il titolo inserito esiste già. Scegline un altro.");
                 } else {
-                    // Procedi con l'invio del form
-                    var table = document.getElementById('table');
-                        var headerRow = table.rows[0];
-                        for (var i = 1; i < headerRow.cells.length; i++) {
-                            var attributeName = headerRow.cells[i].querySelector('input[type="text_attr"]').value;
-                            var attributeType = headerRow.cells[i].querySelector('select[name="attribute_type"]').value;
-                            var isPK = headerRow.cells[i].querySelector('input[name="pk"]').checked;
+                    // Se il titolo non esiste, procedi con l'invio del form
+                    var table = $('#table')[0]; // Utilizzo di jQuery con accesso diretto all'elemento DOM
+                    var headerRow = table.rows[0];
+                    for (var i = 1; i < headerRow.cells.length; i++) {
+                        var cell = $(headerRow.cells[i]);
+                        var attributeName = cell.find('input[type="text_attr"]').val();
+                        var attributeType = cell.find('select[name="attribute_type"]').val();
+                        var isPK = cell.find('input[name="pk"]').prop('checked');
 
-                            var attribute = {
-                                name: attributeName,
-                                type: attributeType,
-                                PK: isPK
-                            };
-                            attributes.push(attribute); //aggiungo l'attributo
-                        }
-
-                        // inserisce in rows tutte le righe.
-                        for (var i = 1; i < table.rows.length; i++) {
-                            var rowData = [];
-                            // legge una riga come array di elementi e li inserisce in rows
-                            for (var j = 1; j < table.rows[i].cells.length; j++) {
-                                rowData.push(table.rows[i].cells[j].querySelector('input[name="row"]').value);
-                            }
-                            rows.push(rowData);
-                        }
-
-                        var formData = {
-                            title: title,
-                            attributes: attributes,
-                            rows: rows
+                        var attribute = {
+                            name: attributeName,
+                            type: attributeType,
+                            PK: isPK
                         };
+                        attributes.push(attribute); // Aggiungo l'attributo
+                    }
 
-                        // Invia i dati in formato JSON al file PHP
-                        var xhr = new XMLHttpRequest();
-                        xhr.open('POST', '../controllers/table/TableController.php', true);
-                        xhr.setRequestHeader('Content-Type', 'application/json');
-                        xhr.onreadystatechange = function () {
-                            if (xhr.readyState === 4 && xhr.status === 200) {
-                                console.log(xhr.responseText); // Puoi gestire la risposta qui...
-                            }
-                        };
-                        xhr.send(JSON.stringify(formData));
+                    // Inserisce in rows tutte le righe
+                    for (var i = 1; i < table.rows.length; i++) {
+                        var rowData = [];
+                        for (var j = 1; j < table.rows[i].cells.length; j++) {
+                            rowData.push($(table.rows[i].cells[j]).find('input[name="row"]').val());
+                        }
+                        rows.push(rowData);
+                    }
 
-                        console.log(formData);
+                    var formData = {
+                        title: title,
+                        attributes: attributes,
+                        rows: rows
+                    };
+
+                    // Invia i dati in formato JSON al file PHP per l'inserimento
+                    $.ajax({
+                        type: 'POST',
+                        url: '../controllers/table/TableController.php',
+                        contentType: 'application/json', // Imposta il tipo di contenuto come JSON
+                        data: JSON.stringify(formData), // Converte i dati del form in stringa JSON
+                        success: function(response) {
+                            console.log(response); // Gestisci la risposta qui
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Errore:', error);
+                        }
+                    });
                 }
-            })
-            .catch((error) => {
+            },
+            error: function(xhr, status, error) {
                 console.error('Errore:', error);
-            });
-        }
+            },
+            dataType: 'json' // Aspettati una risposta JSON
+        });
+    }
+
 
     </script>
     
 </body>
 </html>
 
-
-
-function addMenu() {
-// Effettua una richiesta AJAX per ottenere i nomi delle tabelle dal file PHP
-$.getJSON("../controllers/test/TestController.php?endpoint=get_tables", function(data){
-// Crea il menu a tendina
-var select = $("<select id='tabelle' name='tabelle'></select>");
-// Itera attraverso l'array ricevuto e aggiungi le opzioni al menu a tendina
-$.each(data, function(index, obj) {
-select.append("<option value='" + obj.IDTabella + "'>" + obj.Nome + "</option>");
-});
-// Inserisci il menu a tendina nel contenitore
-$("#menuContainer").empty().append(select);
-
-// Aggiungi un gestore per l'evento di cambio al menu a tendina
-select.change(function() {
-// Aggiorna la variabile selectedTable con l'ID e il nome della tabella selezionata
-var selectedID = $(this).val();
-
-// Effettua una richiesta AJAX per inviare i dati al file PHP
-$.getJSON("../controllers/test/TestController.php?endpoint=get_full_table&tableId="+selectedID);
-});
-});
-}

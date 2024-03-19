@@ -185,36 +185,43 @@
         // Definisci la funzione JavaScript che viene chiamata quando il bottone viene premuto
         function addMenu() {
             // Effettua una richiesta AJAX per ottenere i nomi delle tabelle dal file PHP
-            $.getJSON("../controllers/test/TestController.php", function(data) {
-                // Crea il menu a tendina con lo stesso stile di addConstraints
-                var select = $("<select class='dropdown-table' name='tabelle'></select>"); // Usa 'dropdown-table' per il primo menu
-                // Aggiungi un'opzione di placeholder disabilitata e selezionata di default
-                select.append("<option value='' disabled selected>Sel.Tabella</option>");
-                // Itera attraverso l'array ricevuto e aggiungi le opzioni al menu a tendina
-                $.each(data, function(index, value) {
-                    select.append("<option value='" + value.id + "'>" + value.name + "</option>");
-                });
+            $.ajax({
+                type: "GET",
+                url: "../controllers/test/TestController.php?get_tables?endpoint=get_tables",
+                data: { },
+                success: function(data) {
+                    console.log("Successo:", data);
+                    // Agisci qui con i dati ricevuti
+                    // Crea il menu a tendina con lo stesso stile di addConstraints
+                    var select = $("<select class='dropdown-table' name='tabelle'></select>"); // Usa 'dropdown-table' per il primo menu
+                    // Aggiungi un'opzione di placeholder disabilitata e selezionata di default
+                    select.append("<option value='' disabled selected>Sel.Tabella</option>");
+                    // Itera attraverso l'array ricevuto e aggiungi le opzioni al menu a tendina
+                    $.each(data, function(index, value) {
+                        select.append("<option value='" + value.id + "'>" + value.name + "</option>");
+                    });
 
-                // Inserisci il menu a tendina nel contenitore
-                $("#menuContainer").append(select);
+                    // Inserisci il menu a tendina nel contenitore
+                    $("#menuContainer").append(select);
 
-                // Aggiungi un gestore per l'evento di cambio al menu a tendina
-                select.change(function() {
-                    // Nasconde il menu a tendina dopo la selezione
-                    $(this).hide();
-                    // Esegue le azioni necessarie in base alla selezione
-                    var selectedTable = {
-                        id: $(this).val(),
-                        name: $(this).find("option:selected").text()
-                    };
-                    tables.push(selectedTable); // Memorizza le tabelle selezionate
-                    updateMenuTable1();
-                    console.log("Tabella selezionata: ", selectedTable);
-                    requestData(selectedTable); // Invia i dati della tabella selezionata
-                    // Crea e aggiungi il bottone di eliminazione per questa specifica tabella selezionata
-                    //deleteTable(selectedTable.id);
-
-                });
+                    // Aggiungi un gestore per l'evento di cambio al menu a tendina
+                    select.change(function() {
+                        // Nasconde il menu a tendina dopo la selezione
+                        $(this).hide();
+                        // Esegue le azioni necessarie in base alla selezione
+                        var selectedTable = {
+                            id: $(this).val(),
+                            name: $(this).find("option:selected").text()
+                        };
+                        tables.push(selectedTable); // Memorizza le tabelle selezionate
+                        updateMenuTable1();
+                        console.log("Tabella selezionata: ", selectedTable);
+                        requestData(selectedTable.id); // Invia i dati della tabella selezionata
+                        // Crea e aggiungi il bottone di eliminazione per questa specifica tabella selezionata
+                        //deleteTable(selectedTable.id);
+                    });
+                },
+                dataType: "json"
             }).fail(function(jqxhr, textStatus, error) {
                 var err = textStatus + ", " + error;
                 console.log("Request Failed: " + err);
@@ -244,18 +251,51 @@
         // Funzione per inviare la variabile selectedTable al file PHP
         function requestData(selectedID) {
             // AJAX request to send data to the PHP file and receive table data
-            $.getJSON("../controllers/test/TestController.php?endpoint=get_full_table&tableId="+selectedID);
+            /*$.getJSON("../controllers/test/TestController.php?endpoint=get_full_table&tableId="+selectedID, function(data)){
+                // Crea il menu a tendina con lo stesso stile di addConstraints
+                var select = $("<select class='dropdown-table' name='tabelle'></select>"); // Usa 'dropdown-table' per il primo menu
+                // Aggiungi un'opzione di placeholder disabilitata e selezionata di default
+                select.append("<option value='' disabled selected>Sel.Tabella</option>");
+                // Itera attraverso l'array ricevuto e aggiungi le opzioni al menu a tendina
+                $.each(data, function(index, value) {
+                    select.append("<option value='" + value.id + "'>" + value.name + "</option>");
+                });
 
-            $.getJSON("../controllers/test/TestController.php?endpoint=get_full_table&tableId="+selectedID, function(response) {
-                console.log("Data received from the server: ", response);
+                // Inserisci il menu a tendina nel contenitore
+                $("#menuContainer").append(select);
+
+                // Aggiungi un gestore per l'evento di cambio al menu a tendina
+                select.change(function() {
+                    // Nasconde il menu a tendina dopo la selezione
+                    $(this).hide();
+                    // Esegue le azioni necessarie in base alla selezione
+                    var selectedTable = {
+                        id: $(this).val(),
+                        name: $(this).find("option:selected").text()
+                    };
+                    tables.push(selectedTable); // Memorizza le tabelle selezionate
+                    updateMenuTable1();
+                    console.log("Tabella selezionata: ", selectedTable);
+                    requestData(selectedTable); // Invia i dati della tabella selezionata
+                    // Crea e aggiungi il bottone di eliminazione per questa specifica tabella selezionata
+                    //deleteTable(selectedTable.id);
+
+                });
+            }*/
+            $.ajax({
+                type: "GET", // Metodo HTTP utilizzato
+                url: "../controllers/test/TestController.php?endpoint=get_full_table", // URL a cui viene fatta la richiesta
+                data: { tableId: selectedID }, // Dati inviati al server
+                success: function(response) {
+                    console.log("Data received from the server: ", response);
                 // Crea un contenitore per la tabella e il bottone di eliminazione
-                var tableContainer = $("<div class='table-container'></div>").attr("id", "container-" + selectedTable.id);
+                var tableContainer = $("<div class='table-container'></div>").attr("id", "container-" + selectedID);
         
                 // Crea il bottone di eliminazione
                 var deleteButton = $("<button class='delete-button'>Elimina Tabella</button>");
                 deleteButton.click(function() {
                     // Rimuovi la tabella e il bottone dall'array tables e dal DOM
-                    tables = tables.filter(table => table.id !== selectedTable.id);
+                    tables = tables.filter(table => table.id !== selectedID);
                     tableContainer.remove(); // Rimuovi il contenitore che include la tabella e il bottone
                     updateMenuTable1();// Aggiorna il menu a tendina delle tabelle
                 });
@@ -264,7 +304,7 @@
                 tableContainer.append($("<br>"));
                 // Assuming the response is an array of objects, where each object represents a table row
                 // Create a table element
-                var viewTable = $("<table></table>").attr("id", "table-" + selectedTable.id); 
+                var viewTable = $("<table></table>").attr("id", "table-" + selectedID); 
                 // Usa l'ID della tabella per creare un ID univoco per l'elemento table
                 viewTable.append("<tr><th>ID</th><th>Name</th></tr>"); // Add table header
 
@@ -277,67 +317,15 @@
                     tableContainer.append(viewTable);
                     $("#menuContainer").append(tableContainer);
                 // Expecting response in JSON format
-            }, "json").fail(function(jqxhr, textStatus, error) {
+            },
+                dataType: "json" // Specifica il tipo di dati attesi in risposta
+            }).fail(function(jqxhr, textStatus, error) {
                 var err = textStatus + ", " + error;
                 console.log("Request Failed: " + err);
             });
         }
     
 
-        /*function addConstraints() {
-            const container = document.getElementById('constraintsContainer');
-            const dropdownsDiv = document.createElement('div');
-            dropdownsDiv.classList.add('flex-container');
-
-            // Genera un identificativo unico per questo gruppo di dropdown
-            const uniqueId = 'group-' + document.querySelectorAll('.flex-container').length;
-
-            // Crea un elemento per la freccia (inizialmente nascosto)
-            const arrow = document.createElement('span');
-            arrow.id = uniqueId + '-arrow';
-            //arrow.innerHTML = '&#x2192;'; // Codice HTML per una freccia verso destra
-            arrow.style.display = 'none'; // Nasconde inizialmente la freccia
-            arrow.classList.add('separator'); // Aggiungi classi per lo stile se necessario
-
-            // Crea i 4 menu a tendina
-            for (let i = 1; i <= 4; i++) {
-                const select = document.createElement('select');
-                select.id = uniqueId + '-menu' + i; // Assegna un ID unico
-                select.classList.add(i === 1 ? 'dropdown-menu1' : 'dropdown-menu');
-                if (i !== 4) {
-                    select.style.display = i === 1 ? 'block' : 'none'; // Mostra solo il primo menu a tendina
-                }
-                select.innerHTML = `
-                    <option value="">Seleziona opzione</option>
-                    <option value="menu${i}.opz1">Menu ${i}.Opzione 1</option>
-                    <option value="menu${i}.opz2">Menu ${i}.Opzione 2</option>
-                `;
-                if (i === 1) {
-                    select.onchange = function() { 
-                        showDropdown(uniqueId + '-menu1', [uniqueId + '-menu2']); 
-                        showDropdown(uniqueId + '-menu2', [uniqueId + '-menu3']); 
-                        document.getElementById(uniqueId + '-arrow').style.display = 'inline-block'; // Mostra la freccia
-                    };
-                }  else if (i === 3) {
-                    select.onchange = function() { showDropdown(uniqueId + '-menu3', [uniqueId + '-menu4']); };
-                }
-
-                dropdownsDiv.appendChild(select);
-                if (i === 2) { // Posiziona la freccia tra il secondo e il terzo menu a tendina
-                    dropdownsDiv.appendChild(arrow);
-                }
-            }
-
-            // Applica la logica per mostrare/nascondere i dropdown basati sulla selezione
-            function showDropdown(currentDropdownId, nextDropdownIds) {
-                nextDropdownIds.forEach(id => {
-                    const dropdown = document.getElementById(id);
-                    if (dropdown) dropdown.style.display = 'block';
-                });
-            }
-
-            container.appendChild(dropdownsDiv);
-        }*/
         function addConstraints() {
         const container = document.getElementById('constraintsContainer');
         const dropdownsDiv = document.createElement('div');
@@ -385,12 +373,23 @@
                 .map(table => `<option value="${table.id}">${table.name}</option>`)
                 .join('');
 
-            $.post("ConnessioneProvaAle/SimulatoreInvioDatiColonne.php", { action: 'getColumns', tableId: selectedTableId }, function(columns) {
+            /*$.getJSON("../controllers/test/TestController.php?endpoint=get_table_columns&tableId=" +selectedTableId, function(columns) {
                 menuAttribute1.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>` + columns.map(col => `<option value="${col}">${col}</option>`).join('');
                 menuAttribute1.style.display = 'block';
                 arrow.style.display = 'inline-block';
-            }, "json");
-
+            });*/
+            $.ajax({
+                type: "GET", // Imposta il metodo HTTP su GET
+                url: "../controllers/test/TestController.php?endpoint=get_table_columns", // URL a cui fare la richiesta
+                data: { tableId: selectedTableId }, // Dati inviati al server come parte della richiesta
+                success: function(columns) {
+                    // Costruisci le opzioni del menu a tendina usando i dati ricevuti
+                    menuAttribute1.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>` + columns.map(col => `<option value="${col}">${col}</option>`).join('');
+                    menuAttribute1.style.display = 'block'; // Mostra il menu a tendina
+                    arrow.style.display = 'inline-block'; // Mostra la freccia (assumendo che sia un elemento del tuo DOM)
+                },
+                dataType: "json" // Aspettati una risposta in formato JSON
+            });
             menuTable2.innerHTML = `<option value="" disabled selected>Sel.Tabella</option>` + otherTablesOptions;
             menuTable2.style.display = 'block';
         };
@@ -399,10 +398,20 @@
         menuTable2.onchange = function() {
             const selectedTableId = this.value;
 
-            $.post("ConnessioneProvaAle/SimulatoreInvioDatiColonne.php", { action: 'getColumns', tableId: selectedTableId }, function(columns) {
+            /*$.getJSON("../controllers/test/TestController.php?endpoint=get_table_columns&tableId=" +selectedTableId, function(columns) {
                 menuAttribute2.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>` + columns.map(col => `<option value="${col}">${col}</option>`).join('');
                 menuAttribute2.style.display = 'block';
-            }, "json");
+            });*/
+            $.ajax({
+                type: "GET", // Imposta il metodo HTTP su GET
+                url: "../controllers/test/TestController.php?endpoint=get_table_columns", // URL a cui fare la richiesta
+                data: {tableId: selectedTableId},
+                success: function(columns) {
+                    menuAttribute2.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>` + columns.map(col => `<option value="${col}">${col}</option>`).join('');
+                    menuAttribute2.style.display = 'block';
+                },
+                dataType: "json" // Aspettati una risposta in formato JSON
+            });
         };
         // Aggiunta del bottone di eliminazione al DIV contenitore dei dropdown
         deleteConstraint(uniqueId, dropdownsDiv, container);
@@ -543,14 +552,6 @@
             };
             questionDiv.appendChild(deleteQuestionButton);
             
-            
-            /*const addCodeAnswerButton = document.createElement('button');
-            addCodeAnswerButton.textContent = 'Aggiungi altra risposta MySQL';
-            addCodeAnswerButton.classList.add('add-answer-button');
-            addCodeAnswerButton.onclick = function() {
-                addCodeAnswer(questionDiv);
-            };
-            questionDiv.appendChild(addCodeAnswerButton);*/
 
            // Adding MySQL code textarea
             const codeTextarea = document.createElement('textarea');
@@ -569,20 +570,21 @@
 
             container.appendChild(questionDiv);
         }
+
         function codeCheck() {
             // Ottenere il codice MySQL inserito dall'utente
             const code = document.querySelector('.code-textarea').value;
 
             // Effettuare una chiamata AJAX per inviare il codice al server
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', '../controllers/test/TestController.php', true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    // Analizzare la risposta
-                    const response = JSON.parse(xhr.responseText);
+            $.ajax({
+                type: 'POST', // Tipo di richiesta HTTP
+                url: '../controllers/test/TestController.php', // //AGGIUNGERE ENDPOINT PER GESTIONE DELLE 2 RICHIESTE POST
+                contentType: 'application/json', // Tipo di contenuto inviato al server
+                data: JSON.stringify({ code: code }), // Dati inviati al server
+                success: function(response) {
+                    // Analizzare la risposta (con jQuery, la risposta è già un oggetto JS se il server risponde con JSON)
                     if (response.length > 0) {
-                        const table = createTable(response); //
+                        const table = createTable(response);
                         document.body.appendChild(table);
                         // Il codice è valido
                         alert('Il codice è valido!');
@@ -590,18 +592,19 @@
                         // Il codice non è valido
                         alert('Il codice non è valido!');
                     }
-                } else {
+                },
+                error: function(xhr, status, error) {
                     // Gestione degli errori
-                    alert('Errore durante la verifica del codice.');
-                }
-            };
-            xhr.onerror = function() {
-                // Gestione degli errori di rete
-                alert('Errore di rete durante la verifica del codice.');
-            };
-            // Invia il codice al server come payload JSON
-            xhr.send(JSON.stringify({ code: code }));
+                    if (xhr.status === 0) {
+                        alert('Errore di rete durante la verifica del codice.');
+                    } else {
+                        alert('Errore durante la verifica del codice.');
+                    }
+                },
+                dataType: 'json' // Tipo di dati attesi dalla risposta
+            });
         }
+
 
 
     
@@ -625,22 +628,22 @@
                     sendDataTest.QuestionMC.push({questionText: questionText, answers: answers});
                 });
 
-                // Raccogliere domande di codice
-                $('.question-code').each(function() {
-                    var questionText = $(this).find('.question-input').val(); 
-                    var sqlCode = $(this).find('.code-textarea').val(); 
-                    sendDataTest.questionCode.push({questionText: questionText, sqlCode: sqlCode});
-                });
-                // Raccogliere dati dei vincoli
-                $('.flex-container').each(function() {
-                    var constraintData = {
-                        table1: $(this).find('#menuTable1.dropdown-table').val(), // Assumi di avere menu con classi specifiche o data-attributes
-                        attribute1: $(this).find('menuAttribute1.dropdown-table').val(),
-                        table2: $(this).find('menuTable2.dropdown-table').val(),
-                        attribute2: $(this).find('menuAttribute2.dropdown-table').val()
-                    };
-                    sendDataTest.constraints.push(constraintData);
-                });
+            // Raccogliere domande di codice
+            $('.question-code').each(function() {
+                var questionText = $(this).find('.question-input').val(); 
+                var sqlCode = $(this).find('.code-textarea').val(); 
+                sendDataTest.questionCode.push({questionText: questionText, sqlCode: sqlCode});
+            });
+            // Raccogliere dati dei vincoli
+            $('.flex-container').each(function() {
+                var constraintData = {
+                    table1: $(this).find('#menuTable1.dropdown-table').val(), // Assumi di avere menu con classi specifiche o data-attributes
+                    attribute1: $(this).find('menuAttribute1.dropdown-table').val(),
+                    table2: $(this).find('menuTable2.dropdown-table').val(),
+                    attribute2: $(this).find('menuAttribute2.dropdown-table').val()
+                };
+                sendDataTest.constraints.push(constraintData);
+            });
             return sendDataTest;
         }
 
@@ -649,7 +652,7 @@
         // Invio dei dati al file PHP tramite AJAX
         $.ajax({
             type: 'POST',
-            url: 'xxx.php',
+            url: '../controllers/test/TestController.php', //AGGIUNGERE ENDPOINT PER GESTIONE DELLE 2 RICHIESTE POST
             data: JSON.stringify(sendDataTest),
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
