@@ -187,7 +187,7 @@
             // Effettua una richiesta AJAX per ottenere i nomi delle tabelle dal file PHP
             $.ajax({
                 type: "GET",
-                url: "../controllers/test/TestController.php?get_tables?endpoint=get_tables",
+                url: "../controllers/test/TestController.php?endpoint=get_tables",
                 data: { },
                 success: function(data) {
                     console.log("Successo:", data);
@@ -198,7 +198,7 @@
                     select.append("<option value='' disabled selected>Sel.Tabella</option>");
                     // Itera attraverso l'array ricevuto e aggiungi le opzioni al menu a tendina
                     $.each(data, function(index, value) {
-                        select.append("<option value='" + value.id + "'>" + value.name + "</option>");
+                        select.append("<option value='" + value.IDTabella + "'>" + value.Nome + "</option>");
                     });
 
                     // Inserisci il menu a tendina nel contenitore

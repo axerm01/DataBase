@@ -22,22 +22,22 @@ switch ($method) {
 
             case 'get_tests': // GET di tutti i test di un certo professore la cui mail è passata da FE
                 $prof_email = filter_input(INPUT_GET, 'prof_email');
-                $data = getAllTests($prof_email);
+                $data = Test::getProfTests($prof_email);
                 break;
 
             case 'get_tables': // GET delle tabelle create da un docente, restituisce id tabella e nome
-                $data = getAllTables($_SESSION['email']);
+                $data = Table::getAllTables($_SESSION['email']);
                 break;
 
             case 'get_table_columns': // GET delle colonne di una tabella indicata
                 $id = filter_input(INPUT_GET, 'tableId');
-                $data = getTableColumns($id);
+                $data = Column::getTableColumns($id);
                 break;
 
             case 'get_full_table': // GET del contenuto della tabella
                 $id = filter_input(INPUT_GET, 'tableId');
-                $columns = getTableColumns($id);
-                $content = getTableContent($id);
+                $columns = Column::getTableColumns($id);
+                $content = Table::getTableContent($id);
 
                 $data = array_merge(array($columns), $content);
                 break;
@@ -112,62 +112,6 @@ function newTest() {
 
     }
 }
-
-function getAllTables($profEmail) //restituisce id tabella e nome
-{
-    global $con;
-    $q = 'CALL ViewAllTables(?);';
-    $stmt = $con->prepare($q);
-    if ($stmt === false) {
-        die("Errore nella preparazione della query: " . $con->error);
-    }
-    $stmt->bind_param('s', $profEmail);
-    if (!$stmt->execute()) {
-        die("Errore nell'esecuzione della query: " . $stmt->error);
-    }
-
-    $result = $stmt->get_result();
-    $data = [];
-    while ($row = $result->fetch_assoc()) {
-        $data[] = [
-            'IDTabella' => $row['ID'],
-            'Nome' => $row['Nome']
-        ];
-    }
-    $stmt->close();
-
-    return $data;
-
-}
-
-function getTableColumns($tableId)
-{
-    global $con;
-    $q = 'CALL ViewAllAttributes(?);';
-    $stmt = $con->prepare($q);
-    if ($stmt === false) {
-        die("Errore nella preparazione della query: " . $con->error);
-    }
-    $stmt->bind_param('s', $tableId );
-    if (!$stmt->execute()) {
-        die("Errore nell'esecuzione della query: " . $stmt->error);
-    }
-
-    $result = $stmt->get_result();
-    $data = [];
-
-    while ($row = $result->fetch_assoc()) {
-        $data[] = [
-            'IDTabella' => $row['IDTabella'],
-            'Nome' => $row['Nome']
-        ];
-    }
-    $stmt->close();
-
-    return $data;
-
-}
-
 function testQuery($q){
     global $con;
     $stmt = $con->prepare($q);
@@ -189,72 +133,7 @@ function testQuery($q){
     return $data;
 }
 
-function getAllTests($prof_email){
-    global $con;
-    $q = 'CALL ViewAllTest(?);';
-    $stmt = $con->prepare($q);
-    if ($stmt === false) {
-        die("Errore nella preparazione della query: " . $con->error);
-    }
-    $stmt->bind_param('s', $prof_email );
-    if (!$stmt->execute()) {
-        die("Errore nell'esecuzione della query: " . $stmt->error);
-    }
 
-    $result = $stmt->get_result();
-    $data = [];
-
-    while ($row = $result->fetch_assoc()) {
-        $data[] = $row;  // Aggiunge ogni riga all'array $data
-    }
-    $stmt->close();
-
-    return $data;
-}
-
-function getTableContent($tableID){
-    global $con;
-
-    // Prima, ottieni il nome della tabella in base al suo ID
-    $queryNomeTabella = "SELECT Nome FROM tabella WHERE ID = ?";
-    $stmt1 = $con->prepare($queryNomeTabella);
-    if ($stmt1 === false) {
-        die("Errore nella preparazione della query: " . $con->error);
-    }
-
-    $stmt1->bind_param('i', $tableID);
-    if (!$stmt1->execute()) {
-        die("Errore nell'esecuzione della query: " . $stmt1->error);
-    }
-
-    $resultNomeTabella = $stmt1->get_result();
-    if ($row = $resultNomeTabella->fetch_assoc()) {
-        $tableName = $row['Nome'];
-    } else {
-        die("Nessuna tabella trovata con l'ID specificato");
-    }
-    $stmt1->close();
-
-
-    $q = "SELECT * FROM ".$tableName;
-    $stmt = $con->prepare($q);
-    if ($stmt === false) {
-        die("Errore nella preparazione della query: " . $con->error);
-    }
-    if (!$stmt->execute()) {
-        die("Errore nell'esecuzione della query: " . $stmt->error);
-    }
-
-    $result = $stmt->get_result();
-    $data = [];
-
-    while ($row = $result->fetch_assoc()) {
-        $data[] = $row;  // Aggiunge ogni riga all'array $data
-    }
-    $stmt->close();
-
-    return $data;
-}
 
 
 

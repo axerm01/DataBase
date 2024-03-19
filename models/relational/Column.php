@@ -14,6 +14,8 @@ class Column {
         $this->references = []; // Inizializzazione come array vuoto
     }
 
+
+
     // Getters
     public function getTableId() {
         return $this->tableId;
@@ -90,6 +92,35 @@ class Column {
         mysqli_stmt_close($stmt);
 
     }
+
+    public static function getTableColumns($tableId)
+    {
+        global $con;
+        $q = 'CALL ViewAllAttributes(?);';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('s', $tableId );
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+
+        $result = $stmt->get_result();
+        $data = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $data[] = [
+                'IDTabella' => $row['IDTabella'],
+                'Nome' => $row['Nome']
+            ];
+        }
+        $stmt->close();
+
+        return $data;
+
+    }
+
 }
 
 

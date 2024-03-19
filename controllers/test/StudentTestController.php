@@ -3,36 +3,49 @@ session_start();
 include('../utils/connect.php');
 include '../../models/users/Student.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    $action = filter_input(INPUT_GET, 'action');
+$method = $_SERVER['REQUEST_METHOD'];
+$endpoint = $_GET['endpoint'];
+//$uri = explode('?', $_SERVER['REQUEST_URI'], 2);
+//$endpoint = $uri[0];
 
-    $data = 'no data';
-    switch ($action) {
-        case 'start_test':
-            $testId = filter_input(INPUT_GET, 'id');
-            $stdEmail = $_SESSION['email'];
+header('Content-Type: application/json');
 
-            $data = startTest($testId, $stdEmail);
-            break;
+switch ($method) {
+    case 'GET':
+        switch ($endpoint) {
+            case 'start_test':
+                $testId = filter_input(INPUT_GET, 'testId');
+                $stdEmail = $_SESSION['email'];
+                $data = startTest($testId, $stdEmail);
+                break;
 
-        case 'get_tests': // GET di tutti i test di un certo professore la cui mail è passata da FE
-            $prof_email = filter_input(INPUT_GET, 'prof_email');
-            $data = getAllTests($prof_email);
-            break;
+            case 'get_tests': // GET di tutti i test presenti a sistema
+                $data = Test::getAllTests();
+                break;
 
-        case 'get_tables': // GET delle tabelle create da un docente, restituisce id tabella e nome
-            $data = getAllTables();
-            break;
+            case 'get_my_tests': // GET dei test aperti, in progress e chiusi di uno studente
+                $testId = filter_input(INPUT_GET, 'testId');
+                $stdEmail = $_SESSION['email'];
+                $data = StudentTest::getTests($testId, $stdEmail);
+                break;
 
-        case 'get_table_columns': // GET delle colonne di una tabella indicata
-            $id = filter_input(INPUT_GET, 'tableId');
-            $data = getTableColumns($id);
-            break;
-    }
+        }
+        echo json_encode($data);  // Converte l'array $data in JSON e lo invia
 
-    header('Content-Type: application/json');  // Imposta l'header per il contenuto JSON
-    echo json_encode($data);  // Converte l'array $data in JSON e lo invia
-    }
+        break;
+
+    case 'POST':
+        break;
+
+    case 'PUT':
+        break;
+
+    case 'DELETE':
+        break;
+
+}
+
+
 
 function startTest($testId, $stdEmail){
     $data = '';
@@ -46,3 +59,4 @@ function startTest($testId, $stdEmail){
 
 
 ?>
+

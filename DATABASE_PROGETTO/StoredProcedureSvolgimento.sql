@@ -7,7 +7,7 @@ in DataUltimaRispostaAtt datetime,
 in IDTestAtt int
 )
 BEGIN
-INSERT INTO Scelta_Multipla (MailStudente,Stato,DataPrimaRisposta,DataUltimaRisposta,IDTest)
+INSERT INTO Svolgimento (MailStudente,Stato,DataPrimaRisposta,DataUltimaRisposta,IDTest)
 VALUES (MailStudenteAtt,StatoAtt,DataPrimaRispostaAtt,DataUltimaRispostaAtt,IDTestAtt);
 END //
 
@@ -24,7 +24,7 @@ CREATE PROCEDURE `ViewSvolgimento`(in IDTestAtt int,
 in MailStudenteAtt varchar(45))
 BEGIN
 SELECT*
-FROM Scelta_Multipla
+FROM Svolgimento
 WHERE IDTest = IDTestAtt and MailStudente = MailStudenteAtt;
 END //
 

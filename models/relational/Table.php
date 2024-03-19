@@ -122,6 +122,76 @@ class Table {
         }
     }
 
+    public static function getAllTables($profEmail) //restituisce id tabella e nome
+    {
+        global $con;
+        $q = 'CALL ViewAllTables(?);';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('s', $profEmail);
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+
+        $result = $stmt->get_result();
+        $data = [];
+        while ($row = $result->fetch_assoc()) {
+            $data[] = [
+                'IDTabella' => $row['ID'],
+                'Nome' => $row['Nome']
+            ];
+        }
+        $stmt->close();
+
+        return $data;
+
+    }
+
+    public static function getTableContent($tableID){
+        global $con;
+
+        // Prima, ottieni il nome della tabella in base al suo ID
+        $queryNomeTabella = "SELECT Nome FROM tabella WHERE ID = ?";
+        $stmt1 = $con->prepare($queryNomeTabella);
+        if ($stmt1 === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+
+        $stmt1->bind_param('i', $tableID);
+        if (!$stmt1->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt1->error);
+        }
+
+        $resultNomeTabella = $stmt1->get_result();
+        if ($row = $resultNomeTabella->fetch_assoc()) {
+            $tableName = $row['Nome'];
+        } else {
+            die("Nessuna tabella trovata con l'ID specificato");
+        }
+        $stmt1->close();
+
+
+        $q = "SELECT * FROM ".$tableName;
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+
+        $result = $stmt->get_result();
+        $data = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;  // Aggiunge ogni riga all'array $data
+        }
+        $stmt->close();
+
+        return $data;
+    }
 
     // Getters e Setters
     public function getId() {

@@ -50,7 +50,7 @@ class Test {
         }
     }
 
-    function linkTablesToTest($list){
+    public function linkTablesToTest($list){
         global $con;
         if ($con->connect_error) {
             die("Connessione fallita: " . $con->connect_error);
@@ -83,6 +83,51 @@ class Test {
         // Chiudi lo statement e la connessione
         $stmt->close();
         $con->close();
+    }
+
+    public static function getAllTests(){
+        global $con;
+        $q = 'SELECT ID, TITOLO FROM TEST';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+
+        $result = $stmt->get_result();
+        $data = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;  // Aggiunge ogni riga all'array $data
+        }
+        $stmt->close();
+
+        return $data;
+    }
+
+    public static function getProfTests($prof_email){
+        global $con;
+        $q = 'CALL ViewAllTest(?);';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('s', $prof_email );
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+
+        $result = $stmt->get_result();
+        $data = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;  // Aggiunge ogni riga all'array $data
+        }
+        $stmt->close();
+
+        return $data;
     }
 
     // Getters
