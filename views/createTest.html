@@ -185,6 +185,16 @@
         // Definisci la funzione JavaScript che viene chiamata quando il bottone viene premuto
         function addMenu() {
             // Effettua una richiesta AJAX per ottenere i nomi delle tabelle dal file PHP
+            $.ajax({
+                type: "GET",
+                url: "../controllers/test/TestController.php",
+                data: { action: "get_tables" },
+                success: function(data) {
+                    console.log("Successo:", data);
+                    // Agisci qui con i dati ricevuti
+                },
+                dataType: "json"
+            });
             $.getJSON("../controllers/test/TestController.php", function(data) {
                 // Crea il menu a tendina con lo stesso stile di addConstraints
                 var select = $("<select class='dropdown-table' name='tabelle'></select>"); // Usa 'dropdown-table' per il primo menu
@@ -647,7 +657,7 @@
         // Invio dei dati al file PHP tramite AJAX
         $.ajax({
             type: 'POST',
-            url: 'xxx.php',
+            url: 'TestController.php',
             data: JSON.stringify(sendDataTest),
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
