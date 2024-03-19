@@ -185,16 +185,6 @@
         // Definisci la funzione JavaScript che viene chiamata quando il bottone viene premuto
         function addMenu() {
             // Effettua una richiesta AJAX per ottenere i nomi delle tabelle dal file PHP
-            $.ajax({
-                type: "GET",
-                url: "../controllers/test/TestController.php",
-                data: { action: "get_tables" },
-                success: function(data) {
-                    console.log("Successo:", data);
-                    // Agisci qui con i dati ricevuti
-                },
-                dataType: "json"
-            });
             $.getJSON("../controllers/test/TestController.php", function(data) {
                 // Crea il menu a tendina con lo stesso stile di addConstraints
                 var select = $("<select class='dropdown-table' name='tabelle'></select>"); // Usa 'dropdown-table' per il primo menu
@@ -252,9 +242,11 @@
 
 
         // Funzione per inviare la variabile selectedTable al file PHP
-        function requestData(selectedTable) {
+        function requestData(selectedID) {
             // AJAX request to send data to the PHP file and receive table data
-            $.post("ConnessioneProvaAle/SimulatoreInvioDati.php", selectedTable, function(response) {
+            $.getJSON("../controllers/test/TestController.php?endpoint=get_full_table&tableId="+selectedID);
+
+            $.getJSON("../controllers/test/TestController.php?endpoint=get_full_table&tableId="+selectedID, function(response) {
                 console.log("Data received from the server: ", response);
                 // Crea un contenitore per la tabella e il bottone di eliminazione
                 var tableContainer = $("<div class='table-container'></div>").attr("id", "container-" + selectedTable.id);
@@ -657,7 +649,7 @@
         // Invio dei dati al file PHP tramite AJAX
         $.ajax({
             type: 'POST',
-            url: 'TestController.php',
+            url: 'xxx.php',
             data: JSON.stringify(sendDataTest),
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',

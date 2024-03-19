@@ -1,5 +1,8 @@
 <?php
 
+include('../../controllers/utils/connect.php');
+
+
 class Student {
     private $firstName;
     private $lastName;
@@ -126,8 +129,25 @@ class Student {
 
     public static function getStudent($email)
     {
-        $student = '';
-        //Query per select Student
+        global $con;
+        $q = 'CALL ViewStudente(?);';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('s', $email);
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+
+        $student = [];
+        $result = $stmt->get_result();
+        while ($row = $result->fetch_assoc()) {
+            $student[] = $row;  // Aggiunge ogni riga all'array $student
+        }
+        $stmt->close();
+        $con->close();
+
         return $student;
     }
 

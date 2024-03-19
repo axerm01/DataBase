@@ -237,3 +237,28 @@
     
 </body>
 </html>
+
+
+
+function addMenu() {
+// Effettua una richiesta AJAX per ottenere i nomi delle tabelle dal file PHP
+$.getJSON("../controllers/test/TestController.php?endpoint=get_tables", function(data){
+// Crea il menu a tendina
+var select = $("<select id='tabelle' name='tabelle'></select>");
+// Itera attraverso l'array ricevuto e aggiungi le opzioni al menu a tendina
+$.each(data, function(index, obj) {
+select.append("<option value='" + obj.IDTabella + "'>" + obj.Nome + "</option>");
+});
+// Inserisci il menu a tendina nel contenitore
+$("#menuContainer").empty().append(select);
+
+// Aggiungi un gestore per l'evento di cambio al menu a tendina
+select.change(function() {
+// Aggiorna la variabile selectedTable con l'ID e il nome della tabella selezionata
+var selectedID = $(this).val();
+
+// Effettua una richiesta AJAX per inviare i dati al file PHP
+$.getJSON("../controllers/test/TestController.php?endpoint=get_full_table&tableId="+selectedID);
+});
+});
+}
