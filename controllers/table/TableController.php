@@ -29,14 +29,8 @@ switch ($method){
         break;
 
     case 'POST': //Creazione di una nuova tabella
-        if($endpoint === '/tables'){
-            echo "Ricevuta una richiesta Tables";
 
-        }
-        else{
-            echo "Ricevuta una richiesta";
-        }
-        /*if($endpoint === '/tables'){
+        if($endpoint === '/tables'){
             $content = trim(file_get_contents("php://input"));
 
             // Decodifica il JSON ricevuto
@@ -54,7 +48,7 @@ switch ($method){
             $table->insertOnDB();
             $table->createNewTable();
             $table->fillTableRows($decodedData['rows']);
-        }*/
+        }
 
         break;
 

@@ -43,6 +43,34 @@ class StudentTest {
         return $data;
     }
 
+    public static function start($testId, $stdEmail) {
+        global $con; // Assumi che $con sia la tua connessione al database
+
+        // Prepara la query per controllare l'esistenza del record
+        $checkQuery = "SELECT * FROM Svolgimento WHERE MailStudente = ? AND IDTest = ?";
+        $stmt = $con->prepare($checkQuery);
+        $stmt->bind_param('si', $stdEmail, $testId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $currentTime = date('Y-m-d H:i:s'); // Ottieni il timestamp corrente
+
+        if ($result->num_rows > 0) {
+            // Il record esiste, aggiorna DataUltimaRisposta
+            $updateQuery = "UPDATE Svolgimento SET DataUltimaRisposta = ?, Stato = ? WHERE MailStudente = ? AND IDTest = ?";
+            $updateStmt = $con->prepare($updateQuery);
+            $status = self::IN_PROGRESS;
+            $updateStmt->bind_param('sssi', $currentTime,$status, $stdEmail, $testId);
+            $updateStmt->execute();
+        } else {
+            // Il record non esiste, inseriscilo
+            $insertQuery = "INSERT INTO Svolgimento (MailStudente, Stato, DataPrimaRisposta, DataUltimaRisposta, IDTest) VALUES (?, 'Open', ?, ?, ?)";
+            $insertStmt = $con->prepare($insertQuery);
+            $insertStmt->bind_param('sssi', $stdEmail, $currentTime, $currentTime, $testId);
+            $insertStmt->execute();
+        }
+    }
+
     public function getStudentEmail() {
         return $this->studentEmail;
     }

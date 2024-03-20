@@ -87,7 +87,7 @@ class Test {
 
     public static function getAllTests(){
         global $con;
-        $q = 'SELECT ID, TITOLO FROM TEST';
+        $q = 'SELECT * FROM TEST';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
             die("Errore nella preparazione della query: " . $con->error);
@@ -115,6 +115,29 @@ class Test {
             die("Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('s', $prof_email );
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+
+        $result = $stmt->get_result();
+        $data = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;  // Aggiunge ogni riga all'array $data
+        }
+        $stmt->close();
+
+        return $data;
+    }
+
+    public static function showInfo($testId){
+        global $con;
+        $q = 'select * from test where ID = ?';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('i', $testId );
         if (!$stmt->execute()) {
             die("Errore nell'esecuzione della query: " . $stmt->error);
         }
@@ -266,8 +289,4 @@ class Test {
         }
         return null;
     }
-}
-
-?>
-
 }

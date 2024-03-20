@@ -10,6 +10,29 @@ class CodeQuestion extends Question {
         $this->output = $output;
     }
 
+    public static function getQuestion($id, $testId) {
+        global $con; // Assicurati che $con sia la tua connessione al database
+
+        $query = "SELECT * FROM codice WHERE ID = ? AND IDTest = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param('ii', $id, $testId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $data = [];
+
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;  // Aggiunge ogni riga all'array $data
+            }
+        }
+        else {
+            $data = null;
+        }
+
+        $stmt->close();
+        return $data;
+    }
+
     public function insertOnDB()
     {
         global $con;

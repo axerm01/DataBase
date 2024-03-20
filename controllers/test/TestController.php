@@ -1,6 +1,9 @@
 <?php
 session_start();
 include('../utils/connect.php');
+include '../../models/relational/Table.php';
+require '../../models/tests/Test.php';
+require '../../models/relational/Column.php';
 
 
 $method = $_SERVER['REQUEST_METHOD'];
@@ -12,11 +15,10 @@ header('Content-Type: application/json');
 
 switch ($method) {
     case 'GET':
-        $data = 'no data';
         switch ($endpoint) {
 
             case 'test_query': //restituisce il risultato della query inserita dal docente per trovare la risposta di una code question
-            $query = filter_input(INPUT_GET, 'query');
+            $query = filter_input(INPUT_GET, 'code');
             $data = testQuery($query);
                 break;
 
@@ -27,6 +29,7 @@ switch ($method) {
 
             case 'get_tables': // GET delle tabelle create da un docente, restituisce id tabella e nome
                 $data = Table::getAllTables($_SESSION['email']);
+                //$data = getAllTables($_SESSION['email']);
                 break;
 
             case 'get_table_columns': // GET delle colonne di una tabella indicata
@@ -133,9 +136,28 @@ function testQuery($q){
     return $data;
 }
 
+ //function getAllTables($profEmail) //restituisce id tabella e nome
+    {
+        global $con;
+        $q = 'CALL ViewAllTables(?);';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('s', $profEmail);
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
+        }
 
+        $result = $stmt->get_result();
+        $data = [];
+        while ($row = $result->fetch_assoc()) {
+            $data[] = [
+                'IDTabella' => $row['ID'],
+                'Nome' => $row['Nome']
+            ];
+        }
+        $stmt->close();
 
-
-
-?>
-
+        return $data;
+    }

@@ -13,10 +13,22 @@ header('Content-Type: application/json');
 switch ($method) {
     case 'GET':
         switch ($endpoint) {
+            /*case 'show_test':
+                $testId = filter_input(INPUT_GET, 'testId');
+                $data = Test::showInfo($testId);
+                break;*/
+
             case 'start_test':
                 $testId = filter_input(INPUT_GET, 'testId');
                 $stdEmail = $_SESSION['email'];
-                $data = startTest($testId, $stdEmail);
+                StudentTest::start($testId, $stdEmail);
+                $data = Question::getQuestion(0,$testId);
+                break;
+
+            case 'next_question': //se $data è NULL significa che si è raggiunta la fine del test, mettere controllo sul frontend
+                $qId = filter_input(INPUT_GET, 'questionId');
+                $testId = filter_input(INPUT_GET, 'testId');
+                $data = Question::getQuestion($qId,$testId);
                 break;
 
             case 'get_tests': // GET di tutti i test presenti a sistema
@@ -44,19 +56,6 @@ switch ($method) {
         break;
 
 }
-
-
-
-function startTest($testId, $stdEmail){
-    $data = '';
-    $student = Student::getStudent($stdEmail);
-    $student->getStudentTestList();
-
-
-    return $data;
-}
-
-
 
 ?>
 

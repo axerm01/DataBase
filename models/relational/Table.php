@@ -136,17 +136,16 @@ class Table {
         }
 
         $result = $stmt->get_result();
-        $data = [];
+        $content = [];
         while ($row = $result->fetch_assoc()) {
-            $data[] = [
+            $content[] = [
                 'IDTabella' => $row['ID'],
                 'Nome' => $row['Nome']
             ];
         }
         $stmt->close();
 
-        return $data;
-
+        return $content;
     }
 
     public static function getTableContent($tableID){
@@ -257,9 +256,4 @@ class Table {
         }
         return false;
     }
-
 }
-
-
-?>
-

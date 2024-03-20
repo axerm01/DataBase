@@ -224,6 +224,8 @@
                 dataType: "json"
             }).fail(function(jqxhr, textStatus, error) {
                 var err = textStatus + ", " + error;
+                var data = JSON.parse(jqxhr.responseText);
+                console.log("Parsed response data: ", data);
                 console.log("Request Failed: " + err);
             });
         }
@@ -257,6 +259,7 @@
                 data: { tableId: selectedID }, // Dati inviati al server
                 success: function(response) {
                     console.log("Data received from the server: ", response);
+
                 // Crea un contenitore per la tabella e il bottone di eliminazione
                 var tableContainer = $("<div class='table-container'></div>").attr("id", "container-" + selectedID);
         
@@ -273,14 +276,33 @@
                 tableContainer.append($("<br>"));
                 // Assuming the response is an array of objects, where each object represents a table row
                 // Create a table element
-                var viewTable = $("<table></table>").attr("id", "table-" + selectedID); 
-                // Usa l'ID della tabella per creare un ID univoco per l'elemento table
-                viewTable.append("<tr><th>ID</th><th>Name</th></tr>"); // Add table header
+                    var viewTable = $("<table></table>").attr("id", "table-" + selectedID);
+                    if (Array.isArray(response[0])) {
+                        // Estrai i nomi e inseriscili in un nuovo array
+                        let nomi = response[0].map(obj => obj.Nome);
 
-                // Add rows to the table based on received data
-                $.each(response, function(index, row) {
-                    viewTable.append("<tr><td>" + row.IDTabella + "</td><td>" + row.Nome + "</td></tr>");
-                });
+                        // Creazione dinamica delle intestazioni della tabella
+                        var headerRow = $('<tr></tr>');
+                        nomi.forEach(function(nome) {
+                            headerRow.append('<th>' + nome + '</th>');
+                        });
+                        viewTable.append(headerRow);
+                    } else {
+                        console.error('Formato JSON non valido');
+                    }
+
+                    var rows = response.slice(1);
+
+                    // Add rows to the table based on received data
+                    $.each(rows, function(index, row) {
+                        var dataRow = '<tr>';
+                        // Per ogni proprietà dell'oggetto 'row', aggiungi una cella alla riga
+                        Object.keys(row).forEach(function(key) {
+                            dataRow += '<td>' + row[key] + '</td>';
+                        });
+                        dataRow += '</tr>';
+                        viewTable.append(dataRow);
+                    });
 
                 // Clear previous table container and add the new table
                     tableContainer.append(viewTable);
@@ -304,7 +326,7 @@
         const uniqueId = 'group-' + document.querySelectorAll('.flex-container').length;
         dropdownsDiv.id = uniqueId; // Assegna un ID univoco al container dei dropdown
 
-        let optionsForMenuTable1 = tables.map(table => `<option value="${table.IDTabella}">${table.Nome}</option>`).join('');
+        let optionsForMenuTable1 = tables.map(table => `<option value="${table.id}">${table.name}</option>`).join('');
 
         const menuTable1 = document.createElement('select');
         menuTable1.id = uniqueId + '-menuTable1';
@@ -338,8 +360,8 @@
         menuTable1.onchange = function() {
             const selectedTableId = this.value;
             const otherTablesOptions = tables
-                .filter(table => table.IDTabella !== selectedTableId)
-                .map(table => `<option value="${table.IDTabella}">${table.Nome}</option>`)
+                .filter(table => table.id !== selectedTableId)
+                .map(table => `<option value="${table.id}">${table.name}</option>`)
                 .join('');
 
             $.ajax({
@@ -387,8 +409,8 @@
         // Popola di nuovo il menu con le tabelle aggiornate
         tables.forEach(table => {
             const option = document.createElement('option');
-            option.value = table.IDTabella;
-            option.textContent = table.Nome;
+            option.value = table.id;
+            option.textContent = table.name;
             menuTable1.appendChild(option);
         });
     }
@@ -537,9 +559,8 @@
 
             // Effettuare una chiamata AJAX per inviare il codice al server
             $.ajax({
-                type: 'POST', // Tipo di richiesta HTTP
-                url: '../controllers/test/TestController.php', // //AGGIUNGERE ENDPOINT PER GESTIONE DELLE 2 RICHIESTE POST
-                contentType: 'application/json', // Tipo di contenuto inviato al server
+                type: 'GET', // Tipo di richiesta HTTP
+                url: '../controllers/test/TestController.php?endpoint=test_query', // //AGGIUNGERE ENDPOINT PER GESTIONE DELLE 2 RICHIESTE POST
                 data: JSON.stringify({ code: code }), // Dati inviati al server
                 success: function(response) {
                     // Analizzare la risposta (con jQuery, la risposta è già un oggetto JS se il server risponde con JSON)
