@@ -251,37 +251,6 @@
         // Funzione per inviare la variabile selectedTable al file PHP
         function requestData(selectedID) {
             // AJAX request to send data to the PHP file and receive table data
-            /*$.getJSON("../controllers/test/TestController.php?endpoint=get_full_table&tableId="+selectedID, function(data)){
-                // Crea il menu a tendina con lo stesso stile di addConstraints
-                var select = $("<select class='dropdown-table' name='tabelle'></select>"); // Usa 'dropdown-table' per il primo menu
-                // Aggiungi un'opzione di placeholder disabilitata e selezionata di default
-                select.append("<option value='' disabled selected>Sel.Tabella</option>");
-                // Itera attraverso l'array ricevuto e aggiungi le opzioni al menu a tendina
-                $.each(data, function(index, value) {
-                    select.append("<option value='" + value.id + "'>" + value.name + "</option>");
-                });
-
-                // Inserisci il menu a tendina nel contenitore
-                $("#menuContainer").append(select);
-
-                // Aggiungi un gestore per l'evento di cambio al menu a tendina
-                select.change(function() {
-                    // Nasconde il menu a tendina dopo la selezione
-                    $(this).hide();
-                    // Esegue le azioni necessarie in base alla selezione
-                    var selectedTable = {
-                        id: $(this).val(),
-                        name: $(this).find("option:selected").text()
-                    };
-                    tables.push(selectedTable); // Memorizza le tabelle selezionate
-                    updateMenuTable1();
-                    console.log("Tabella selezionata: ", selectedTable);
-                    requestData(selectedTable); // Invia i dati della tabella selezionata
-                    // Crea e aggiungi il bottone di eliminazione per questa specifica tabella selezionata
-                    //deleteTable(selectedTable.id);
-
-                });
-            }*/
             $.ajax({
                 type: "GET", // Metodo HTTP utilizzato
                 url: "../controllers/test/TestController.php?endpoint=get_full_table", // URL a cui viene fatta la richiesta
@@ -310,7 +279,7 @@
 
                 // Add rows to the table based on received data
                 $.each(response, function(index, row) {
-                    viewTable.append("<tr><td>" + row.id + "</td><td>" + row.name + "</td></tr>");
+                    viewTable.append("<tr><td>" + row.IDTabella + "</td><td>" + row.Nome + "</td></tr>");
                 });
 
                 // Clear previous table container and add the new table
@@ -335,7 +304,7 @@
         const uniqueId = 'group-' + document.querySelectorAll('.flex-container').length;
         dropdownsDiv.id = uniqueId; // Assegna un ID univoco al container dei dropdown
 
-        let optionsForMenuTable1 = tables.map(table => `<option value="${table.id}">${table.name}</option>`).join('');
+        let optionsForMenuTable1 = tables.map(table => `<option value="${table.IDTabella}">${table.Nome}</option>`).join('');
 
         const menuTable1 = document.createElement('select');
         menuTable1.id = uniqueId + '-menuTable1';
@@ -369,15 +338,10 @@
         menuTable1.onchange = function() {
             const selectedTableId = this.value;
             const otherTablesOptions = tables
-                .filter(table => table.id !== selectedTableId)
-                .map(table => `<option value="${table.id}">${table.name}</option>`)
+                .filter(table => table.IDTabella !== selectedTableId)
+                .map(table => `<option value="${table.IDTabella}">${table.Nome}</option>`)
                 .join('');
 
-            /*$.getJSON("../controllers/test/TestController.php?endpoint=get_table_columns&tableId=" +selectedTableId, function(columns) {
-                menuAttribute1.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>` + columns.map(col => `<option value="${col}">${col}</option>`).join('');
-                menuAttribute1.style.display = 'block';
-                arrow.style.display = 'inline-block';
-            });*/
             $.ajax({
                 type: "GET", // Imposta il metodo HTTP su GET
                 url: "../controllers/test/TestController.php?endpoint=get_table_columns", // URL a cui fare la richiesta
@@ -398,10 +362,6 @@
         menuTable2.onchange = function() {
             const selectedTableId = this.value;
 
-            /*$.getJSON("../controllers/test/TestController.php?endpoint=get_table_columns&tableId=" +selectedTableId, function(columns) {
-                menuAttribute2.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>` + columns.map(col => `<option value="${col}">${col}</option>`).join('');
-                menuAttribute2.style.display = 'block';
-            });*/
             $.ajax({
                 type: "GET", // Imposta il metodo HTTP su GET
                 url: "../controllers/test/TestController.php?endpoint=get_table_columns", // URL a cui fare la richiesta
@@ -427,8 +387,8 @@
         // Popola di nuovo il menu con le tabelle aggiornate
         tables.forEach(table => {
             const option = document.createElement('option');
-            option.value = table.id;
-            option.textContent = table.name;
+            option.value = table.IDTabella;
+            option.textContent = table.Nome;
             menuTable1.appendChild(option);
         });
     }
@@ -603,6 +563,39 @@
                 },
                 dataType: 'json' // Tipo di dati attesi dalla risposta
             });
+        }
+        function createTable(response) {
+            // Crea l'elemento <table> e aggiungi un ID alla tabella
+            const table = document.createElement('table');
+            table.id = response.IDTabella;
+            table.className = 'custom-table'; // Aggiungi una classe per lo styling se necessario
+
+            // Crea l'intestazione della tabella con le colonne
+            const thead = document.createElement('thead');
+            const trHead = document.createElement('tr');
+            response.Colonne.forEach(colName => {
+                const th = document.createElement('th');
+                th.textContent = colName;
+                trHead.appendChild(th);
+            });
+            thead.appendChild(trHead);
+            table.appendChild(thead);
+
+            // Crea il corpo della tabella con il contenuto delle righe
+            const tbody = document.createElement('tbody');
+            response.Contenuto.forEach(row => {
+                const tr = document.createElement('tr');
+                row.forEach(cell => {
+                    const td = document.createElement('td');
+                    td.textContent = cell;
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+
+            // Restituisce l'elemento <table> creato
+            return table;
         }
 
 
