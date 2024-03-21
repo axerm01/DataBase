@@ -7,7 +7,6 @@ require '../../models/relational/Column.php';
 
 
 $method = $_SERVER['REQUEST_METHOD'];
-$endpoint = $_GET['endpoint'];
 //$uri = explode('?', $_SERVER['REQUEST_URI'], 2);
 //$endpoint = $uri[0];
 
@@ -15,12 +14,8 @@ header('Content-Type: application/json');
 
 switch ($method) {
     case 'GET':
+        $endpoint = $_GET['endpoint'];
         switch ($endpoint) {
-
-            case 'test_query': //restituisce il risultato della query inserita dal docente per trovare la risposta di una code question
-            $query = filter_input(INPUT_GET, 'code');
-            $data = testQuery($query);
-                break;
 
             case 'get_tests': // GET di tutti i test di un certo professore la cui mail è passata da FE
                 $prof_email = filter_input(INPUT_GET, 'prof_email');
@@ -50,8 +45,20 @@ switch ($method) {
         break;
 
     case 'POST':
-        newTest();
-        break;
+        $action = $_POST['action'];
+        switch ($action) {
+            case 'test_query': //restituisce il risultato della query inserita dal docente per trovare la risposta di una code question
+                $query = filter_input(INPUT_POST, 'query');
+                $data = testQuery($query);
+                echo json_encode($data);
+
+                break;
+
+            case 'save_test':
+                newTest();
+                break;
+        }
+
 
     case 'PUT':
 
@@ -117,6 +124,11 @@ function newTest() {
 }
 function testQuery($q){
     global $con;
+
+    if (stripos($q, 'DROP') !== false || stripos($q, 'DELETE') !== false || stripos($q, 'UPDATE') !== false) {
+        return 'Query non consentita';
+    }
+
     $stmt = $con->prepare($q);
     if ($stmt === false) {
         die("Errore nella preparazione della query: " . $con->error);
@@ -135,29 +147,3 @@ function testQuery($q){
 
     return $data;
 }
-
- //function getAllTables($profEmail) //restituisce id tabella e nome
-    {
-        global $con;
-        $q = 'CALL ViewAllTables(?);';
-        $stmt = $con->prepare($q);
-        if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
-        }
-        $stmt->bind_param('s', $profEmail);
-        if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
-        }
-
-        $result = $stmt->get_result();
-        $data = [];
-        while ($row = $result->fetch_assoc()) {
-            $data[] = [
-                'IDTabella' => $row['ID'],
-                'Nome' => $row['Nome']
-            ];
-        }
-        $stmt->close();
-
-        return $data;
-    }

@@ -182,7 +182,6 @@
         var selectedTable = "";
         var tables = []; // Array per tenere traccia delle scelte
     
-        // Definisci la funzione JavaScript che viene chiamata quando il bottone viene premuto
         function addMenu() {
             // Effettua una richiesta AJAX per ottenere i nomi delle tabelle dal file PHP
             $.ajax({
@@ -249,7 +248,6 @@
             $("#menuContainer").append(deleteButton);
         }
 
-
         // Funzione per inviare la variabile selectedTable al file PHP
         function requestData(selectedID) {
             // AJAX request to send data to the PHP file and receive table data
@@ -315,7 +313,6 @@
                 console.log("Request Failed: " + err);
             });
         }
-    
 
         function addConstraints() {
         const container = document.getElementById('constraintsContainer');
@@ -400,7 +397,8 @@
         // Infine, aggiungi il div dei menu a tendina al container
         container.appendChild(dropdownsDiv);
     }
-    function updateMenuTable1() {
+
+        function updateMenuTable1() {
         // Trova il container del menu 1 e lo svuota
         const menuTable1 = document.getElementById('group-0-menuTable1');
         if (!menuTable1) return; // Se il menu 1 non esiste, esce dalla funzione
@@ -414,7 +412,8 @@
             menuTable1.appendChild(option);
         });
     }
-    function deleteConstraint(uniqueId, dropdownsDiv, container) {
+
+        function deleteConstraint(uniqueId, dropdownsDiv, container) {
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Elimina Vincolo';
         deleteButton.className = 'delete-button';
@@ -430,7 +429,6 @@
 
         dropdownsDiv.appendChild(deleteButton); // Aggiunge il bottone di eliminazione al div dei dropdown
     }
-
 
     </script>
 
@@ -555,18 +553,18 @@
 
         function codeCheck() {
             // Ottenere il codice MySQL inserito dall'utente
-            const code = document.querySelector('.code-textarea').value;
+            const query = document.querySelector('.code-textarea').value;
 
             // Effettuare una chiamata AJAX per inviare il codice al server
             $.ajax({
-                type: 'GET', // Tipo di richiesta HTTP
-                url: '../controllers/test/TestController.php?endpoint=test_query', // //AGGIUNGERE ENDPOINT PER GESTIONE DELLE 2 RICHIESTE POST
-                data: JSON.stringify({ code: code }), // Dati inviati al server
+                type: 'POST', // Tipo di richiesta HTTP
+                url: '../controllers/test/TestController.php',
+                data: { query: query, action: 'test_query'}, // Dati inviati al server
                 success: function(response) {
                     // Analizzare la risposta (con jQuery, la risposta è già un oggetto JS se il server risponde con JSON)
                     if (response.length > 0) {
                         const table = createTable(response);
-                        document.body.appendChild(table);
+                        document.body.appendChild(table); // da correggere come viene mostrata a schermo
                         // Il codice è valido
                         alert('Il codice è valido!');
                     } else {
@@ -585,16 +583,19 @@
                 dataType: 'json' // Tipo di dati attesi dalla risposta
             });
         }
-        function createTable(response) {
-            // Crea l'elemento <table> e aggiungi un ID alla tabella
-            const table = document.createElement('table');
-            table.id = response.IDTabella;
-            table.className = 'custom-table'; // Aggiungi una classe per lo styling se necessario
 
-            // Crea l'intestazione della tabella con le colonne
+        function createTable(response) {
+            // Assumi che tutti gli oggetti abbiano lo stesso set di chiavi
+            // Usa le chiavi del primo oggetto per le intestazioni delle colonne
+            const columns = response.length > 0 ? Object.keys(response[0]) : [];
+
+            const table = document.createElement('table');
+            table.className = 'custom-table';
+
+            // Creazione delle intestazioni della tabella
             const thead = document.createElement('thead');
             const trHead = document.createElement('tr');
-            response.Colonne.forEach(colName => {
+            columns.forEach(colName => {
                 const th = document.createElement('th');
                 th.textContent = colName;
                 trHead.appendChild(th);
@@ -602,13 +603,13 @@
             thead.appendChild(trHead);
             table.appendChild(thead);
 
-            // Crea il corpo della tabella con il contenuto delle righe
+            // Creazione del corpo della tabella
             const tbody = document.createElement('tbody');
-            response.Contenuto.forEach(row => {
+            response.forEach(obj => {
                 const tr = document.createElement('tr');
-                row.forEach(cell => {
+                columns.forEach(column => {
                     const td = document.createElement('td');
-                    td.textContent = cell;
+                    td.textContent = obj[column];
                     tr.appendChild(td);
                 });
                 tbody.appendChild(tr);
@@ -618,9 +619,6 @@
             // Restituisce l'elemento <table> creato
             return table;
         }
-
-
-
     
         function pickupData() {
             var sendDataTest = {
