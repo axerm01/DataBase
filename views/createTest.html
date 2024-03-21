@@ -166,8 +166,7 @@
             <button  onclick="addMCQuestion()">Aggiungi Quesito Risposta Multipla</button>
         </div>
         <div id="questionsContainer">
-            <div id="questions-mc" class="question-mc">   </div>
-            <div id="questions-code" class="question-code" >    </div>
+            
         </div>
 
         <button id="submitTestButton">Crea Test</button>
@@ -438,10 +437,11 @@
         function addMCQuestion() {
             questionMCCount++;
 
-            const container = document.getElementById('questions-mc');
+            const container = document.getElementById('questionsContainer');
 
             const questionDiv = document.createElement('div');
             questionDiv.classList.add('question');
+            questionDiv.setAttribute('data-question-type', 'mc'); // Identifica il tipo di domanda
 
             const questionLabel = document.createElement('label');
             //questionLabel.textContent = 'D.' + questionMCCount + ': ';
@@ -505,13 +505,14 @@
             container.appendChild(answerDiv);
         }
 
-        function addCodeQuestion() {
+         function addCodeQuestion() {
             questionCodeCount++;
 
-            const container = document.getElementById('questions-code');
+            const container = document.getElementById('questionsContainer');
 
             const questionDiv = document.createElement('div');
             questionDiv.classList.add('question');
+            questionDiv.setAttribute('data-question-type', 'code'); // Identifica il tipo di domanda
 
             const questionLabel = document.createElement('label');
             //questionLabel.textContent = 'D.' + questionCodeCount + ' Code: ';
@@ -623,28 +624,27 @@
         function pickupData() {
             var sendDataTest = {
                 title: $('#title').val(),
-                QuestionMC: [], // Questo sarà riempito con i dati delle domande a risposta multipla
-                questionCode: [], // Questo sarà riempito con le domande sul codice SQL
+                questions: [], // Questo sarà riempito con le domande
                 tables: tables, // Assumo che 'tables' sia già un array di oggetti come mostrato
                 constraints: [] // Questo dovrà essere riempito con i vincoli definiti
             };
-            // Raccogliere domande a risposta multipla
-            $('.question-mc').each(function() {
-                    var questionText = $(this).find('.question-input').val(); 
+            // Raccoglie tutte le domande
+            $('#questionsContainer .question').each(function() {
+                const questionType = $(this).data('question-type'); // Legge il tipo di domanda
+                const questionText = $(this).find('.question-input').val();
+
+                if (questionType === 'mc') {
                     var answers = [];
                     $(this).find('.answer').each(function() {
                         var answerText = $(this).find('.answer-input').val();
                         var isCorrect = $(this).find('.correct-checkbox').is(':checked');
-                        answers.push({text: answerText, isCorrect: isCorrect});
+                        answers.push({ text: answerText, isCorrect: isCorrect });
                     });
-                    sendDataTest.QuestionMC.push({questionText: questionText, answers: answers});
-                });
-
-            // Raccogliere domande di codice
-            $('.question-code').each(function() {
-                var questionText = $(this).find('.question-input').val(); 
-                var sqlCode = $(this).find('.code-textarea').val(); 
-                sendDataTest.questionCode.push({questionText: questionText, sqlCode: sqlCode});
+                    sendDataTest.questions.push({ type: "mc", questionText: questionText, answers: answers });
+                } else if (questionType === 'code') {
+                    var sqlCode = $(this).find('.code-textarea').val();
+                    sendDataTest.questions.push({ type: "code", questionText: questionText, sqlCode: sqlCode });
+                }
             });
             // Raccogliere dati dei vincoli
             $('.flex-container').each(function() {
