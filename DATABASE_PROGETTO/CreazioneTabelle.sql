@@ -81,6 +81,7 @@ CREATE TABLE IF NOT EXISTS `CODICE` (
   `ID` INT NOT NULL,
   `Output` VARCHAR(45) DEFAULT NULL,
   `IDTest` INT NOT NULL,
+  `Difficolta` INT NOT NULL, -- aggiunto
   PRIMARY KEY (`ID`, `IDTest`),
   CONSTRAINT `FK_Codice_IDTest`
     FOREIGN KEY (`IDTest`)
@@ -170,7 +171,7 @@ CREATE TABLE IF NOT EXISTS `SCELTA_MULTIPLA` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS `SCELTA` (
+CREATE TABLE IF NOT EXISTS `SCELTA` ( -- le possibili scelte dei quesiti scelta multipla
   `ID` INT NOT NULL AUTO_INCREMENT,
   `Testo` VARCHAR(45) NULL,
   `IDTest` INT NOT NULL,
@@ -186,6 +187,59 @@ CREATE TABLE IF NOT EXISTS `SCELTA` (
     REFERENCES `SCELTA_MULTIPLA` (`ID`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `RISPOSTA_SCELTA` ( -- tabella risposta dello studente quesito multiplo
+  `Studente` varchar(45) not null,
+  `IDDomanda` INT NOT NULL,
+  `IDRisposta` int,
+  `IDTest` INT NOT NULL,
+  PRIMARY KEY (`Studente`, `IDDomanda`,`IDRisposta`),
+  CONSTRAINT `FK_RispostaScelta_IDTest`
+    FOREIGN KEY (`IDTest`)
+    REFERENCES `TEST` (`ID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `FK_RispostaScelta_IDRisposta`
+    FOREIGN KEY (`IDRisposta`)
+    REFERENCES `SCELTA` (`ID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,  
+  CONSTRAINT `FK_RispostaScelta_IDDomanda`
+    FOREIGN KEY (`IDDomanda`)
+    REFERENCES `SCELTA_MULTIPLA` (`ID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `FK_RispostaScelta_Studente`
+    FOREIGN KEY (`Studente`)
+    REFERENCES `Studente` (`Mail`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+    )
+ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `RISPOSTA_CODICE` ( -- tabella risposta dello studente a quesito codice
+  `Studente` varchar(45) not null,
+  `IDDomanda` INT NOT NULL,
+  `CodiceRisposta` varchar(500),
+  `IDTest` INT NOT NULL,
+  PRIMARY KEY (`Studente`, `IDDomanda`,`IDTest`),
+  CONSTRAINT `FK_RispostaCodice_IDTest`
+    FOREIGN KEY (`IDTest`)
+    REFERENCES `TEST` (`ID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `FK_RispostaCodice_IDDomanda`
+    FOREIGN KEY (`IDDomanda`)
+    REFERENCES `CODICE` (`ID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `FK_RispostaCodice_Studente`
+    FOREIGN KEY (`Studente`)
+    REFERENCES `Studente` (`Mail`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+    )
 ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `SVOLGIMENTO` (

@@ -666,4 +666,40 @@ DELETE FROM Test
 where id NOT LIKE -1;
 END//
 
+CREATE PROCEDURE `ViewRispostaStudente`( --nuovo
+in StudenteAtt varchar(45), IDDomandaAtt int ,IDTestAtt int
+)
+BEGIN
+SELECT IDRisposta
+FROM RISPOSTA_SCELTA
+WHERE Studente = StudenteAtt and IDDomanda = IDDomandaAtt and IDTest = IDTestAtt;
+END //
+
+CREATE PROCEDURE `ViewCodiceStudente`( --nuovo
+in StudenteAtt varchar(45), IDDomandaAtt int ,IDTestAtt int
+)
+BEGIN
+SELECT CodiceRisposta
+FROM RISPOSTA_CODICE
+WHERE Studente = StudenteAtt and IDDomanda = IDDomandaAtt and IDTest = IDTestAtt;
+END //
+
+CREATE PROCEDURE `UpdateRispostaStudente`( --nuovo
+in StudenteAtt varchar(45), IDDomandaAtt int ,IDRispostaAtt int
+)
+BEGIN
+UPDATE RISPOSTA_SCELTA
+SET IDRisposta = IDRispostaAtt
+WHERE Studente = StudenteAtt and IDDomanda = IDDomandaAtt;
+END //
+
+CREATE PROCEDURE `UpdateCodiceStudente`( --nuovo
+in StudenteAtt varchar(45), IDDomandaAtt int ,IDTestAtt int, RispostaAtt varchar(500)
+)
+BEGIN
+UPDATE RISPOSTA_CODICE
+SET CodiceRisposta = RispostaAtt
+WHERE Studente = StudenteAtt and IDDomanda = IDDomandaAtt and IDTest = IDTestAtt;
+END //
+
 DELIMITER ;
