@@ -472,10 +472,9 @@
     </script>
 
     <script>
-        let questionMCCount = 0;
-        let questionCodeCount = 0;
+        let questionCount = 0;
         function addMCQuestion() {
-            questionMCCount++;
+            questionCount++;
 
             const container = document.getElementById('questionsContainer');
 
@@ -488,7 +487,8 @@
 
             const questionInput = document.createElement('input');
             questionInput.type = 'text';
-            questionInput.name = 'question' + questionMCCount;
+            questionInput.name = 'question' + questionCount;
+            questionInput.id = questionCount;
             questionInput.placeholder = 'Scrivi la Domanda';
             questionInput.classList.add('question-input');
             questionDiv.appendChild(questionInput);
@@ -505,6 +505,8 @@
             answersContainer.classList.add('answers-container');
             questionDiv.appendChild(answersContainer);
 
+            let answerCount = 0;
+
             const addAnswerButton = document.createElement('button');
             addAnswerButton.textContent = 'Aggiungi Risposta';
             addAnswerButton.classList.add('add-answer-button');
@@ -515,7 +517,7 @@
 
             // Crea il menu a tendina per la difficoltà
             const difficultySelect = document.createElement('select');
-            difficultySelect.name = 'difficulty' + questionMCCount;
+            difficultySelect.name = 'difficulty' + questionCount;
             difficultySelect.classList.add('difficulty-select');
             // Opzione non selezionabile come etichetta
             const defaultOption = document.createElement('option');
@@ -559,14 +561,15 @@
 
             const answerInput = document.createElement('input');
             answerInput.type = 'text';
-            answerInput.name = 'answer' + questionMCCount + '_' + (container.children.length + 1);
+            answerInput.name = 'answer' + questionCount + '_' + (container.children.length + 1);
+            answerInput.id = answerCount;
             answerInput.placeholder = 'Inserisci Risposta';
             answerInput.classList.add('answer-input');
             answerDiv.appendChild(answerInput);
 
             const correctCheckbox = document.createElement('input');
             correctCheckbox.type = 'checkbox';
-            correctCheckbox.name = 'correct' + questionMCCount + '_' + (container.children.length + 1);
+            correctCheckbox.name = 'correct' + questionCount + '_' + (container.children.length + 1);
             correctCheckbox.classList.add('correct-checkbox');
             answerDiv.appendChild(correctCheckbox);
 
@@ -582,7 +585,7 @@
         }
 
          function addCodeQuestion() {
-            questionCodeCount++;
+            questionCount++;
 
             const container = document.getElementById('questionsContainer');
 
@@ -591,12 +594,13 @@
             questionDiv.setAttribute('data-question-type', 'code'); // Identifica il tipo di domanda
 
             const questionLabel = document.createElement('label');
-            //questionLabel.textContent = 'D.' + questionCodeCount + ' Code: ';
+            //questionLabel.textContent = 'D.' + questionCount + ' Code: ';
             questionDiv.appendChild(questionLabel);
 
             const questionInput = document.createElement('input');
             questionInput.type = 'text';
-            questionInput.name = 'question' + questionCodeCount;
+            questionInput.name = 'question' + questionCount;
+            questionInput.id = questionCount;
             questionInput.placeholder = 'Scrivi la Domanda';
             questionInput.classList.add('question-input');
             questionDiv.appendChild(questionInput);
@@ -612,7 +616,7 @@
 
            // Adding MySQL code textarea
             const codeTextarea = document.createElement('textarea');
-            codeTextarea.name = 'code' + questionCodeCount;
+            codeTextarea.name = 'code' + questionCount;
             codeTextarea.placeholder = 'Inserisci codice MySQL';
             codeTextarea.classList.add('code-textarea');
             questionDiv.appendChild(codeTextarea);
@@ -627,7 +631,7 @@
 
             // Crea il menu a tendina per la difficoltà
             const difficultySelect = document.createElement('select');
-            difficultySelect.name = 'difficulty' + questionMCCount;
+            difficultySelect.name = 'difficulty' + questionCount;
             difficultySelect.classList.add('difficulty-select');
             // Opzione non selezionabile come etichetta
             const defaultOption = document.createElement('option');
@@ -745,18 +749,20 @@
                 const questionType = $(this).data('question-type'); // Legge il tipo di domanda
                 const questionText = $(this).find('.question-input').val();
                 const difficultyLevel = $(this).find('.difficulty-select').val(); // Raccoglie il livello di difficoltà selezionato
+                const questionId = this.id;
 
                 if (questionType === 'mc') {
                     var answers = [];
                     $(this).find('.answer').each(function() {
                         var answerText = $(this).find('.answer-input').val();
                         var isCorrect = $(this).find('.correct-checkbox').is(':checked');
-                        answers.push({ text: answerText, isCorrect: isCorrect });
+                        var answerId = this.id;
+                        answers.push({ id: answerId,text: answerText, isCorrect: isCorrect });
                     });
-                    sendDataTest.questions.push({ type: "mc", questionText: questionText, answers: answers });
+                    sendDataTest.questions.push({ id: questionId, type: "mc", questionText: questionText, level : difficultyLevel, answers: answers });
                 } else if (questionType === 'code') {
                     var sqlCode = $(this).find('.code-textarea').val();
-                    sendDataTest.questions.push({ type: "code", questionText: questionText, sqlCode: sqlCode });
+                    sendDataTest.questions.push({ id: questionId, type: "code", questionText: questionText,level : difficultyLevel, sqlCode: sqlCode });
                 }
             });
             // Raccogliere dati dei vincoli
