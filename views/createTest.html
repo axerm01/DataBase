@@ -132,7 +132,24 @@
         th {
             background-color: #f2f2f2; /* Colore di sfondo delle celle dell'intestazione */
         }
-        
+        .difficulty-select {
+            margin-top: 6px;
+            width: 100px; /* Aggiungi larghezza */
+            padding: 8px; /* Aggiungi padding */
+            border: 2px solid #ccc; /* Aggiungi bordo */
+            border-radius: 5px; /* Aggiungi bordi arrotondati */
+            margin-right: 5px;
+            margin-left: 5px;
+        }
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin-top: 20px;
+            border: 2px solid #ccc; /* Bordo simile a quello usato per i dropdown */
+            border-radius: 5px; /* Bordi arrotondati come i menu a tendina */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Ombra per dare profondità, simile al container */
+        }
+
 
     </style>
 </head>
@@ -142,7 +159,17 @@
         <h1>Studia con ESQL</h1>
     </header>
     <div class="main-container">
-        <p style="margin-right: 10px; font-size: 28px; font-weight: bold;">Crea Test</p>
+        <div class="main-content">
+            <span style="margin-right: 10px; font-size: 28px; font-weight: bold;">Crea Test</span>
+            <div class="image-container">
+                <label for="testImage" style="font-size: small;">Carica immagine:</label>
+                <br>
+                <input type="file" id="testImage" name="testImage" accept="image/*">
+                <br>
+                <!-- Elemento per l'anteprima dell'immagine -->
+                <img id="imagePreview" src="#" alt="Anteprima Immagine" class="image-preview">
+            </div>
+        </div>
         <label for="title" style="font-size: 22px; font-weight: bolder;">Titolo Test:</label>
         <input type="text" id="title" name="title"><br>
         <!--il permesso di visualizzazione deve essere fuori da qui. (anche) quando vedo l'elenco dei test gia creati-->
@@ -176,6 +203,18 @@
     <!-- Includi jQuery per semplificare la gestione delle richieste AJAX -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
+    <script>
+        document.getElementById('testImage').addEventListener('change', function(event) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const preview = document.getElementById('imagePreview');
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+    };
+    reader.readAsDataURL(event.target.files[0]);
+});
+
+    </script>
     <script>
         // Variabile per memorizzare il nome della tabella selezionata
         var selectedTable = "";
@@ -227,6 +266,7 @@
                 console.log("Request Failed: " + err);
             });
         }
+        
         function deleteTable(tableId) {
             const deleteButton = $("<button class='delete-button'>Elimina Tabella</button>");
             deleteButton.click(function() {
@@ -288,7 +328,7 @@
                         console.error('Formato JSON non valido');
                     }
 
-                    var rows = response.slice(1);
+                    var rows = response.slice(1); // per leggere dalla seconda riga in poi 
 
                     // Add rows to the table based on received data
                     $.each(rows, function(index, row) {
@@ -366,7 +406,7 @@
                 data: { tableId: selectedTableId }, // Dati inviati al server come parte della richiesta
                 success: function(columns) {
                     // Costruisci le opzioni del menu a tendina usando i dati ricevuti
-                    menuAttribute1.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>` + columns.map(col => `<option value="${col}">${col}</option>`).join('');
+                    menuAttribute1.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>` + columns.map(col => `<option value="${col.Nome}">${col.Nome}</option>`).join('');
                     menuAttribute1.style.display = 'block'; // Mostra il menu a tendina
                     arrow.style.display = 'inline-block'; // Mostra la freccia (assumendo che sia un elemento del tuo DOM)
                 },
@@ -385,7 +425,7 @@
                 url: "../controllers/test/TestController.php?endpoint=get_table_columns", // URL a cui fare la richiesta
                 data: {tableId: selectedTableId},
                 success: function(columns) {
-                    menuAttribute2.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>` + columns.map(col => `<option value="${col}">${col}</option>`).join('');
+                    menuAttribute2.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>` + columns.map(col => `<option value="${col.Nome}">${col.Nome}</option>`).join('');
                     menuAttribute2.style.display = 'block';
                 },
                 dataType: "json" // Aspettati una risposta in formato JSON
@@ -441,10 +481,9 @@
 
             const questionDiv = document.createElement('div');
             questionDiv.classList.add('question');
-            questionDiv.setAttribute('data-question-type', 'mc'); // Identifica il tipo di domanda
+            questionDiv.setAttribute('data-question-type', 'mc');
 
             const questionLabel = document.createElement('label');
-            //questionLabel.textContent = 'D.' + questionMCCount + ': ';
             questionDiv.appendChild(questionLabel);
 
             const questionInput = document.createElement('input');
@@ -461,7 +500,7 @@
                 container.removeChild(questionDiv);
             };
             questionDiv.appendChild(deleteQuestionButton);
-            
+
             const answersContainer = document.createElement('div');
             answersContainer.classList.add('answers-container');
             questionDiv.appendChild(answersContainer);
@@ -473,6 +512,43 @@
                 addAnswer(answersContainer);
             };
             questionDiv.appendChild(addAnswerButton);
+
+            // Crea il menu a tendina per la difficoltà
+            const difficultySelect = document.createElement('select');
+            difficultySelect.name = 'difficulty' + questionMCCount;
+            difficultySelect.classList.add('difficulty-select');
+            // Opzione non selezionabile come etichetta
+            const defaultOption = document.createElement('option');
+            defaultOption.value = "";
+            defaultOption.textContent = "Difficoltà:";
+            defaultOption.disabled = true; // la rende non selezionabile
+            defaultOption.selected = true; // la seleziona fino a che non si cambia dall utende
+            difficultySelect.appendChild(defaultOption);
+            // Opzioni per il menu a tendina
+            const difficultyLevels = ["Basso", "Medio", "Alto"];
+            difficultyLevels.forEach(level => {
+                const option = document.createElement('option');
+                option.value = level.toLowerCase();
+                option.textContent = level;
+                difficultySelect.appendChild(option);
+            });
+            // Aggiungi listener per cambiare il colore in base alla selezione
+            difficultySelect.addEventListener('change', function() {
+                switch(this.value) {
+                    case 'basso':
+                        this.style.backgroundColor = '#77dd77'; // Verde
+                        break;
+                    case 'medio':
+                        this.style.backgroundColor = '#fbdc52'; // Giallo
+                        break;
+                    case 'alto':
+                        this.style.backgroundColor = '#ff6961'; // Rosso
+                        break;
+                    default:
+                        this.style.backgroundColor = ''; // Resetta allo stile di default se necessario
+                }
+            });
+            questionDiv.appendChild(difficultySelect);
 
             container.appendChild(questionDiv);
         }
@@ -549,6 +625,42 @@
             };
             questionDiv.appendChild(addCodeAnswerButton);
 
+            // Crea il menu a tendina per la difficoltà
+            const difficultySelect = document.createElement('select');
+            difficultySelect.name = 'difficulty' + questionMCCount;
+            difficultySelect.classList.add('difficulty-select');
+            // Opzione non selezionabile come etichetta
+            const defaultOption = document.createElement('option');
+            defaultOption.value = "";
+            defaultOption.textContent = "Difficoltà:";
+            defaultOption.disabled = true; // la rende non selezionabile
+            defaultOption.selected = true; // la seleziona fino a che non si cambia dall utende
+            difficultySelect.appendChild(defaultOption);
+            // Opzioni per il menu a tendina
+            const difficultyLevels = ["Basso", "Medio", "Alto"];
+            difficultyLevels.forEach(level => {
+                const option = document.createElement('option');
+                option.value = level.toLowerCase();
+                option.textContent = level;
+                difficultySelect.appendChild(option);
+            });
+            // Aggiungi listener per cambiare il colore in base alla selezione
+            difficultySelect.addEventListener('change', function() {
+                switch(this.value) {
+                    case 'basso':
+                        this.style.backgroundColor = '#77dd77'; // Verde
+                        break;
+                    case 'medio':
+                        this.style.backgroundColor = '#fbdc52'; // Giallo
+                        break;
+                    case 'alto':
+                        this.style.backgroundColor = '#ff6961'; // Rosso
+                        break;
+                    default:
+                        this.style.backgroundColor = ''; // Resetta allo stile di default se necessario
+                }
+            });
+            questionDiv.appendChild(difficultySelect);
             container.appendChild(questionDiv);
         }
 
@@ -632,6 +744,7 @@
             $('#questionsContainer .question').each(function() {
                 const questionType = $(this).data('question-type'); // Legge il tipo di domanda
                 const questionText = $(this).find('.question-input').val();
+                const difficultyLevel = $(this).find('.difficulty-select').val(); // Raccoglie il livello di difficoltà selezionato
 
                 if (questionType === 'mc') {
                     var answers = [];
@@ -661,22 +774,31 @@
 
         function submitFormTest() {
             var sendDataTest = pickupData();
-        // Invio dei dati al file PHP tramite AJAX
-        $.ajax({
-            type: 'POST',
-            url: '../controllers/test/TestController.php', //AGGIUNGERE ENDPOINT PER GESTIONE DELLE 2 RICHIESTE POST
-            data: JSON.stringify(sendDataTest),
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-            success: function(response) {
-                console.log("Risposta del server:", response);
-                // Gestire la risposta del server qui
-            },
-            error: function(xhr, status, error) {
-                console.error("Errore durante l'invio dei dati:", status, error);
-                // Gestire eventuali errori qui
+            var formData = new FormData();
+
+            // Aggiunge i dati testuali al FormData
+            formData.append("data", JSON.stringify(sendDataTest));
+
+            // Aggiunge il file immagine al FormData
+            var imageFile = document.getElementById('testImage').files[0];
+            if (imageFile) {
+                formData.append("testImage", imageFile);
             }
-        });
+            formData.append("action" , "save_test");
+            // Invio dei dati al file PHP tramite AJAX
+            $.ajax({
+                type: 'POST',
+                url: '../controllers/test/TestController.php', //AGGIUNGERE ENDPOINT PER GESTIONE DELLE 2 RICHIESTE POST
+                data: formData,
+                success: function(response) {
+                    console.log("Risposta del server:", response);
+                    // Gestire la risposta del server qui
+                },
+                error: function(xhr, status, error) {
+                    console.error("Errore durante l'invio dei dati:", status, error);
+                    // Gestire eventuali errori qui
+                }
+            });
         }
         // Chiama la funzione definita sopra quando il bottone viene cliccato
         $('#submitTestButton').click(function(e) {
