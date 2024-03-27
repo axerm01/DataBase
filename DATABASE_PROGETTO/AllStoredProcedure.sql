@@ -668,7 +668,7 @@ DELETE FROM Test
 where id NOT LIKE -1;
 END//
 
-CREATE PROCEDURE `ViewRispostaStudente`( --nuovo
+CREATE PROCEDURE `ViewRispostaStudente`( /*NUOVO*/
 in StudenteAtt varchar(45), IDDomandaAtt int ,IDTestAtt int
 )
 BEGIN
@@ -677,7 +677,7 @@ FROM RISPOSTA_SCELTA
 WHERE Studente = StudenteAtt and IDDomanda = IDDomandaAtt and IDTest = IDTestAtt;
 END //
 
-CREATE PROCEDURE `ViewCodiceStudente`( --nuovo
+CREATE PROCEDURE `ViewCodiceStudente`( /*NUOVO*/
 in StudenteAtt varchar(45), IDDomandaAtt int ,IDTestAtt int
 )
 BEGIN
@@ -686,7 +686,7 @@ FROM RISPOSTA_CODICE
 WHERE Studente = StudenteAtt and IDDomanda = IDDomandaAtt and IDTest = IDTestAtt;
 END //
 
-CREATE PROCEDURE `UpdateRispostaStudente`( --nuovo
+CREATE PROCEDURE `UpdateRispostaStudente`( /*NUOVO*/
 in StudenteAtt varchar(45), IDDomandaAtt int ,IDRispostaAtt int
 )
 BEGIN
@@ -695,7 +695,7 @@ SET IDRisposta = IDRispostaAtt
 WHERE Studente = StudenteAtt and IDDomanda = IDDomandaAtt;
 END //
 
-CREATE PROCEDURE `UpdateCodiceStudente`( --nuovo
+CREATE PROCEDURE `UpdateCodiceStudente`( /*NUOVO*/
 in StudenteAtt varchar(45), IDDomandaAtt int ,IDTestAtt int, RispostaAtt varchar(500)
 )
 BEGIN
