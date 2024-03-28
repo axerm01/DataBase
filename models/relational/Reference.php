@@ -3,20 +3,7 @@ include('../../controllers/utils/connect.php');
 
 class Reference
 {
-    private $tab1;
-    private $tab2;
-    private $att1;
-    private $att2;
-
-    public function __construct($tab1, $tab2, $att1, $att2)
-    {
-        $this->tab1 = $tab1;
-        $this->tab2 = $tab2;
-        $this->att1 = $att1;
-        $this->att2 = $att2;
-    }
-
-    public function insertOnDB()
+    public static function saveReferenceData($tab1, $tab2, $att1,  $att2)
     {
         global $con;
         $q = 'CALL CreateReference(?,?,?,?);';
@@ -24,55 +11,37 @@ class Reference
         if ($stmt === false) {
             die("Errore nella preparazione della query: " . $con->error);
         }
-        $stmt->bind_param('iiii', $this->tab1, $this->tab2, $this->att1,  $this->att2);
+        $stmt->bind_param('iiii', $tab1, $tab2, $att1,  $att2);
         if (!$stmt->execute()) {
             die("Errore nell'esecuzione della query: " . $stmt->error);
         }
 
         $stmt->close();
     }
+    public static function getReferencesByTableIds($tableIds) {
+        global $con; // Assumi che $con sia la tua connessione al database
 
+        // Converti l'array di ID in una stringa per la query SQL
+        $tableIdsString = implode(',', array_map('intval', $tableIds));
 
-    public function getTab1()
-    {
-        return $this->tab1;
+        // Prepara la query SQL
+        $query = "SELECT * FROM Referenze WHERE IDTab1 IN ($tableIdsString) OR IDTab2 IN ($tableIdsString)";
+
+        // Esegui la query
+        $result = $con->query($query);
+
+        // Verifica che la query sia stata eseguita correttamente
+        if (!$result) {
+            die("Errore nell'esecuzione della query: " . $con->error);
+        }
+
+        // Estrai i risultati
+        $references = [];
+        while ($row = $result->fetch_assoc()) {
+            $references[] = $row;
+        }
+
+        return $references;
     }
-
-    public function setTab1($tab1): void
-    {
-        $this->tab1 = $tab1;
-    }
-
-    public function getTab2()
-    {
-        return $this->tab2;
-    }
-
-    public function setTab2($tab2): void
-    {
-        $this->tab2 = $tab2;
-    }
-
-    public function getAtt1()
-    {
-        return $this->att1;
-    }
-
-    public function setAtt1($att1): void
-    {
-        $this->att1 = $att1;
-    }
-
-    public function getAtt2()
-    {
-        return $this->att2;
-    }
-
-    public function setAtt2($att2): void
-    {
-        $this->att2 = $att2;
-    }
-
-
 
 }

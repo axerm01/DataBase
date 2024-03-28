@@ -1,6 +1,6 @@
 DELIMITER //
 
-CREATE PROCEDURE `CreateAttributo`(
+CREATE PROCEDURE `CreateAttribute`(
 in IDTabellaAtt int,
 in NomeAtt varchar(45),
 in TipoAtt varchar(45),
@@ -11,7 +11,7 @@ INSERT INTO attributo (IDTabella,Nome,Tipo,IsPK)
 VALUES (IDTabellaAtt,NomeAtt,TipoAtt,IsPKAtt);
 END //
 
-CREATE PROCEDURE `DropAttributo`(
+CREATE PROCEDURE `DropAttribute`(
 in IDTabellaAtt int,
 in NomeAtt varchar(45)
 )
@@ -20,14 +20,14 @@ DELETE FROM attributo
 WHERE IDTabella = IDTabellaAtt and Nome = NomeAtt;
 END //
 
-CREATE PROCEDURE `ViewAllAttributi`(in IDTabellaAtt int)
+CREATE PROCEDURE `ViewAllAttributes`(in IDTabellaAtt int)
 BEGIN
 SELECT*
 FROM attributo
 WHERE IDTabella = IDTabellaAtt;
 END //
 
-CREATE PROCEDURE `ViewAttributo`(in IDTabellaAtt int,
+CREATE PROCEDURE `ViewAttribute`(in IDTabellaAtt int,
 in NomeAtt varchar(45))
 BEGIN
 SELECT * 

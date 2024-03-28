@@ -1,5 +1,3 @@
-USE ESQL;
-
 DELIMITER //
 
 CREATE PROCEDURE CreateTT(
@@ -668,7 +666,7 @@ DELETE FROM Test
 where id NOT LIKE -1;
 END//
 
-CREATE PROCEDURE `ViewRispostaStudente`( /*NUOVO*/
+CREATE PROCEDURE `ViewRispostaStudente`( --nuovo
 in StudenteAtt varchar(45), IDDomandaAtt int ,IDTestAtt int
 )
 BEGIN
@@ -677,7 +675,7 @@ FROM RISPOSTA_SCELTA
 WHERE Studente = StudenteAtt and IDDomanda = IDDomandaAtt and IDTest = IDTestAtt;
 END //
 
-CREATE PROCEDURE `ViewCodiceStudente`( /*NUOVO*/
+CREATE PROCEDURE `ViewCodiceStudente`( --nuovo
 in StudenteAtt varchar(45), IDDomandaAtt int ,IDTestAtt int
 )
 BEGIN
@@ -686,7 +684,7 @@ FROM RISPOSTA_CODICE
 WHERE Studente = StudenteAtt and IDDomanda = IDDomandaAtt and IDTest = IDTestAtt;
 END //
 
-CREATE PROCEDURE `UpdateRispostaStudente`( /*NUOVO*/
+CREATE PROCEDURE `UpdateRispostaStudente`( --nuovo
 in StudenteAtt varchar(45), IDDomandaAtt int ,IDRispostaAtt int
 )
 BEGIN
@@ -695,7 +693,7 @@ SET IDRisposta = IDRispostaAtt
 WHERE Studente = StudenteAtt and IDDomanda = IDDomandaAtt;
 END //
 
-CREATE PROCEDURE `UpdateCodiceStudente`( /*NUOVO*/
+CREATE PROCEDURE `UpdateCodiceStudente`( --nuovo
 in StudenteAtt varchar(45), IDDomandaAtt int ,IDTestAtt int, RispostaAtt varchar(500)
 )
 BEGIN

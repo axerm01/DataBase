@@ -2,73 +2,71 @@
 session_start();
 
 include '../utils/connect.php';
+include '../../models/relational/Table.php';
+require '../../models/relational/Column.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
-$uri = explode('?', $_SERVER['REQUEST_URI'], 2);
-$endpoint = $uri[0];
-
-echo "Risposta ricevuta ".$endpoint;
 
 header('Content-Type: application/json');
 
 switch ($method){
     case 'GET':
-        //get all tables
-        if($endpoint === '/tables'){
+        $endpoint = $_GET['endpoint'];
+        switch ($endpoint) {
+            case 'get_tables': // GET delle tabelle create da un docente, restituisce id tabella e nome
+                $data = Table::getAllTables($_SESSION['email']);
+                //$data = getAllTables($_SESSION['email']);
+                break;
 
-            //logica per gestire la get
+            case 'get_table_columns': // GET delle colonne di una tabella indicata
+                $id = filter_input(INPUT_GET, 'tableId');
+                $data = Column::getTableColumns($id);
+                break;
 
+            case 'get_full_table': // GET del contenuto della tabella
+                $id = filter_input(INPUT_GET, 'tableId');
+                $columns = Column::getTableColumns($id);
+                $content = Table::getTableContent($id);
+
+                $data = array_merge(array($columns), $content);
+                break;
         }
-        // get table by ID
-        else if(preg_match('/^\/tables\/(\d+)$/', $endpoint, $matches)){
-            $tableId = $matches[1];
-
-            //logica per gestire la get
-        }
-
+        echo json_encode($data);  // Converte l'array $data in JSON e lo invia
         break;
 
     case 'POST': //Creazione di una nuova tabella
-
-        if($endpoint === '/tables'){
-            $content = trim(file_get_contents("php://input"));
-
-            // Decodifica il JSON ricevuto
-            $decodedData = json_decode($content, true);
-
-            // Crea un nuovo oggetto Table
-            $table = new Table($decodedData['title'], $_SESSION['email'], count($decodedData['rows']));
-
-            // Aggiungi le colonne alla tabella
-            foreach ($decodedData['attributes'] as $columnData) {
-                $column = new Column($columnData['name'], $columnData['type'], $columnData['PK']);
-                $table->addColumn($column);
+        if (isset($_POST['action'])){
+            $action = $_POST['action'];
+            switch ($action) {
+                case 'save_table':
+                    $data = $_POST['data'];
+                    $response = saveTable($data);
+                    echo json_encode($response);
+                    break;
             }
-
-            $table->insertOnDB();
-            $table->createNewTable();
-            $table->fillTableRows($decodedData['rows']);
+        } else {
+            echo json_encode("no action");
         }
-
         break;
 
     case 'PUT': //Update di una tabella dato il suo ID
-        if(preg_match('/^\/tables\/(\d+)$/', $endpoint, $matches)){
-            $tableId = $matches[1];
-
-            //logica per gestire la put
-        }
 
         break;
     case 'DELETE': //Delete di una tabella dato il suo ID
-        if(preg_match('/^\/tables\/(\d+)$/', $endpoint, $matches)){
-            $tableId = $matches[1];
-
-            //logica per gestire la delete
-        }
 
         break;
 }
 
-?>
+function saveTable($data) {
+    $decodedData = json_decode($data, true);
+    $response = "";
+
+    $creationDate = date('Y-m-d H:i:s');
+    $tableId = Table::saveTableData($_SESSION['email'], $decodedData['title'], $creationDate, count($decodedData['rows']), $decodedData['attributes']);
+    $response .= $tableId;
+    $response .= Table::createNewTable($decodedData['title'], $decodedData['attributes']);
+    $response .= Table::fillTableRows($decodedData['rows'], $decodedData['attributes'], $decodedData['title']);
+
+    return $response;
+}
 

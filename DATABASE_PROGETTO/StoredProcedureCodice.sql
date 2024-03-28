@@ -23,11 +23,11 @@ FROM codice
 WHERE IDTest = IDTestAtt;
 END //
 
-CREATE PROCEDURE `ViewCodice`(in IDAtt int)
+CREATE PROCEDURE `ViewCodice`(in IDTestAtt int, in IDAtt int)
 BEGIN
 SELECT*
 FROM codice
-WHERE ID = IDAtt;
+WHERE ID = IDAtt and IDTest = IDTestAtt;
 END //
 
 DELIMITER ;

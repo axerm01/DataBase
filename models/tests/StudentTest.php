@@ -1,25 +1,54 @@
 <?php
+include('../../controllers/utils/connect.php');
+include ('CodeQuestion.php');
+include ('MultipleChoiceQuestion.php');
+include ('Answer.php');
+include ('../../models/relational/Table.php');
+include ('../../models/relational/Column.php');
+include ('../../models/relational/Reference.php');
 
 class StudentTest {
-    private $studentEmail;
-    private $testID;
-    private $status; // Can be 'Open', 'InProgress', 'Close'
-    private $firstResponseDate;
-    private $lastResponseDate;
-
     const OPEN = 'Open';
     const IN_PROGRESS = 'InProgress';
     const CLOSE = 'Close';
 
-    public function __construct($studentEmail, $testID, $status, $firstResponseDate, $lastResponseDate) {
-        $this->studentEmail = $studentEmail;
-        $this->testID = $testID;
-        $this->status = $status;
-        $this->firstResponseDate = $firstResponseDate;
-        $this->lastResponseDate = $lastResponseDate;
-    }
+    public static function getTests($stdEmail, $filter) //Filter può essere Open, InProgress, Close, All
+    {
+        global $con;
+        if($filter == 'All'){
+            $q = "CALL ViewAllSvolgimento(?);";
+            $stmt = $con->prepare($q);
+            if ($stmt === false) {
+                die("Errore nella preparazione della query: " . $con->error);
+            }
+            $stmt->bind_param('s', $stdEmail);
+            if (!$stmt->execute()) {
+                die("Errore nell'esecuzione della query: " . $stmt->error);
+            }
+        }
+        else{
+            $q = "CALL ViewSvolgimentoByStatus(?,?);";
+            $stmt = $con->prepare($q);
+            if ($stmt === false) {
+                die("Errore nella preparazione della query: " . $con->error);
+            }
+            $stmt->bind_param('ss', $stdEmail, $filter);
+            if (!$stmt->execute()) {
+                die("Errore nell'esecuzione della query: " . $stmt->error);
+            }
+        }
 
-    public static function getTests($idTest, $stdEmail)
+        $result = $stmt->get_result();
+        $data = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;  // Aggiunge ogni riga all'array $data
+        }
+        $stmt->close();
+
+        return $data;
+    }
+    public static function getSingleTest($idTest, $stdEmail)
     {
         global $con;
         $q = "CALL ViewSvolgimento(?,?);";
@@ -42,83 +71,179 @@ class StudentTest {
 
         return $data;
     }
+    public static function start($testId) {
+        $codeQuestions = CodeQuestion::getTestQuestions($testId);
+        $mcQuestions = MultipleChoiceQuestion::getTestQuestions($testId);
+        $mcAnswers = Answer::getTestMCAnswers($testId);
+        foreach ($mcQuestions as $qIndex => $question) {
+            // Inizializza l'attributo "answers" come un array vuoto
+            $mcQuestions[$qIndex]['answers'] = [];
 
-    public static function start($testId, $stdEmail) {
+            // Cerca le risposte corrispondenti in $mcAnswers
+            foreach ($mcAnswers as $answer) {
+                if ($answer['IDScMult'] == $question['ID']) {
+                    // Aggiungi la risposta all'array "answers"
+                    $mcQuestions[$qIndex]['answers'][] = [
+                        'ID' => $answer['ID'],
+                        'Testo' => $answer['Testo'],
+                        'IsCorretta' => $answer['IsCorretta']
+                    ];
+                }
+            }
+        }
+
+        $questions = array_merge($codeQuestions, $mcQuestions);
+        // Ordina l'array combinato in base all'ID
+        usort($questions, function($a, $b) {
+            return $a['ID'] - $b['ID'];
+        });
+
+        $tables = Table::getTestTables($testId);
+        $tableIDs = [];
+        foreach ($tables as $index => $table) {
+            if (isset($table['ID'])) {
+                $tables[$index]['columns'] = Column::getTableColumns($table['ID']);
+                $tables[$index]['content'] = Table::getTableContent($table['ID']);
+                $tableIDs = $table['ID'];
+
+            }
+        }
+
+        $references = Reference::getReferencesByTableIds($tableIDs);
+
+        $test = [];
+        $test['questions'] = $questions;
+        $test['tables'] = $tables;
+        $test['references'] = $references;
+
+        return $test;
+    }
+    public static function resume($testId, $stdEmail) {
         global $con; // Assumi che $con sia la tua connessione al database
 
-        // Prepara la query per controllare l'esistenza del record
-        $checkQuery = "SELECT * FROM Svolgimento WHERE MailStudente = ? AND IDTest = ?";
-        $stmt = $con->prepare($checkQuery);
-        $stmt->bind_param('si', $stdEmail, $testId);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        $codeQuestions = CodeQuestion::getTestQuestions($testId);
+        $mcQuestions = MultipleChoiceQuestion::getTestQuestions($testId);
+        $mcAnswers = Answer::getTestMCAnswers($testId);
+        foreach ($mcQuestions as $qIndex => $question) {
+            // Inizializza l'attributo "answers" come un array vuoto
+            $mcQuestions[$qIndex]['answers'] = [];
 
+            // Cerca le risposte corrispondenti in $mcAnswers
+            foreach ($mcAnswers as $answer) {
+                if ($answer['IDScMult'] == $question['ID']) {
+                    // Aggiungi la risposta all'array "answers"
+                    $mcQuestions[$qIndex]['answers'][] = [
+                        'ID' => $answer['ID'],
+                        'Testo' => $answer['Testo'],
+                        'IsCorretta' => $answer['IsCorretta']
+                    ];
+                }
+            }
+        }
+
+        $codeResponse = StudentAnswer::getTestCodeAnswers($testId, $stdEmail);
+        $mcResponse = StudentAnswer::getTestMCAnswers($testId, $stdEmail);
+        foreach ($codeQuestions as $qIndex => $question) {
+            foreach ($codeResponse as $response) {
+                if ($question['ID'] == $response['IDDomanda']) {
+                    $codeQuestions[$qIndex]['Risposta'] = [
+                        'Risposta' => $response['Risposta'],
+                        'Esito' => $response['Esito']
+                    ];
+                    break; // Interrompe il ciclo interno una volta trovata la corrispondenza
+                }
+            }
+        }
+        foreach ($mcQuestions as $qIndex => $question) {
+            foreach ($mcResponse as $response) {
+                if ($question['ID'] == $response['IDDomanda']) {
+                    $codeQuestions[$qIndex]['Risposta'] = [
+                        'Risposta' => $response['Risposta'],
+                        'Esito' => $response['Esito']
+                    ];
+                    break; // Interrompe il ciclo interno una volta trovata la corrispondenza
+                }
+            }
+        }
+
+        $questions = array_merge($codeQuestions, $mcQuestions);
+        // Ordina l'array combinato in base all'ID
+        usort($questions, function($a, $b) {
+            return $a['ID'] - $b['ID'];
+        });
+
+
+        $tables = Table::getTestTables($testId);
+        $tableIDs =[];
+        foreach ($tables as $index => $table) {
+            if (isset($table['ID'])) {
+                $tables[$index]['columns'] = Column::getTableColumns($table['ID']);
+                $tables[$index]['content'] = Table::getTableContent($table['ID']);
+                $tableIDs = $table['ID'];
+            }
+        }
+
+        $references = Reference::getReferencesByTableIds($tableIDs);
+
+        $test = [];
+        $test['questions'] = $questions;
+        $test['tables'] = $tables;
+        $test['references'] = $references;
+
+        return $test;
+    }
+    public static function close($testId, $stdEmail) {
+        global $con; // Assumi che $con sia la tua connessione al database
         $currentTime = date('Y-m-d H:i:s'); // Ottieni il timestamp corrente
 
-        if ($result->num_rows > 0) {
             // Il record esiste, aggiorna DataUltimaRisposta
             $updateQuery = "UPDATE Svolgimento SET DataUltimaRisposta = ?, Stato = ? WHERE MailStudente = ? AND IDTest = ?";
             $updateStmt = $con->prepare($updateQuery);
-            $status = self::IN_PROGRESS;
+            $status = self::CLOSE;
             $updateStmt->bind_param('sssi', $currentTime,$status, $stdEmail, $testId);
             $updateStmt->execute();
-        } else {
-            // Il record non esiste, inseriscilo
-            $insertQuery = "INSERT INTO Svolgimento (MailStudente, Stato, DataPrimaRisposta, DataUltimaRisposta, IDTest) VALUES (?, 'Open', ?, ?, ?)";
-            $insertStmt = $con->prepare($insertQuery);
-            $insertStmt->bind_param('sssi', $stdEmail, $currentTime, $currentTime, $testId);
-            $insertStmt->execute();
+            return 'closed correctly';
+    }
+    public static function saveStudentTestData($dataPrima, $dataUltima, $testId, $email) {
+        global $con;
+        $q = 'CALL CreateSvolgimento(?,?,?,?,?);';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
         }
-    }
-
-    public function getStudentEmail() {
-        return $this->studentEmail;
-    }
-
-    public function setStudentEmail($studentEmail) {
-        $this->studentEmail = $studentEmail;
-    }
-
-    public function getTestID() {
-        return $this->testID;
-    }
-
-    public function setTestID($testID) {
-        $this->testID = $testID;
-    }
-
-    public function getStatus() {
-        return $this->status;
-    }
-
-    public function setStatus($status) {
-        switch ($status) {
-            case self::OPEN:
-            case self::IN_PROGRESS:
-            case self::CLOSE:
-                $this->status = $status;
-                break;
-            default:
-                throw new InvalidArgumentException("Invalid status");
+        $stato = self::OPEN;
+        $stmt->bind_param('ssssi', $email, $stato, $dataPrima, $dataUltima, $testId);
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
         }
+        $stmt->close();
+    }
+    public static function updateStudentTestData($testId, $email) {
+        global $con;
+        $q = 'CALL UpdateFineSvolgimento(?,?);';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('is', $testId, $email );
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+        $stmt->close();
+    }
+    public static function updateStudentTestStatus($testId, $email) {
+        global $con;
+        $q = 'CALL UpdateStatoSvolgimento(?,?,?);';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+        $status = self::IN_PROGRESS;
+        $stmt->bind_param('iss', $testId, $email, $status );
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+        $stmt->close();
     }
 
-    public function getFirstResponseDate() {
-        return $this->firstResponseDate;
-    }
-
-    public function setFirstResponseDate($firstResponseDate) {
-        $this->firstResponseDate = $firstResponseDate;
-    }
-
-    public function getLastResponseDate() {
-        return $this->lastResponseDate;
-    }
-
-    public function setLastResponseDate($lastResponseDate) {
-        $this->lastResponseDate = $lastResponseDate;
-    }
 }
-
-
-?>

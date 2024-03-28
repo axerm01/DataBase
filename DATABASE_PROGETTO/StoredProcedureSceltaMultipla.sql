@@ -12,19 +12,28 @@ END //
 
 CREATE PROCEDURE `DropSceltaMultipla`(
 in IDTestAtt int,
-in DescrizioneAtt varchar(45)
+in IDAtt int
 )
 BEGIN
 DELETE FROM Scelta_Multipla
-WHERE IDTest = IDTestAtt and Descrizione = DescrizioneAtt;
+WHERE IDTest = IDTestAtt and ID = IDAtt;
 END //
 
-CREATE PROCEDURE `ViewSceltaMultipla`(in IDTestAtt int,
-in DescrizioneAtt varchar(45))
+CREATE PROCEDURE `ViewSceltaMultipla`(
+in IDTestAtt int,
+in IDAtt int )
 BEGIN
 SELECT*
 FROM Scelta_Multipla
-WHERE IDTest = IDTestAtt and Descrizione = DescrizioneAtt;
+WHERE IDTest = IDTestAtt and ID = IDAtt;
+END //
+
+CREATE PROCEDURE `ViewAllSceltaMultipla`(
+    in IDTestAtt int )
+        BEGIN
+        SELECT*
+        FROM Scelta_Multipla
+        WHERE IDTest = IDTestAtt;
 END //
 
 DELIMITER ;

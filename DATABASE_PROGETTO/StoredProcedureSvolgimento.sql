@@ -1,7 +1,7 @@
 DELIMITER //
 CREATE PROCEDURE `CreateSvolgimento`(
 in MailStudenteAtt varchar(45),
-in StatoAtt varchar(45),
+in StatoAtt varchar(45) default 'Open',
 in DataPrimaRispostaAtt datetime,
 in DataUltimaRispostaAtt datetime,
 in IDTestAtt int

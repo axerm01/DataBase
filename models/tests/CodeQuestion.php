@@ -1,14 +1,8 @@
 <?php
 include('../../controllers/utils/connect.php');
-
+include ('Question.php');
 
 class CodeQuestion extends Question {
-    private $output;
-
-    public function __construct($text, $output) {
-        parent::__construct($text);
-        $this->output = $output;
-    }
 
     public static function getQuestion($id, $testId) {
         global $con; // Assicurati che $con sia la tua connessione al database
@@ -26,22 +20,35 @@ class CodeQuestion extends Question {
             }
         }
         else {
-            $data = null;
+            $data = 0;
         }
 
         $stmt->close();
         return $data;
     }
 
-    public function insertOnDB()
+    public static function getTestQuestions($testId) {
+        global $con; // Assumi che $con sia la tua connessione al database
+
+        $codiceQuery = $con->prepare("CALL ViewAllCodice(?)");
+        $codiceQuery->bind_param('i', $testId);
+        $codiceQuery->execute();
+        $result = $codiceQuery->get_result();
+        $codiceData = $result->fetch_all(MYSQLI_ASSOC);
+        $codiceQuery->close();
+
+        return $codiceData;
+    }
+
+    public static function saveCodeQuestion($IDTest, $ID, $text, $output, $difficulty)
     {
         global $con;
-        $q = 'CALL CreateCodice(?,?,?);';
+        $q = 'CALL CreateCodice(?,?,?,?,?);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
             die("Errore nella preparazione della query: " . $con->error);
         }
-        $stmt->bind_param('iis', $this->IDTest, $this->ID, $this->output);
+        $stmt->bind_param('iisss', $IDTest, $ID, $text, $output, $difficulty);
         if (!$stmt->execute()) {
             die("Errore nell'esecuzione della query: " . $stmt->error);
         }
@@ -49,16 +56,4 @@ class CodeQuestion extends Question {
         $stmt->close();
     }
 
-
-    // Getter e setter per output
-    public function getOutput() {
-        return $this->output;
-    }
-
-    public function setOutput($output) {
-        $this->output = $output;
-    }
 }
-
-
-?>

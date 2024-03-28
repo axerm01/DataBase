@@ -7,8 +7,6 @@ require '../../models/relational/Column.php';
 
 
 $method = $_SERVER['REQUEST_METHOD'];
-//$uri = explode('?', $_SERVER['REQUEST_URI'], 2);
-//$endpoint = $uri[0];
 
 header('Content-Type: application/json');
 
@@ -21,44 +19,32 @@ switch ($method) {
                 $prof_email = filter_input(INPUT_GET, 'prof_email');
                 $data = Test::getProfTests($prof_email);
                 break;
-
-            case 'get_tables': // GET delle tabelle create da un docente, restituisce id tabella e nome
-                $data = Table::getAllTables($_SESSION['email']);
-                //$data = getAllTables($_SESSION['email']);
-                break;
-
-            case 'get_table_columns': // GET delle colonne di una tabella indicata
-                $id = filter_input(INPUT_GET, 'tableId');
-                $data = Column::getTableColumns($id);
-                break;
-
-            case 'get_full_table': // GET del contenuto della tabella
-                $id = filter_input(INPUT_GET, 'tableId');
-                $columns = Column::getTableColumns($id);
-                $content = Table::getTableContent($id);
-
-                $data = array_merge(array($columns), $content);
-                break;
         }
 
         echo json_encode($data);  // Converte l'array $data in JSON e lo invia
         break;
 
     case 'POST':
-        $action = $_POST['action'];
-        switch ($action) {
-            case 'test_query': //restituisce il risultato della query inserita dal docente per trovare la risposta di una code question
-                $query = filter_input(INPUT_POST, 'query');
-                $data = testQuery($query);
-                echo json_encode($data);
+        if (isset($_POST['action'])){
+            $action = $_POST['action'];
+            switch ($action) {
+                case 'test_query': //restituisce il risultato della query inserita dal docente per trovare la risposta di una code question
+                    $query = filter_input(INPUT_POST, 'query');
+                    $data = testQuery($query);
+                    echo json_encode($data);
 
-                break;
+                    break;
 
-            case 'save_test':
-                newTest();
-                break;
+                case 'save_test':
+                    $data = $_POST['data'];
+                    $response = saveTest($data);
+                    echo json_encode($response);
+                    break;
+            }
+        } else {
+            echo json_encode("no action");
         }
-
+        break;
 
     case 'PUT':
 
@@ -70,57 +56,40 @@ switch ($method) {
 }
 
 //Inserisce a DB un nuovo test creato dal docente
-function newTest() {
-    $contentType = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
-
-    if ($contentType === "application/json") {
-        // Ricevi il contenuto grezzo
-        $content = trim(file_get_contents("php://input"));
-
+function saveTest($data) {
+    try {
         // Decodifica il JSON ricevuto
-        $decodedData = json_decode($content, true);
+        $decodedData = json_decode($data, true);
 
         $creationDate = date('Y-m-d H:i:s');
-        $test = new Test($decodedData['title'], $creationDate, $decodedData['show_answers'], $_SESSION['email']);
-        $qID = 0;
+        $testId = Test::saveTestData($decodedData['title'], $creationDate, $decodedData['show_answers'], $_SESSION['email']);
 
         // Sezione dedicata al salvataggio delle tabelle relative al Test
-        foreach ($decodedData['tables'] as $tableID) {
-            $test->addTable($tableID);
+        $tableIDs = [];
+        foreach ($decodedData['tables'] as $table) {
+            $tableIDs[] = $table['id'];
         }
-        $test->linkTablesToTest($decodedData['tables']);
+        Test::linkTablesToTest($tableIDs, $testId);
 
         // Sezione dedicata al salvataggio delle referenze relative al Test
-        foreach ($decodedData['references'] as $referenceData) {
-            $reference = new Reference($referenceData['tab1'], $referenceData['tab2'], $referenceData['att1'], $referenceData['att2']);
-            $test->addRef($reference);
+        foreach ($decodedData['constraints'] as $referenceData) {
+            Reference::saveReferenceData($referenceData['tab1'], $referenceData['tab2'], $referenceData['att1'], $referenceData['att2']);
         }
 
         // Sezione dedicata al salvataggio delle domande relative al Test
         foreach ($decodedData['questions'] as $questionData) {
-            $qID = $qID + 1;
             if ($questionData['type'] == 'code') {
-                $question = new CodeQuestion($questionData['text'], $questionData['output']);
-                $question->setID($qID);
+                CodeQuestion::saveCodeQuestion($testId,$questionData['id'], $questionData['questionText'], $questionData['sqlCode'], $questionData['difficulty']);
             } else if ($questionData['type'] == 'mc') {
-                $question = new MultipleChoiceQuestion($questionData['text'], $questionData['diff'], count($questionData['answers']));
-                $question->setID($qID);
-                $IDAnswer = 0;
-                foreach ($decodedData['answers'] as $answersData) {
-                    $IDAnswer = $IDAnswer + 1;
-                    $answer = new Answer($IDAnswer, $qID, $decodedData['text'], $decodedData['isCorrect']);
-                    $question->addAnswer($answer);
-                }
-
-
+                MultipleChoiceQuestion::saveMCData($testId,$questionData['id'],$questionData['questionText'], count($questionData['answers']), $questionData['difficulty'], $questionData['answers'] );
             }
-            $test->addQuestion($question);
         }
-
-        $test->insertOnDB();
-
-
+        $response = 'Saved correctly';
+    } catch (Exception $exc){
+        $response = 'Some error occoured. Error log: ' .$exc;
     }
+
+    return $response;
 }
 function testQuery($q){
     global $con;
