@@ -29,6 +29,22 @@ class Table {
         return $id;
     }
 
+    //da verificare se basta un trigger per fare update di numRows
+    public static function updateTableData($tableId, $numRows, $columns)
+    {
+        global $con;
+        $q = 'CALL UpdateTable(?,?);';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('ii',$tableId, $numRows);
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+        $stmt->close();
+    }
+
     public static function createNewTable($name, $columns) {
         global $con;
 
@@ -99,6 +115,48 @@ class Table {
 
         return $response;
     }
+
+    public static function updateTableRows($rows, $columns, $name) {
+        global $con;
+        mysqli_begin_transaction($con);
+
+        try {
+            foreach ($rows as $rowData) {
+                $updatePairs = [];
+                $whereConditions = [];
+
+                foreach ($columns as $index => $column) {
+                    $columnName = $column['nome']; // Assumiamo che 'name' sia il nome della colonna
+                    $value = $rowData[$index];
+
+                    if ($column['IsPK']) {
+                        // Prepara le condizioni per la chiave primaria
+                        $whereConditions[] = "$columnName = '" . mysqli_real_escape_string($con, $value) . "'";
+                    } else {
+                        // Prepara i campi da aggiornare
+                        $type = $column['type'];
+                        $valueFormatted = (strpos($type, 'smallint') !== false || strpos($type, 'float') !== false || strpos($type, 'decimal') !== false || strpos($type, 'double') !== false) ? $value : "'" . mysqli_real_escape_string($con, $value) . "'";
+                        $updatePairs[] = "$columnName = $valueFormatted";
+                    }
+                }
+
+                $q = "UPDATE " . $name . " SET " . implode(", ", $updatePairs) . " WHERE " . implode(" AND ", $whereConditions);
+                if (!mysqli_query($con, $q)) {
+                    throw new Exception("Errore nell'update della riga: " . mysqli_error($con));
+                }
+            }
+
+            mysqli_commit($con);
+            $response = "Update OK";
+        } catch (Exception $e) {
+            mysqli_rollback($con);
+            $response = "Errore: " . $e->getMessage();
+        }
+
+        return $response;
+    }
+
+
 
     public static function getAllTables($profEmail) //restituisce id tabella e nome
     {
@@ -191,6 +249,14 @@ class Table {
         $tableQuery->close();
         return $tableData;
 
+    }
+
+    public static function deleteTable($tableId) {
+        global $con; // Assumi che $con sia la tua connessione al database
+        $tableQuery = $con->prepare("CALL DropTabella(?)");
+        $tableQuery->bind_param('i', $tableId);
+        $tableQuery->execute();
+        $tableQuery->close();
     }
 
 }

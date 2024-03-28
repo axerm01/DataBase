@@ -590,15 +590,15 @@ BEGIN
     VALUES (MailAtt, NomeAtt, DataAtt, NumRigheAtt);
 END//
 
-CREATE PROCEDURE `DropTabella`(
-in ID smallint,
-in mail varchar(45))
+CREATE PROCEDURE `DropTabella`(IN ID smallint)
 BEGIN
+
 DELETE FROM tabella
-WHERE (
-tabella.ID = ID and
-tabella.MailProfessore = mail);
-END//
+WHERE tabella.ID = ID;
+
+DELETE FROM ATTRIBUTO
+WHERE IDTabella = ID;
+END //
 
 CREATE PROCEDURE `ViewAllTabelle`(in mail varchar(45))
 BEGIN

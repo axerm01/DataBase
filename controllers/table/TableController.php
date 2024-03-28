@@ -11,11 +11,10 @@ header('Content-Type: application/json');
 
 switch ($method){
     case 'GET':
-        $endpoint = $_GET['endpoint'];
+        $endpoint = $_GET['action'];
         switch ($endpoint) {
             case 'get_tables': // GET delle tabelle create da un docente, restituisce id tabella e nome
                 $data = Table::getAllTables($_SESSION['email']);
-                //$data = getAllTables($_SESSION['email']);
                 break;
 
             case 'get_table_columns': // GET delle colonne di una tabella indicata
@@ -50,10 +49,28 @@ switch ($method){
         break;
 
     case 'PUT': //Update di una tabella dato il suo ID
+        if (isset($_GET['action']) && isset($_GET['tableId'])){
+            $action = $_GET['action'];
+            $tableId = $_GET['tableId'];
+            switch ($action) {
+                case 'update_table':
+                    $data = $_POST['data'];
+                    $response = updateTable($data);
+                    echo json_encode($response);
+                    break;
+            }
+        } else {
+            echo json_encode("no action");
+        }
+        break;
 
         break;
     case 'DELETE': //Delete di una tabella dato il suo ID
-
+        if (isset($_GET['tableId'])){
+            $tableId = $_GET['tableId'];
+            Table::deleteTable($tableId);
+            echo json_encode('deleted successfully');
+        }
         break;
 }
 
@@ -66,6 +83,17 @@ function saveTable($data) {
     $response .= $tableId;
     $response .= Table::createNewTable($decodedData['title'], $decodedData['attributes']);
     $response .= Table::fillTableRows($decodedData['rows'], $decodedData['attributes'], $decodedData['title']);
+
+    return $response;
+}
+
+function updateTable($data) {
+    $decodedData = json_decode($data, true);
+    $response = "";
+
+    //Da capire se ha senso tenerlo
+    Table::updateTableData($decodedData['tableId'], count($decodedData['rows']), $decodedData['attributes']);
+    $response .= Table::updateTableRows($decodedData['rows'], $decodedData['attributes'], $decodedData['title']);
 
     return $response;
 }
