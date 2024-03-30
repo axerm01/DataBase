@@ -6,6 +6,24 @@
     <title>Registrazione-ESQL-Esercitazioni</title>
     <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
+    <style>
+    #role {
+        width: 150px;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #fff; /* Colore di sfondo */
+        color: #333; /* Colore del testo */
+        font-size: 16px; /* Dimensione del testo */
+        font-family: Arial, sans-serif; /* Famiglia di caratteri */
+    }
+    /* Stile per le opzioni nel menu a discesa del ruolo */
+    #role option {
+        background-color: #fff; /* Colore di sfondo */
+        color: #333; /* Colore del testo */
+    }
+    </style>
 </head>
 
 <body class="signin_body">
@@ -16,20 +34,20 @@
 
     <div class="signin-container">
         <form action="../controllers/utils/SignInController.php" method="post">
-            <h2>Registrazione <select name="role" required>
+            <h2>Registrazione <select id="role" name="role" required>
                 <option value="" disabled selected>Scegli il tuo ruolo</option>
                 <option value="professor">Docente</option>
                 <option value="student">Studente</option>
             </select></h2>
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <input type="text" name="name" placeholder="Nome" required>
-            <input type="text" name="surname" placeholder="Cognome" required>
-            <input type="number" name="matricola" placeholder="Matricola" required> <!--Matricola ??? -->
-            <input type="text" name="registration_year" placeholder="Anno Immatricolazione" required>
-            <input type="text" name="course" placeholder="Corso" required>
-            <input type="text" name="department" placeholder="Dipartimento" required>
-            <input type="number" name="phone" placeholder="Telefono">
+            <input type="email" id="email" name="email"placeholder="Email" required>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <input type="text" id="name" name="name" placeholder="Nome" required>
+            <input type="text" id="surname" name="surname" placeholder="Cognome" required>
+            <input type="number" id="matricola" name="matricola" placeholder="Matricola" required> <!--Matricola ??? -->
+            <input type="text" id="registration_year" name="registration_year" placeholder="Anno Immatricolazione" required>
+            <input type="text" id="course" name="course" placeholder="Corso" required>
+            <input type="text" id="department" name="department" placeholder="Dipartimento" required>
+            <input type="number" id="phone" name="phone" placeholder="Telefono">
             
             <input type="submit" value="invio">
             
@@ -46,62 +64,65 @@
         <h3>Università di Bologna</h3>
     </footer>
 
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-        document.querySelector('select[name="role"]').addEventListener("change", function() {
-        var role = this.value;
-        var fieldsToShow = [];
+        // Nascondi tutti i campi di input all'avvio della pagina
+        window.addEventListener('DOMContentLoaded', function() {
+            $('#email').hide(); 
+            $('#password').hide();
+            $('#name').hide();
+            $('#surname').hide();
+            $('#phone').hide();
 
-        // Determina quali campi mostrare in base al ruolo selezionato
-        switch(role) {
-            case "professor":
-                fieldsToShow = ["email", "password", "name", "surname", "course", "department","phone"];
-                var matricolaField = document.querySelector('input[name="matricola"]');
-                if (matricolaField) {
-                    matricolaField.remove();
-                }
-                var registration_yearField = document.querySelector('input[name="registration_year"]');
-                if (registration_yearField) {
-                    registration_yearField.remove();
-                }
-                break;
-            case "student":
-                fieldsToShow = ["email", "password", "name", "surname", "matricola", "registration_year", "phone"];
-                var courseField = document.querySelector('input[name="course"]');
-                if (courseField) {
-                    courseField.remove();
-                }
-                var departmentField = document.querySelector('input[name="department"]');
-                if (departmentField) {
-                    departmentField.remove();
-                }
-                break;
-            default:
-                // Selezionato "Scegli il tuo ruolo" o altro, nascondi tutti i campi
-                fieldsToShow = [];
-        }
+            $('#course').hide();
+            $('#department').hide();
+            $('#matricola').hide();
+            $('#registration_year').hide();
+        });
 
-        /*// Nascondi tutti i campi di input
-        var allFields = document.querySelectorAll('input[name="email"], input[name="password"], input[name="name"], input[name="surname"], input[name="matricola"], input[name="registration_year"], input[name="course"], input[name="department"], input[name="phone"]');
-        allFields.forEach(function(field) {
-            field.style.display = "none";
-        });*/
+        document.querySelector('#role').addEventListener("change", function() {
+            var role = this.value;
+            
+            // Determina quali campi mostrare in base al ruolo selezionato
+            switch(role) {
+                case "professor":
 
-        // Mostra solo i campi necessari per il ruolo selezionato
-        fieldsToShow.forEach(function(role) {
-            var fieldToShow = document.querySelector('input[name="' + role + '"]');
-            if (fieldToShow) {
-                fieldToShow.style.display = "block";
+                    $('#matricola').hide();
+                    $('#registration_year').hide();
+                    $('#matricola').prop('required', false);
+                    $('#registration_year').prop('required', false);
+
+                    $('#email').show(); 
+                    $('#password').show();
+                    $('#name').show();
+                    $('#surname').show();
+                    $('#phone').show();
+
+                    $('#course').show();
+                    $('#department').show();
+                    $('#course').prop('required', true);
+                    $('#department').prop('required', true);
+                    break;
+                case "student":
+                    $('#course').hide();
+                    $('#department').hide();
+                    $('#course').prop('required', false);
+                    $('#department').prop('required', false);
+
+                    $('#email').show(); 
+                    $('#password').show();
+                    $('#name').show();
+                    $('#surname').show();
+                    $('#phone').show();
+
+                    $('#matricola').show();
+                    $('#registration_year').show();
+                    $('#matricola').prop('required', true);
+                    $('#registration_year').prop('required', true);
+                    break;
             }
         });
-    });
-    // Nascondi tutti i campi di input all'avvio della pagina
-    window.addEventListener('DOMContentLoaded', function() {
-        var allFields = document.querySelectorAll('input[name="email"], input[name="password"], input[name="name"], input[name="surname"], input[name="matricola"], input[name="registration_year"], input[name="course"], input[name="department"], input[name="phone"]');
-        allFields.forEach(function(field) {
-            field.style.display = "none";
-        });
-    });
+    
     </script>
 </body>
 </html>
