@@ -1,8 +1,7 @@
 <?php
 include('../../controllers/utils/connect.php');
-include ('Question.php');
 
-class CodeQuestion extends Question {
+class CodeQuestion  {
 
     public static function getQuestion($id, $testId) {
         global $con; // Assicurati che $con sia la tua connessione al database

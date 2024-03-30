@@ -3,7 +3,6 @@ session_start();
 
 include '../utils/connect.php';
 include '../../models/relational/Table.php';
-require '../../models/relational/Column.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -12,6 +11,7 @@ header('Content-Type: application/json');
 switch ($method){
     case 'GET':
         $endpoint = $_GET['action'];
+        $data = [];
         switch ($endpoint) {
             case 'get_tables': // GET delle tabelle create da un docente, restituisce id tabella e nome
                 $data = Table::getAllTables($_SESSION['email']);
@@ -29,7 +29,15 @@ switch ($method){
 
                 $data = array_merge(array($columns), $content);
                 break;
+
+            case 'check_name': // GET delle colonne di una tabella indicata
+                $name = filter_input(INPUT_GET, 'name');
+                $data = Table::checkIfNameExists($name);
+                //$data = $name;
+                break;
+
         }
+
         echo json_encode($data);  // Converte l'array $data in JSON e lo invia
         break;
 
@@ -86,7 +94,6 @@ function saveTable($data) {
 
     return $response;
 }
-
 function updateTable($data) {
     $decodedData = json_decode($data, true);
     $response = "";

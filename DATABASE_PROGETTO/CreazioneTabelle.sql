@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `CODICE` (
   `ID` INT NOT NULL,
   `Output` VARCHAR(45) DEFAULT NULL,
   `IDTest` INT NOT NULL,
-  `Difficolta` INT NOT NULL, -- aggiunto
+  `Difficolta` INT NOT NULL,
   PRIMARY KEY (`ID`, `IDTest`),
   CONSTRAINT `FK_Codice_IDTest`
     FOREIGN KEY (`IDTest`)

@@ -6,12 +6,12 @@ class Test {
     public static function saveTestData($title, $creationDate, $showAnswers, $professorEmail){
 
         global $con;
-        $q = 'CALL CreateTest(?,?,?,?,@lastID);';
+        $q = 'CALL CreateTest(?,?,?,@lastID);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
             die("Errore nella preparazione della query: " . $con->error);
         }
-        $stmt->bind_param('ssis', $title, $creationDate, $showAnswers, $professorEmail);
+        $stmt->bind_param('sis', $title, $showAnswers, $professorEmail);
         if (!$stmt->execute()) {
             die("Errore nell'esecuzione della query: " . $stmt->error);
         }

@@ -224,7 +224,7 @@
             // Effettua una richiesta AJAX per ottenere i nomi delle tabelle dal file PHP
             $.ajax({
                 type: "GET",
-                url: "../controllers/test/TestController.php?endpoint=get_tables",
+                url: "../controllers/table/TableController.php?action=get_tables",
                 data: { },
                 success: function(data) {
                     console.log("Successo:", data);
@@ -292,7 +292,7 @@
             // AJAX request to send data to the PHP file and receive table data
             $.ajax({
                 type: "GET", // Metodo HTTP utilizzato
-                url: "../controllers/test/TestController.php?endpoint=get_full_table", // URL a cui viene fatta la richiesta
+                url: "../controllers/table/TableController.php?action=get_full_table", // URL a cui viene fatta la richiesta
                 data: { tableId: selectedID }, // Dati inviati al server
                 success: function(response) {
                     console.log("Data received from the server: ", response);
@@ -402,7 +402,7 @@
 
             $.ajax({
                 type: "GET", // Imposta il metodo HTTP su GET
-                url: "../controllers/test/TestController.php?endpoint=get_table_columns", // URL a cui fare la richiesta
+                url: "../controllers/table/TableController.php?action=get_table_columns", // URL a cui fare la richiesta
                 data: { tableId: selectedTableId }, // Dati inviati al server come parte della richiesta
                 success: function(columns) {
                     // Costruisci le opzioni del menu a tendina usando i dati ricevuti
@@ -422,7 +422,7 @@
 
             $.ajax({
                 type: "GET", // Imposta il metodo HTTP su GET
-                url: "../controllers/test/TestController.php?endpoint=get_table_columns", // URL a cui fare la richiesta
+                url: "../controllers/table/TableController.php?action=get_table_columns", // URL a cui fare la richiesta
                 data: {tableId: selectedTableId},
                 success: function(columns) {
                     menuAttribute2.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>` + columns.map(col => `<option value="${col.Nome}">${col.Nome}</option>`).join('');

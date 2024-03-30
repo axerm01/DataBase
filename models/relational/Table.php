@@ -23,7 +23,7 @@ class Table {
         $stmt->close();
 
         foreach ($columns as $column) {
-            Column::saveTableColumns($column['id'], $column['name'], $column['type'], $column['PK']);
+            Column::saveTableColumns($id, $column['name'], $column['type'], $column['PK']);
         }
 
         return $id;
@@ -156,8 +156,6 @@ class Table {
         return $response;
     }
 
-
-
     public static function getAllTables($profEmail) //restituisce id tabella e nome
     {
         global $con;
@@ -258,5 +256,34 @@ class Table {
         $tableQuery->execute();
         $tableQuery->close();
     }
+
+    public static function checkIfNameExists($nome) {
+        global $con; // Assumi che $con sia la tua connessione al database (mysqli)
+
+        // Prepara la chiamata alla stored procedure
+        $stmt = $con->prepare("CALL CheckIfNameExists(?, @result)");
+        if ($stmt === false) {
+            // Gestisci l'errore di preparazione della query
+            throw new Exception("Errore nella preparazione della query: " . $con->error);
+        }
+
+        // Lega i parametri
+        $stmt->bind_param('s', $nome);
+
+        // Esegui la stored procedure
+        if (!$stmt->execute()) {
+            // Gestisci l'errore di esecuzione della query
+            throw new Exception("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+
+        // Recupera il risultato
+        $result = $con->query("SELECT @result AS result")->fetch_assoc();
+
+        $stmt->close();
+
+        // Restituisce il risultato booleano
+        return (bool) $result['result'];
+    }
+
 
 }

@@ -79,7 +79,8 @@
                     <td>Nome attributi:</td>
                 </tr>
             </table>
-            <a href="createTable.html"><input type="submit" value="Invia" onclick="submitForm()"></a>
+        <input type="submit" value="Invia" onclick="submitForm()">
+<!--            <a href="createTable.html"><input type="submit" value="Invia" onclick="submitForm()"></a>-->
 
     </div>
 
@@ -88,6 +89,7 @@
         <h3>Università di Bologna</h3>
     </footer>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         var attributeCounter = 1;
         var rowCounter = 1;
@@ -172,10 +174,10 @@
         // Prima invia una richiesta GET per verificare il titolo
         $.ajax({
             type: 'GET', // Cambiato in GET
-            url: '../controllers/table/TableController.php', // URL dello script PHP per la verifica del titolo
-            data: { title: title }, // Parametri inviati nella stringa di query URL
+            url: '../controllers/table/TableController.php?action=check_name&name='+title, // URL dello script PHP per la verifica del titolo
+            data: { }, // Parametri inviati nella stringa di query URL
             success: function(data) {
-                if(data.esiste) {
+                if(data) {
                     alert("Il titolo inserito esiste già. Scegline un altro.");
                 } else {
                     // Se il titolo non esiste, procedi con l'invio del form
@@ -204,18 +206,24 @@
                         rows.push(rowData);
                     }
 
-                    var formData = {
+                    var table_data = {
                         title: title,
                         attributes: attributes,
                         rows: rows
                     };
 
+                    var formData = new FormData();
+                    // Aggiunge i dati al FormData
+                    formData.append("data", JSON.stringify(table_data));
+                    formData.append("action", "save_table");
+
                     // Invia i dati in formato JSON al file PHP per l'inserimento
                     $.ajax({
                         type: 'POST',
                         url: '../controllers/table/TableController.php',
-                        contentType: 'application/json', // Imposta il tipo di contenuto come JSON
-                        data: JSON.stringify(formData), // Converte i dati del form in stringa JSON
+                        data: formData,
+                        contentType: false, // Importante per il corretto invio di FormData
+                        processData: false,
                         success: function(response) {
                             console.log(response); // Gestisci la risposta qui
                         },

@@ -3,7 +3,7 @@ class Column {
     public static function saveTableColumns($tableId, $name, $type, $isPK){
         global $con;
         $isPK = (int) $isPK;
-        $q = "CALL CreateAttribute(?,?,?,?);";
+        $q = "CALL CreateAttribute(?,?,?,?)";
         $stmt = mysqli_prepare($con, $q);
         if ($stmt === false) {
             die("Errore nella preparazione della query: " . mysqli_error($con));

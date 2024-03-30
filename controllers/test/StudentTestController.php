@@ -79,7 +79,7 @@ switch ($method) {
             $email = $_SESSION['email'];
 
             switch ($action) {
-                case 'status_in_progress':
+                case 'status_in_progress': // inutile, fa il trigger dal DB
                     StudentTest::updateStudentTestStatus($testId, $email);
                     echo json_encode('updated status: in progress');
                     break;
@@ -98,8 +98,4 @@ switch ($method) {
             echo json_encode("no action");
         }
         break;
-
-    case 'DELETE':
-        break;
-
 }

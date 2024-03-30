@@ -623,13 +623,15 @@ DELIMITER //
 CREATE PROCEDURE `CreateTest`(
 in TitoloAtt varchar(45),
 in VisualizzaRisposteAtt int,
-in MailDocenteAtt varchar(45)
+in MailDocenteAtt varchar(45),
+out IDAtt INT
 )
 BEGIN
 Declare orario DATETIME;
 set orario = NOW();
 INSERT INTO test (Titolo,DataCreazione,VisualizzaRisposte,MailDocente)
 VALUES (TitoloAtt,orario,VisualizzaRisposteAtt,MailDocenteAtt);
+SET IDAtt = LAST_INSERT_ID();
 END //
 
 CREATE PROCEDURE `UpdateVisualizzaRisposteTest`(
@@ -745,5 +747,21 @@ BEGIN
     INSERT INTO RISPOSTA_CODICE(Studente,IDDomanda,IDTest,CodiceRisposta)
     VALUES (StudenteAtt,IDDomandaAtt,IDTestAtt,CodiceRispostaAtt);
 END//
+
+
+CREATE PROCEDURE CheckIfNameExists(IN nomeInput VARCHAR(45), OUT result BOOLEAN)
+BEGIN
+    DECLARE countName INT;
+
+SELECT COUNT(*) INTO countName
+FROM Tabella
+WHERE Nome = nomeInput;
+
+IF countName > 0 THEN
+        SET result = TRUE;
+ELSE
+        SET result = FALSE;
+END IF;
+END //
 
 DELIMITER ;

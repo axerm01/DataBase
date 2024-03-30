@@ -3,7 +3,6 @@ session_start();
 include('../utils/connect.php');
 include '../../models/relational/Table.php';
 require '../../models/tests/Test.php';
-require '../../models/relational/Column.php';
 
 
 $method = $_SERVER['REQUEST_METHOD'];
@@ -62,7 +61,7 @@ function saveTest($data) {
         $decodedData = json_decode($data, true);
 
         $creationDate = date('Y-m-d H:i:s');
-        $testId = Test::saveTestData($decodedData['title'], $creationDate, $decodedData['show_answers'], $_SESSION['email']);
+        $testId = Test::saveTestData($decodedData['title'], $creationDate, true/*$decodedData['show_answers']*/, $_SESSION['email']);
 
         // Sezione dedicata al salvataggio delle tabelle relative al Test
         $tableIDs = [];
@@ -73,13 +72,16 @@ function saveTest($data) {
 
         // Sezione dedicata al salvataggio delle referenze relative al Test
         foreach ($decodedData['constraints'] as $referenceData) {
-            Reference::saveReferenceData($referenceData['tab1'], $referenceData['tab2'], $referenceData['att1'], $referenceData['att2']);
+            if (isset($referenceData['tab1'], $referenceData['tab2'], $referenceData['att1'], $referenceData['att2'])) {
+                Reference::saveReferenceData($referenceData['tab1'], $referenceData['tab2'], $referenceData['att1'], $referenceData['att2']);
+            }
         }
 
         // Sezione dedicata al salvataggio delle domande relative al Test
         foreach ($decodedData['questions'] as $questionData) {
             if ($questionData['type'] == 'code') {
                 CodeQuestion::saveCodeQuestion($testId,$questionData['id'], $questionData['questionText'], $questionData['sqlCode'], $questionData['difficulty']);
+                return 'ok';
             } else if ($questionData['type'] == 'mc') {
                 MultipleChoiceQuestion::saveMCData($testId,$questionData['id'],$questionData['questionText'], count($questionData['answers']), $questionData['difficulty'], $questionData['answers'] );
             }

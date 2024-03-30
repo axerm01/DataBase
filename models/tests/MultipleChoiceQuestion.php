@@ -1,7 +1,7 @@
 <?php
-include('../../controllers/utils/connect.php');
+include ('Answer.php');
 
-class MultipleChoiceQuestion extends Question {
+class MultipleChoiceQuestion {
 
     public static function getTestQuestions($testId) {
         global $con; // Assumi che $con sia la tua connessione al database
