@@ -96,7 +96,7 @@ ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `GALLERIA` (
   `IDTest` INT NOT NULL,
-  `Foto` varchar(45) NOT NULL, -- da modificare
+  `Foto` varchar(45) NOT NULL,
   PRIMARY KEY (`IDTest`, `Foto`),
   CONSTRAINT `FK_Galleria_IDTest`
     FOREIGN KEY (`IDTest`)
@@ -175,7 +175,7 @@ CREATE TABLE IF NOT EXISTS `SCELTA_MULTIPLA` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS `SCELTA` ( -- le possibili scelte dei quesiti scelta multipla
+CREATE TABLE IF NOT EXISTS `SCELTA` (
   `ID` INT NOT NULL AUTO_INCREMENT,
   `Testo` VARCHAR(45) NULL,
   `IDTest` INT NOT NULL,
@@ -193,7 +193,7 @@ CREATE TABLE IF NOT EXISTS `SCELTA` ( -- le possibili scelte dei quesiti scelta 
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS `RISPOSTA_SCELTA` ( -- tabella risposta dello studente quesito multiplo
+CREATE TABLE IF NOT EXISTS `RISPOSTA_SCELTA` (
   `Studente` varchar(45) not null,
   `IDDomanda` INT NOT NULL,
   `IDRisposta` int,
@@ -222,7 +222,7 @@ CREATE TABLE IF NOT EXISTS `RISPOSTA_SCELTA` ( -- tabella risposta dello student
     )
 ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS `RISPOSTA_CODICE` ( -- tabella risposta dello studente a quesito codice
+CREATE TABLE IF NOT EXISTS `RISPOSTA_CODICE` (
   `Studente` varchar(45) not null,
   `IDDomanda` INT NOT NULL,
   `CodiceRisposta` varchar(500),

@@ -54,5 +54,20 @@ class CodeQuestion  {
 
         $stmt->close();
     }
+    public static function deleteCodeQuestion($IDTest, $ID)
+    {
+        global $con;
+        $q = 'CALL DropCodice(?,?);';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('ii',$ID, $IDTest);
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+
+        $stmt->close();
+    }
 
 }

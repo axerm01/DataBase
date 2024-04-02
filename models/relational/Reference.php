@@ -18,6 +18,22 @@ class Reference
 
         $stmt->close();
     }
+
+    public static function deleteReferenceData($tab1, $tab2, $att1,  $att2)
+    {
+        global $con;
+        $q = 'CALL DropReference(?,?,?,?);';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('iiii', $tab1, $tab2, $att1,  $att2);
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+
+        $stmt->close();
+    }
     public static function getReferencesByTableIds($tableIds) {
         global $con; // Assumi che $con sia la tua connessione al database
 

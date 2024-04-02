@@ -251,7 +251,7 @@ class Table {
 
     public static function deleteTable($tableId) {
         global $con; // Assumi che $con sia la tua connessione al database
-        $tableQuery = $con->prepare("CALL DropTabella(?)");
+        $tableQuery = $con->prepare("CALL DropTable(?)");
         $tableQuery->bind_param('i', $tableId);
         $tableQuery->execute();
         $tableQuery->close();

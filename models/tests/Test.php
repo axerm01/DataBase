@@ -119,4 +119,55 @@ class Test {
         return $data;
     }
 
+    public static function updateTestData($testId, $title, $showAnswers) {
+        global $con; // Assumi che $con sia la tua connessione al database (mysqli)
+
+        // Preparazione della query SQL
+        $stmt = $con->prepare("UPDATE TEST SET Titolo = ?, VisualizzaRisposte = ? WHERE ID = ?");
+
+        // Verifica se la preparazione della query ha avuto successo
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+
+        // Associa i parametri alla query preparata
+        $stmt->bind_param('sii', $title, $showAnswers, $testId);
+
+        // Esegui la query
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+
+        // Chiusura dello statement
+        $stmt->close();
+
+        return "Aggiornamento completato con successo.";
+    }
+
+    public static function deleteTableTestLink($IDtest, $IDTabella) {
+        global $con; // Assumi che $con sia la tua connessione al database (mysqli)
+
+        // Preparazione della query SQL
+        $stmt = $con->prepare("DELETE FROM TABELLE_TEST WHERE IDTest = ? AND IDTabella = ?");
+
+        // Verifica se la preparazione della query ha avuto successo
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+
+        // Associa i parametri alla query preparata
+        $stmt->bind_param('ii', $IDtest, $IDTabella);
+
+        // Esegui la query
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+
+        // Chiusura dello statement
+        $stmt->close();
+
+        return "Record eliminati con successo.";
+    }
+
+
 }

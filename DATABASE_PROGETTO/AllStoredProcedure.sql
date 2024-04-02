@@ -95,11 +95,12 @@ VALUES (IDTestAtt,OutputAtt);
 END //
 
 CREATE PROCEDURE `DropCodice`(
-in IDAtt int
+in IDAtt int,
+in IDTestAtt int
 )
 BEGIN
 DELETE FROM Codice
-WHERE ID = IDAtt;
+WHERE ID = IDAtt and IDTest = IDTestAtt;
 END //
 
 CREATE PROCEDURE `ViewAllCodice`(in IDTestAtt int)
@@ -348,7 +349,7 @@ INSERT INTO referenze (IDT1, NomeAttributo1, IDT2, NomeAttributo2)
 VALUES (IDT1Att, NomeAttributo1Att, IDT2Att, NomeAttributo2Att);
 END //
 
-CREATE PROCEDURE `DropReferenze`(
+CREATE PROCEDURE `DropReference`(
 in IDT1Att int,
 in IDT2Att int,
 in NomeAttributo1Att varchar(45),
@@ -384,26 +385,28 @@ NomeAttributo2 = NomeAttributo2Att
 END //
 DELIMITER ; 
 DELIMITER //
-CREATE PROCEDURE `CreateScelta`(
-in TestoAtt varchar(45),
+CREATE PROCEDURE `CreateAnswer`(
+in IDAtt int,
 in IDTestAtt int,
-in IDScMulAtt int
+in IDScMulAtt int,
+in TestoAtt varchar(45),,
+in ISCorrectAtt int
 )
 BEGIN
-INSERT INTO scelta (Testo,IDTest,IDScMul)
-VALUES (TestoAtt,IDTestAtt,IDScMulAtt);
+INSERT INTO scelta (ID,Testo,IDTest,IDScMul, IsCorretta)
+VALUES (IDAtt,TestoAtt,IDTestAtt,IDScMulAtt, ISCorrectAtt);
 END //
 
-CREATE PROCEDURE `DropScelta`(
+CREATE PROCEDURE `DropAnswers`(
 in IDTestAtt int,
-in TestoAtt varchar(45)
+in IDScMultAtt varchar(45)
 )
 BEGIN
 DELETE FROM scelta
-WHERE IDTest = IDTestAtt and Testo = TestoAtt;
+WHERE IDTest = IDTestAtt and IDScMult = IDScMultAtt;
 END //
 
-CREATE PROCEDURE `ViewScelta`(in IDTestAtt int,
+CREATE PROCEDURE `ViewAnswer`(in IDTestAtt int,
 in TestoAtt varchar(45))
 BEGIN
 SELECT*
@@ -426,11 +429,11 @@ END //
 
 CREATE PROCEDURE `DropSceltaMultipla`(
 in IDTestAtt int,
-in DescrizioneAtt varchar(45)
+in IDAtt varchar(45)
 )
 BEGIN
 DELETE FROM Scelta_Multipla
-WHERE IDTest = IDTestAtt and Descrizione = DescrizioneAtt;
+WHERE IDTest = IDTestAtt and ID = IDAtt;
 END //
 
 CREATE PROCEDURE `ViewSceltaMultipla`(in IDTestAtt int,
@@ -584,13 +587,15 @@ CREATE PROCEDURE `CreateTable`(
 in MailAtt varchar(45),
 in NomeAtt varchar(45),
 in DataAtt date,
-in NumRigheAtt smallint)
+in NumRigheAtt smallint
+out IDAtt int )
 BEGIN
     INSERT INTO tabella (MailProfessore, Nome, DataCreazione, NumRighe)
     VALUES (MailAtt, NomeAtt, DataAtt, NumRigheAtt);
+    SET IDAtt = LAST_INSERT_ID();
 END//
 
-CREATE PROCEDURE `DropTabella`(IN ID smallint)
+CREATE PROCEDURE `DropTable`(IN ID smallint)
 BEGIN
 
 DELETE FROM tabella
@@ -600,7 +605,7 @@ DELETE FROM ATTRIBUTO
 WHERE IDTabella = ID;
 END //
 
-CREATE PROCEDURE `ViewAllTabelle`(in mail varchar(45))
+CREATE PROCEDURE `ViewAllTables`(in mail varchar(45))
 BEGIN
 SELECT *
 FROM tabella

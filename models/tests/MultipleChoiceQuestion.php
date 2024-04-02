@@ -35,6 +35,22 @@ class MultipleChoiceQuestion {
         }
     }
 
+    public static function deleteMCData($IDTest,$IDMC)
+    {
+        global $con;
+        $q = 'CALL DropSceltaMultipla(?,?);';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('ii',$IDTest, $IDMC);
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+        $stmt->close();
+        Answer::deleteMCAnswersData($IDTest,$IDMC);
+    }
+
     public static function getQuestion($id, $testId) {
         global $con; // Assicurati che $con sia la tua connessione al database
 
