@@ -71,8 +71,7 @@ switch ($method){
             echo json_encode("no action");
         }
         break;
-
-        break;
+        
     case 'DELETE': //Delete di una tabella dato il suo ID
         if (isset($_GET['tableId'])){
             $tableId = $_GET['tableId'];
