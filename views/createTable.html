@@ -172,7 +172,14 @@
         var attributes = [];
         var rows = [];
         // Prima invia una richiesta GET per verificare il titolo
-        
+        $.ajax({
+            type: 'GET', // Cambiato in GET
+            url: '../controllers/table/TableController.php?action=check_name&name='+title, // URL dello script PHP per la verifica del titolo
+            data: { }, // Parametri inviati nella stringa di query URL
+            success: function(data) {
+                if(data) {
+                    alert("Il titolo inserito esiste già. Scegline un altro.");
+                } else {
                     // Se il titolo non esiste, procedi con l'invio del form
                     var table = $('#table')[0]; // Utilizzo di jQuery con accesso diretto all'elemento DOM
                     var headerRow = table.rows[0];
@@ -230,8 +237,13 @@
                         }
                     });
                 }
-            
-
+            },
+            error: function(xhr, status, error) {
+                console.error('Errore:', error);
+            },
+            dataType: 'json' // Aspettati una risposta JSON
+        });
+    }        
 
     </script>
     
