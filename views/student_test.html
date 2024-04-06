@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizza Test</title>
+    <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+</head>
+<style>
+    .questions-container {
+        width: 100%;
+        margin: auto;
+    }
+
+    .question {
+        margin-top: 20px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        padding: 15px;
+        background-color: #fff;
+        width: 150%;
+    }
+
+    .question-description {
+        margin-bottom: 10px;
+    }
+
+    .question-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .question-description textarea {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        font-size: 16px;
+        background-color: #f9f9f9;
+        color: #333;
+        resize: none;
+    }
+
+    .question-difficulty {
+        font-size: 16px;
+        margin-top: 5px;
+    }
+
+    .add-question-button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        margin-top: 10px;
+    }
+
+    .indietro {
+        position: absolute;
+        bottom: 5px;
+        right: 50px;
+        width: 20px;
+        height: 20px;
+    }
+
+    .indietro a {
+        display: block;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .indietro img {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+
+    .testo-indietro {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        color: #ffffff;
+        font-size: 5px;
+    }       
+</style>
+
+
+<body>
+    <header>
+        <h1>Studia con ESQL</h1>
+        <div class="indietro">
+            <!-- Usa "javascript:history.back()" come href per tornare indietro -->
+            <a href="javascript:history.back()">
+                <img src="image/arrow.png" alt="Torna indietro" style="width: 15px; height: 15px;">
+            </a>
+            <span class="testo-indietro">Indietro</span>
+        </div>
+    </header>
+
+    <div id="questionsContainer">
+        <!-- Contenitore per le domande -->
+        <div class="question" id="questionMultipleChoice">
+            <!-- Titolo della domanda a risposta multipla -->
+            <div class="question-title">Domanda a Risposta Multipla:</div>
+            
+            <!-- Zona per la descrizione e la difficoltà -->
+            <div class="question-description">
+                <label for="multipleChoiceDescription">Descrizione:</label>
+                <textarea id="multipleChoiceDescription" name="multipleChoiceDescription" readonly></textarea>
+                <label for="multipleChoiceDifficulty">Difficoltà:</label>
+                <div id="multipleChoiceDifficulty"></div>
+            </div>
+            
+            <!-- Possibili scelte per la domanda a risposta multipla -->
+            <div id="multipleChoiceOptionsContainer">
+                <input type="radio" name="multipleChoiceOptions" value="opzione1"> Opzione 1<br>
+                <input type="radio" name="multipleChoiceOptions" value="opzione2"> Opzione 2<br>
+                <input type="radio" name="multipleChoiceOptions" value="opzione3"> Opzione 3<br>
+                <input type="radio" name="multipleChoiceOptions" value="opzione4"> Opzione 4<br>
+            </div>
+        </div>
+
+        <div class="question" id="questionCode">
+            <!-- Titolo della domanda del codice -->
+            <div class="question-title">Domanda Codice:</div>
+            
+            <!-- Zona per la descrizione e la difficoltà -->
+            <div class="question-description">
+                <label for="codeDescription">Descrizione:</label>
+                <textarea id="codeDescription" name="codeDescription" readonly></textarea>
+                <label for="codeDifficulty">Difficoltà:</label>
+                <div id="codeDifficulty"></div>
+            </div>
+            
+            <!-- Input per la domanda del codice -->
+            <textarea class="code-textarea" name="codeQuestion"></textarea>
+        </div>
+    </div>
+
+    <!-- Pulsanti per aggiungere altre domande -->
+    <button class="add-question-button" onclick="addCodeQuestion()">Aggiungi Domanda Codice</button>
+    <button class="add-question-button" onclick="addMultipleChoiceQuestion()">Aggiungi Domanda a Risposta Multipla</button>
+
+    <!-- Footer aggiunto -->
+    <footer>
+        <p>Alma Mater Studiorum</p>
+        <h3>Università di Bologna</h3>
+    </footer>
+
+    <script>
+        function addCodeQuestion() {
+            var questionCode = document.getElementById('questionCode');
+            var clonedQuestionCode = questionCode.cloneNode(true);
+            document.getElementById('questionsContainer').appendChild(clonedQuestionCode);
+        }
+
+        function addMultipleChoiceQuestion() {
+            var questionMultipleChoice = document.getElementById('questionMultipleChoice');
+            var clonedQuestionMultipleChoice = questionMultipleChoice.cloneNode(true);
+            document.getElementById('questionsContainer').appendChild(clonedQuestionMultipleChoice);
+        }
+
+        // Funzione per impostare la descrizione e la difficoltà
+        function setQuestionDescriptionAndDifficulty(description, difficulty, questionType) {
+            if (questionType === 'multipleChoice') {
+                document.getElementById('multipleChoiceDescription').value = description;
+                document.getElementById('multipleChoiceDifficulty').textContent = difficulty;
+            } else if (questionType === 'code') {
+                document.getElementById('codeDescription').value = description;
+                document.getElementById('codeDifficulty').textContent = difficulty;
+            }
+        }
+    </script>
+</body>
+
+</html>

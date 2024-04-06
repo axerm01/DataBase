@@ -41,9 +41,13 @@ header {
 /* Stili per il contenitore principale */
 .main-container { 
     height: 100%;
-    width: 100%;
+    width: 90%;
     padding: 20px;
     background-color: #fff;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Centra i contenitori delle tabelle orizzontalmente */
+    align-items: flex-start; /* Opzionale, allinea i contenitori delle tabelle in alto */
 }
 .home-container {
     background-color: #fff;

@@ -6,16 +6,60 @@
     <title>Visualizza Tabelle</title>
     <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styleBACK.css">
+    <style>
+    .table-container {
+        display: inline-block;
+        font-size:medium;
+        padding: 10px;
+        text-align: center;
+    }
+    table {
+        display: inline-table; /* Mantiene le tabelle in linea */
+        border-collapse: collapse; /* Per una migliore visualizzazione delle tabelle */
+    }
+
+    th, td {
+        border: 1px solid #ddd; /* Stile dei bordi */
+        padding: 5px; /* Padding delle celle */
+    }
+
+    th {
+        background-color: #f2f2f2; /* Colore di sfondo delle celle dell'intestazione */
+    }
+    .delete-button {
+        background-color: #a51b1bc3;
+        cursor: pointer; /*modifica il cursore del mouse quando va sopra*/
+        font-size: 10px;
+        width: 70px;
+        padding: 5px;
+        margin-left: 25px;
+    }
+    .title{
+        font-size: 24px; /* Dimensione del carattere */
+        color: #333; /* Colore del testo */
+        text-align: center; /* Allineamento del testo */
+        margin-bottom: 0px;
+        margin-top: 0px;
+    }
+    </style>
 </head>
 
 <body>
     <header>
         <h1>Studia con ESQL</h1>
+        <div class="indietro">
+            <!-- Usa "javascript:history.back()" come href per tornare indietro -->
+            <span class="testo-indietro"><a href="javascript:history.back()">
+                <img src="image/arrow.png" alt="Torna indietro" style="width: 25px; height: 25px;">
+            </a>Indietro</span>
+        </div>   
     </header>
     <div class="main-container">
-        
-        <label for="title" >Visualizza Tabelle:</label>
-        
+        <p class="title">Tabelle create:</p>
+        <div id="tablesDisplay">
+            <!-- Le tabelle saranno visualizzate qui -->
+        </div>
     </div>
 
     <footer>
@@ -23,8 +67,84 @@
         <h3>Università di Bologna</h3>
     </footer>
 
-    <script>    
-        
+    <!-- Includi jQuery per semplificare la gestione delle richieste AJAX -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>  
+    
+    $(document).ready(function() {
+        $.ajax({
+            type: "GET",
+            url: "../controllers/table/TableController.php?action=get_tables",
+            data: { },
+            success: function(data) {
+                console.log("Successo GET nomi:", data);
+                $.each(data, function(index, table) {
+                    //logica per visualizzare il contenuto di ogni tabella
+                    requestData(table); // Utilizza il nome della tabella per richiedere i dettagli
+
+                });
+            },
+            dataType: "json"
+        }).fail(function(jqxhr, textStatus, error) {
+            var err = textStatus + ", " + error;
+            console.log("Request Failed: " + err);
+        });
+    });
+
+    function requestData(table) {
+        $.ajax({
+            type: "GET",
+            url: "../controllers/table/TableController.php?action=get_full_table",
+            data: { tableId: table.IDTabella },
+            success: function(response) {
+                console.log(response);
+                // Crea un contenitore per i dettagli della tabella
+                var tableContainer = $("<div class='table-container'></div>");
+                tableContainer.append("<h3>" + table.Nome + "</h3>"); // Aggiunge il titolo della tabella
+
+                // Create a table element
+                var viewTable = $("<table></table>").attr("id", "table-" + table.IDTabella);
+                    if (Array.isArray(response[0])) {
+                        // Estrai i nomi e inseriscili in un nuovo array
+                        let nomi = response[0].map(obj => obj.Nome);
+
+                        // Creazione dinamica delle intestazioni della tabella
+                        var headerRow = $('<tr></tr>');
+                        nomi.forEach(function(nome) {
+                            headerRow.append('<th>' + nome + '</th>');
+                            console.log(nome);
+                        });
+                        viewTable.append(headerRow);
+                    } else {
+                        console.error('Formato JSON non valido');
+                    }
+
+                    var rows = response.slice(1); // per leggere dalla seconda riga in poi 
+
+                    // Add rows to the table based on received data
+                    $.each(rows, function(index, row) {
+                        var dataRow = '<tr>';
+                        // Per ogni proprietà dell'oggetto 'row', aggiungi una cella alla riga
+                        Object.keys(row).forEach(function(key) {
+                            console.log(row +"  " + key);
+                            dataRow += '<td>' + row[key] + '</td>';
+                        });
+                        dataRow += '</tr>';
+                        viewTable.append(dataRow);
+                    });
+
+                // Clear previous table container and add the new table
+                    tableContainer.append(viewTable);
+
+                // Aggiunge il contenitore della tabella alla pagina
+                $("#tablesDisplay").append(tableContainer);
+            },
+            dataType: "json"
+        }).fail(function(jqxhr, textStatus, error) {
+            var err = textStatus + ", " + error;
+            console.log("Request Failed: " + err);
+        });
+    }
     </script>
 </body>
 </html>
