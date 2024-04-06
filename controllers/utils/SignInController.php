@@ -8,6 +8,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
+    header('Content-Type: application/json');
+
     // Controlla se l'email è valida
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         echo "Formato email non valido!";
@@ -48,7 +50,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Pezzo di codice che dovrebe restituire un riscontro
     if ($stmt->execute()) {
-        $messaggio = "Registrazione effettuata in modo corretto!";
+            // Invece di restituire JSON, reindirizza a una pagina di successo
+            header('Location: ../../views/login.html');
+            exit;
     } else {
         $messaggio = "Si è verificato un errore durante la registrazione.";
     }
