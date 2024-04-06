@@ -56,7 +56,6 @@
         .checkbox-label {
             font-size: 14px;
         }
-
     </style>
 </head>
 
@@ -87,7 +86,6 @@
                 </tr>
             </table>
         <input type="submit" value="Invia" onclick="submitForm()">
-<!--            <a href="createTable.html"><input type="submit" value="Invia" onclick="submitForm()"></a>-->
 
     </div>
 
@@ -238,6 +236,8 @@
                         processData: false,
                         success: function(response) {
                             console.log(response);
+                            alert(response);
+                            window.location.reload();
                         },
                         error: function(xhr, status, error) {
                             console.error('Errore:', error);

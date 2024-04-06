@@ -10,6 +10,7 @@
     <style>
         /* Styles for questions */
         .question {
+            /*width: 100vh;*/
             margin-top: 20px;
             border: 1px solid #ccc; /* Add border around the question */
             border-radius: 5px; /* Add rounded corners for the question box */
@@ -19,7 +20,7 @@
         }
         /* Styles for question input */
         .question-input {
-            width: 30%; /* Make the input field occupy the full width of its container */
+            /*width: 500px; /* Make the input field occupy the full width of its container */
             padding: 10px; /* Add padding for better visual appeal */
             margin-top: 15px; /* Add some spacing below the input */
             border: 1px solid #ccc; /* Add a border for clarity */
@@ -30,7 +31,7 @@
             color: #333; /* Set text color */
         }
         .question input[type="text"] {
-            width: 70%;
+            width: 500px;
         }
 
         /* Styles for answers */
@@ -244,6 +245,10 @@
                     $.each(data, function(index, value) {
                         select.append("<option value='" + value.IDTabella + "'>" + value.Nome + "</option>");
                     });
+                    $.each(tables, function(index, v) {
+                        // Rimuove l'opzione dal select con l'ID corrispondente
+                        select.find("option[value='" + v.id + "']").remove();
+                    });
 
                     // Inserisci il menu a tendina nel contenitore
                     $("#menuContainer").append(select);
@@ -257,6 +262,8 @@
                             id: $(this).val(),
                             name: $(this).find("option:selected").text()
                         };
+                         // Rimuovi l'opzione selezionata dal menu a tendina
+                        //$(".dropdown-table option[value='" + selectedTable.id + "']").remove();
                         tables.push(selectedTable); // Memorizza le tabelle selezionate
                         updateMenuTable1();
                         console.log("Tabella selezionata: ", selectedTable);
@@ -795,8 +802,8 @@
             // Invio dei dati al file PHP tramite AJAX
             $.ajax({
                 type: 'POST',
-                url: '../controllers/test/TestController.php', //AGGIUNGERE ENDPOINT PER GESTIONE DELLE 2 RICHIESTE POST
-                data: formData,
+                url: '../controllers/test/TestController.php', 
+                data:{ data: formData, action: 'save_test'},
                 contentType: false, // Importante per il corretto invio di FormData
                 processData: false,
                 success: function(response) {

@@ -44,6 +44,16 @@ header {
     width: 90%;
     padding: 20px;
     background-color: #fff;
+    display: block;
+    flex-wrap: wrap;
+    justify-content: center; /* Centra i contenitori delle tabelle orizzontalmente */
+    align-items: flex-start; /* Opzionale, allinea i contenitori delle tabelle in alto */
+}
+.view-container { 
+    height: 100%;
+    width: 80%;
+    padding: 20px;
+    background-color: #fff;
     display: flex;
     flex-wrap: wrap;
     justify-content: center; /* Centra i contenitori delle tabelle orizzontalmente */
