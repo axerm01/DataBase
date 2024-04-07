@@ -9,17 +9,17 @@
     <link rel="stylesheet" href="styleBACK.css">
     <style>
         .attributes_student h4, .Test_List p {
-            width: 15%;
+            width: 22%;
              float: inline-start;
-             text-align:start;
-             margin: 10px;
+             text-align:center;
+             margin: 20px 10px;
              flex-wrap: nowrap;
         }
         .attributes_student {
             width: 83%;
-            display:inline-block;
-            margin-right: 265px;
-            margin-left: 265px;
+            display: inline-block;
+            margin-right: 250px;
+            margin-left: 250px;
             background-color: #fff;
             border: 2px solid #ccc;
             border-radius: 5px;
@@ -35,12 +35,27 @@
         }
         .Test_List{
             width: 83%;
-            display:flex;
             margin-right: 265px;
             margin-left: 265px;
-            background-color: #fff;
             border: 2px solid #ccc;
             border-radius: 5px;
+        }
+        .test-container {
+            padding: 10px;
+            background-color: #fff; /* Aggiungi lo sfondo bianco */
+            border-radius: 5px; /* Aggiungi il bordo arrotondato */
+            margin-bottom: 10px; /* Aggiungi il margine inferiore */
+            overflow: hidden; /* Aggiungi overflow per gestire altezze variabili */
+        }
+        .test-container p, .button_student_home {
+            float: left; /* Metti i valori su una riga */
+            width: 22%; /* Assegna larghezza fissa ai valori */
+        }
+        .test-container .button_student_home {
+            float: right; /* Allinea i bottoni a destra */
+        }
+        .button_student_home button {
+            margin-left: 10px; /* Aggiungi margine tra i bottoni */
         }
     </style>
 </head>
@@ -67,18 +82,56 @@
         <h4>Stato Test</h4>
     </div>
 
-    <div class = "Test_List"> 
-        <p>CIAOOO</p>
-        <p>iniziato</p>
-        <p>enzomma</p>
-        <div class ="button_student_home">
-            <button onclick="window.location.href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'">Entra nel test</button>
-            <button onclick="window.location.href='Student_message.html'">Messaggi</button>
-        </div>
+    <div class="Test_List"> 
     </div>
     <footer>
         <p>Alma Mater Studiorum</p>
         <h3>Università di Bologna</h3>
     </footer>
+    <!-- Includi jQuery per semplificare la gestione delle richieste AJAX -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>  
+        $(document).ready(function() {
+            // Effettua una richiesta AJAX per ottenere i dati dei test
+            $.ajax({
+                type: "GET",
+                url: "../controllers/test/TestController.php",
+                data: { 
+                    endpoint: 'get_tests',
+                    prof_email: 'Docente@unibo.it'
+                },
+                success: function(response) {
+                    // Una volta ottenuti i dati, popola la sezione dei test
+                    populateTestList(response);
+                },
+                dataType: "json"
+            }).fail(function(jqxhr, textStatus, error) {
+                var err = textStatus + ", " + error;
+                console.log("Request Failed: " + err);
+            });
+        });
+
+        // Funzione per popolare la sezione dei test con i dati ottenuti dalla richiesta AJAX
+        function populateTestList(tests) {
+            var testList = $('.Test_List');
+
+            // Per ogni test, crea un contenitore div e aggiungi i dati
+            $.each(tests, function(index, test) {
+                var testContainer = $('<div class="test-container"></div>');
+
+                var title = $('<p>' + test.Titolo + '</p>');
+                var date = $('<p>' + test.DataCreazione + '</p>');
+                var status = $('<p>' + test.VisualizzaRisposte + '</p>');
+
+                var buttonContainer = $('<div class="button_student_home"></div>');
+                var enterButton = $('<button onclick="window.location.href=\'https://www.youtube.com/watch?v=dQw4w9WgXcQ\'">Entra nel test</button>');
+                var messageButton = $('<button onclick="window.location.href=\'Student_message.html\'">Messaggi</button>');
+
+                buttonContainer.append(enterButton, messageButton);
+                testContainer.append(title, date, status, buttonContainer);
+                testList.append(testContainer);
+            });
+        }
+    </script>
 </body>
 </html>
