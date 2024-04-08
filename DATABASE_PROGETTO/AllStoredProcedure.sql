@@ -389,7 +389,7 @@ CREATE PROCEDURE `CreateAnswer`(
 in IDAtt int,
 in IDTestAtt int,
 in IDScMulAtt int,
-in TestoAtt varchar(45),,
+in TestoAtt varchar(45),
 in ISCorrectAtt int
 )
 BEGIN
