@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS `TEST` (
   `ID` INT NOT NULL AUTO_INCREMENT,
   `Titolo` VARCHAR(45) NOT NULL,
   `DataCreazione` DATETIME,
-  `VisualizzaRisposte` int DEFAULT 0,
+  `VisualizzaRisposte` VARCHAR(45) DEFAULT 'FALSE',
   `MailDocente` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`ID`),
   CONSTRAINT `FK_Test_MailDocente`
