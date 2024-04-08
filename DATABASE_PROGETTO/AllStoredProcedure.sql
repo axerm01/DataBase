@@ -587,7 +587,7 @@ CREATE PROCEDURE `CreateTable`(
 in MailAtt varchar(45),
 in NomeAtt varchar(45),
 in DataAtt date,
-in NumRigheAtt smallint
+in NumRigheAtt smallint,
 out IDAtt int )
 BEGIN
     INSERT INTO tabella (MailProfessore, Nome, DataCreazione, NumRighe)
