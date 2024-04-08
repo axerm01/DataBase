@@ -151,6 +151,41 @@
             border-radius: 5px; /* Bordi arrotondati come i menu a tendina */
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Ombra per dare profondità, simile al container */
         }
+        /* Stile del modale */
+        .modal {
+            display: none; /* Nascosto di default */
+            position: fixed; /* Rimane fermo in posizione */
+            z-index: 1; /* Sopra tutto */
+            left: 0;
+            top: 0;
+            width: 100%; /* Larghezza */
+            height: 100%; /* Altezza piena */
+            overflow: auto; /* Abilita lo scroll se necessario */
+            background-color: rgb(0,0,0); /* Colore di sfondo */
+            background-color: rgba(0,0,0,0.4); /* Colore di sfondo con opacità */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% dal top e centrato orizzontalmente */
+            padding: 20px;
+            border: 1px solid #888;
+            width: fit-content; /* Puoi regolare questa larghezza come preferisci */
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
 
 
     </style>
@@ -186,7 +221,7 @@
             <span class="checkmark"></span>
         </p> -->
         
-        <button onclick="addMenu()">Seleziona Tabelle Necessarie</button>
+        <button onclick="addMenuTable()">Seleziona Tabelle Necessarie</button>
         <div id="menuContainer">
             <!-- Div per il menu a tendina, inizialmente vuoto -->
         </div>
@@ -196,15 +231,24 @@
         <div id="constraintsContainer">
             <!-- Qui verranno aggiunti i menu a tendina -->
         </div>
-        <div style="display: flex; align-items: center;"></div>
-            <button  onclick="addCodeQuestion()">Aggiungi Quesito Codice</button>
-            <button  onclick="addMCQuestion()">Aggiungi Quesito Risposta Multipla</button>
-        </div>
-        <div id="questionsContainer">
-            
-        </div>
+        
+        <button  onclick="addCodeQuestion()">Aggiungi Quesito Codice</button>
+        <button  onclick="addMCQuestion()">Aggiungi Quesito Risposta Multipla</button>
+    </div>
 
-        <button id="submitTestButton">Crea Test</button>
+
+    <div id="questionsContainer">
+        <!-- Qui verranno aggiunti i container per le question -->
+    </div>
+
+    <button id="submitTestButton">Crea Test</button> <!-- Bottone salvataggio -->
+
+    <!-- Modale per la visualizzazione della tabella -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">×</span>
+            <div id="tableContainer"></div> <!-- Contenitore per la tabella -->
+        </div>
     </div>
     
 
@@ -213,22 +257,21 @@
 
     <script>
         document.getElementById('testImage').addEventListener('change', function(event) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const preview = document.getElementById('imagePreview');
-        preview.src = e.target.result;
-        preview.style.display = 'block';
-    };
-    reader.readAsDataURL(event.target.files[0]);
-});
-
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('imagePreview');
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        });
     </script>
     <script>
         // Variabile per memorizzare il nome della tabella selezionata
         var selectedTable = "";
         var tables = []; // Array per tenere traccia delle scelte
     
-        function addMenu() {
+        function addMenuTable() {
             // Effettua una richiesta AJAX per ottenere i nomi delle tabelle dal file PHP
             $.ajax({
                 type: "GET",
@@ -368,120 +411,120 @@
         }
 
         function addConstraints() {
-        const container = document.getElementById('constraintsContainer');
-        const dropdownsDiv = document.createElement('div');
-        dropdownsDiv.classList.add('flex-container');
+            const container = document.getElementById('constraintsContainer');
+            const dropdownsDiv = document.createElement('div');
+            dropdownsDiv.classList.add('flex-container');
 
-        // Genera un identificativo unico per questo gruppo di dropdown
-        const uniqueId = 'group-' + document.querySelectorAll('.flex-container').length;
-        dropdownsDiv.id = uniqueId; // Assegna un ID univoco al container dei dropdown
+            // Genera un identificativo unico per questo gruppo di dropdown
+            const uniqueId = 'group-' + document.querySelectorAll('.flex-container').length;
+            dropdownsDiv.id = uniqueId; // Assegna un ID univoco al container dei dropdown
 
-        let optionsForMenuTable1 = tables.map(table => `<option value="${table.id}">${table.name}</option>`).join('');
+            let optionsForMenuTable1 = tables.map(table => `<option value="${table.id}">${table.name}</option>`).join('');
 
-        const menuTable1 = document.createElement('select');
-        menuTable1.id = uniqueId + '-menuTable1';
-        menuTable1.classList.add('dropdown-table');
-        menuTable1.innerHTML = `<option value="" disabled selected>Sel.Tabella</option>` + optionsForMenuTable1;
-        dropdownsDiv.appendChild(menuTable1);
+            const menuTable1 = document.createElement('select');
+            menuTable1.id = uniqueId + '-menuTable1';
+            menuTable1.classList.add('dropdown-table');
+            menuTable1.innerHTML = `<option value="" disabled selected>Sel.Tabella</option>` + optionsForMenuTable1;
+            dropdownsDiv.appendChild(menuTable1);
 
-        // Crea gli altri menu a tendina
-        const menuAttribute1 = document.createElement('select');
-        menuAttribute1.id = uniqueId + '-menuAttribute1';
-        menuAttribute1.classList.add('dropdown-attribute');
-        dropdownsDiv.appendChild(menuAttribute1); // Aggiunto al DOM qui
+            // Crea gli altri menu a tendina
+            const menuAttribute1 = document.createElement('select');
+            menuAttribute1.id = uniqueId + '-menuAttribute1';
+            menuAttribute1.classList.add('dropdown-attribute');
+            dropdownsDiv.appendChild(menuAttribute1); // Aggiunto al DOM qui
 
-        const arrow = document.createElement('span');
-        arrow.id = uniqueId + '-arrow';
-        arrow.style.display = 'none';
-        arrow.classList.add('separator');
-        dropdownsDiv.appendChild(arrow);     // Assicurati che la freccia sia aggiunta al container
+            const arrow = document.createElement('span');
+            arrow.id = uniqueId + '-arrow';
+            arrow.style.display = 'none';
+            arrow.classList.add('separator');
+            dropdownsDiv.appendChild(arrow);     // Assicurati che la freccia sia aggiunta al container
 
-        const menuTable2 = document.createElement('select');
-        menuTable2.id = uniqueId + '-menuTable2';
-        menuTable2.classList.add('dropdown-table');
-        dropdownsDiv.appendChild(menuTable2); // Aggiunto al DOM qui
+            const menuTable2 = document.createElement('select');
+            menuTable2.id = uniqueId + '-menuTable2';
+            menuTable2.classList.add('dropdown-table');
+            dropdownsDiv.appendChild(menuTable2); // Aggiunto al DOM qui
 
-        const menuAttribute2 = document.createElement('select');
-        menuAttribute2.id = uniqueId + '-menuAttribute2';
-        menuAttribute2.classList.add('dropdown-attribute');
-        dropdownsDiv.appendChild(menuAttribute2); // Aggiunto al DOM qui
+            const menuAttribute2 = document.createElement('select');
+            menuAttribute2.id = uniqueId + '-menuAttribute2';
+            menuAttribute2.classList.add('dropdown-attribute');
+            dropdownsDiv.appendChild(menuAttribute2); // Aggiunto al DOM qui
 
-        // Gestore dell'evento onchange per menu1
-        menuTable1.onchange = function() {
-            const selectedTableId = this.value;
-            const otherTablesOptions = tables
-                .filter(table => table.id !== selectedTableId)
-                .map(table => `<option value="${table.id}">${table.name}</option>`)
-                .join('');
+            // Gestore dell'evento onchange per menu1
+            menuTable1.onchange = function() {
+                const selectedTableId = this.value;
+                const otherTablesOptions = tables
+                    .filter(table => table.id !== selectedTableId)
+                    .map(table => `<option value="${table.id}">${table.name}</option>`)
+                    .join('');
 
-            $.ajax({
-                type: "GET", // Imposta il metodo HTTP su GET
-                url: "../controllers/table/TableController.php?action=get_table_columns", // URL a cui fare la richiesta
-                data: { tableId: selectedTableId }, // Dati inviati al server come parte della richiesta
-                success: function(columns) {
-                    // Costruisci le opzioni del menu a tendina usando i dati ricevuti
-                    menuAttribute1.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>` + columns.map(col => `<option value="${col.Nome}">${col.Nome}</option>`).join('');
-                    menuAttribute1.style.display = 'block'; // Mostra il menu a tendina
-                    arrow.style.display = 'inline-block'; // Mostra la freccia (assumendo che sia un elemento del tuo DOM)
-                },
-                dataType: "json" // Aspettati una risposta in formato JSON
-            });
-            menuTable2.innerHTML = `<option value="" disabled selected>Sel.Tabella</option>` + otherTablesOptions;
-            menuTable2.style.display = 'block';
-        };
+                $.ajax({
+                    type: "GET", // Imposta il metodo HTTP su GET
+                    url: "../controllers/table/TableController.php?action=get_table_columns", // URL a cui fare la richiesta
+                    data: { tableId: selectedTableId }, // Dati inviati al server come parte della richiesta
+                    success: function(columns) {
+                        // Costruisci le opzioni del menu a tendina usando i dati ricevuti
+                        menuAttribute1.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>` + columns.map(col => `<option value="${col.Nome}">${col.Nome}</option>`).join('');
+                        menuAttribute1.style.display = 'block'; // Mostra il menu a tendina
+                        arrow.style.display = 'inline-block'; // Mostra la freccia (assumendo che sia un elemento del tuo DOM)
+                    },
+                    dataType: "json" // Aspettati una risposta in formato JSON
+                });
+                menuTable2.innerHTML = `<option value="" disabled selected>Sel.Tabella</option>` + otherTablesOptions;
+                menuTable2.style.display = 'block';
+            };
 
-        // Ora, poiché menuTable2 è già parte del DOM, puoi aggiungere il gestore dell'evento onchange direttamente
-        menuTable2.onchange = function() {
-            const selectedTableId = this.value;
+            // Ora, poiché menuTable2 è già parte del DOM, puoi aggiungere il gestore dell'evento onchange direttamente
+            menuTable2.onchange = function() {
+                const selectedTableId = this.value;
 
-            $.ajax({
-                type: "GET", // Imposta il metodo HTTP su GET
-                url: "../controllers/table/TableController.php?action=get_table_columns", // URL a cui fare la richiesta
-                data: {tableId: selectedTableId},
-                success: function(columns) {
-                    menuAttribute2.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>` + columns.map(col => `<option value="${col.Nome}">${col.Nome}</option>`).join('');
-                    menuAttribute2.style.display = 'block';
-                },
-                dataType: "json" // Aspettati una risposta in formato JSON
-            });
-        };
-        // Aggiunta del bottone di eliminazione al DIV contenitore dei dropdown
-        deleteConstraint(uniqueId, dropdownsDiv, container);
-        // Infine, aggiungi il div dei menu a tendina al container
-        container.appendChild(dropdownsDiv);
-    }
+                $.ajax({
+                    type: "GET", // Imposta il metodo HTTP su GET
+                    url: "../controllers/table/TableController.php?action=get_table_columns", // URL a cui fare la richiesta
+                    data: {tableId: selectedTableId},
+                    success: function(columns) {
+                        menuAttribute2.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>` + columns.map(col => `<option value="${col.Nome}">${col.Nome}</option>`).join('');
+                        menuAttribute2.style.display = 'block';
+                    },
+                    dataType: "json" // Aspettati una risposta in formato JSON
+                });
+            };
+            // Aggiunta del bottone di eliminazione al DIV contenitore dei dropdown
+            deleteConstraint(uniqueId, dropdownsDiv, container);
+            // Infine, aggiungi il div dei menu a tendina al container
+            container.appendChild(dropdownsDiv);
+        }
 
         function updateMenuTable1() {
-        // Trova il container del menu 1 e lo svuota
-        const menuTable1 = document.getElementById('group-0-menuTable1');
-        if (!menuTable1) return; // Se il menu 1 non esiste, esce dalla funzione
-        menuTable1.innerHTML = "<option value='' disabled selected>Sel.Tabella</option>"; // Reset
+            // Trova il container del menu 1 e lo svuota
+            const menuTable1 = document.getElementById('group-0-menuTable1');
+            if (!menuTable1) return; // Se il menu 1 non esiste, esce dalla funzione
+            menuTable1.innerHTML = "<option value='' disabled selected>Sel.Tabella</option>"; // Reset
 
-        // Popola di nuovo il menu con le tabelle aggiornate
-        tables.forEach(table => {
-            const option = document.createElement('option');
-            option.value = table.id;
-            option.textContent = table.name;
-            menuTable1.appendChild(option);
-        });
-    }
+            // Popola di nuovo il menu con le tabelle aggiornate
+            tables.forEach(table => {
+                const option = document.createElement('option');
+                option.value = table.id;
+                option.textContent = table.name;
+                menuTable1.appendChild(option);
+            });
+        }
 
         function deleteConstraint(uniqueId, dropdownsDiv, container) {
-        const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Elimina Vincolo';
-        deleteButton.className = 'delete-button';
-        deleteButton.onclick = function() {
-            // Rimuovi la riga/menu dal DOM
-            container.removeChild(dropdownsDiv);
-            // Assumi che ogni vincolo corrisponda a una tabella e voglia rimuovere quella tabella dall'array tables
-            // Questo passaggio richiede che tu abbia una corrispondenza tra l'ID del gruppo di vincoli e l'ID della tabella
-            // Qui manca la logica per identificare la tabella corrispondente, quindi adattalo alle tue esigenze
-            // tables = tables.filter(t => t.id !== someId);
-            updateMenuTable1(); // Aggiorna il menu delle tabelle dopo la rimozione
-        };
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Elimina Vincolo';
+            deleteButton.className = 'delete-button';
+            deleteButton.onclick = function() {
+                // Rimuovi la riga/menu dal DOM
+                container.removeChild(dropdownsDiv);
+                // Assumi che ogni vincolo corrisponda a una tabella e voglia rimuovere quella tabella dall'array tables
+                // Questo passaggio richiede che tu abbia una corrispondenza tra l'ID del gruppo di vincoli e l'ID della tabella
+                // Qui manca la logica per identificare la tabella corrispondente, quindi adattalo alle tue esigenze
+                // tables = tables.filter(t => t.id !== someId);
+                updateMenuTable1(); // Aggiorna il menu delle tabelle dopo la rimozione
+            };
 
-        dropdownsDiv.appendChild(deleteButton); // Aggiunge il bottone di eliminazione al div dei dropdown
-    }
+            dropdownsDiv.appendChild(deleteButton); // Aggiunge il bottone di eliminazione al div dei dropdown
+        }
 
     </script>
 
@@ -690,10 +733,9 @@
                 success: function(response) {
                     // Analizzare la risposta (con jQuery, la risposta è già un oggetto JS se il server risponde con JSON)
                     if (response.length > 0) {
-                        const table = createTable(response);
-                        document.body.appendChild(table); // da correggere come viene mostrata a schermo
+                        showTableModal(response);
                         // Il codice è valido
-                        alert('Il codice è valido!');
+                        //alert('Il codice è valido!');
                     } else {
                         // Il codice non è valido
                         alert('Il codice non è valido!');
@@ -709,6 +751,32 @@
                 },
                 dataType: 'json' // Tipo di dati attesi dalla risposta
             });
+        }
+        function showTableModal(response) {
+            // Creazione della tabella come prima
+            const table = createTable(response);
+
+            // Trova il contenitore della tabella nel modale e aggiungi la tabella
+            const tableContainer = document.getElementById('tableContainer');
+            tableContainer.innerHTML = ''; // Pulisce vecchie tabelle se presenti
+            tableContainer.appendChild(table);
+
+            // Mostra il modale
+            const modal = document.getElementById('modal');
+            modal.style.display = 'block';
+
+            // Imposta l'evento per chiudere il modale
+            const closeButton = document.querySelector('.close-button');
+            closeButton.onclick = function() {
+                modal.style.display = 'none';
+            };
+
+            // Chiude il modale anche quando si clicca fuori dal suo contenuto
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            };
         }
 
         function createTable(response) {
@@ -774,15 +842,50 @@
                 }
             });
             // Raccogliere dati dei vincoli
-            $('.flex-container').each(function() {
+            /*$('.flex-container').each(function() {
                 var constraintData = {
-                    table1: $(this).find('#menuTable1.dropdown-table').val(), // Assumi di avere menu con classi specifiche o data-attributes
-                    attribute1: $(this).find('menuAttribute1.dropdown-table').val(),
-                    table2: $(this).find('menuTable2.dropdown-table').val(),
-                    attribute2: $(this).find('menuAttribute2.dropdown-table').val()
+                    table1: $(this).find('#menuTable1.id').val(), // Assumi di avere menu con classi specifiche o data-attributes
+                    attribute1: $(this).find('menuAttribute1.id').val(),
+                    table2: $(this).find('menuTable2.id').val(),
+                    attribute2: $(this).find('menuAttribute2.id').val()
                 };
                 sendDataTest.constraints.push(constraintData);
+                console.log(sendDataTest.constraints);
+            });*/
+            // Raccogliere dati dei vincoli
+            /*$('.flex-container').each(function() {
+                var table1Id = $(this).find('.dropdown-table').eq(0).val(); // Primo menu a tendina per la tabella
+                var attribute1Id = $(this).find('.dropdown-attribute').eq(0).val(); // Primo menu a tendina per l'attributo
+                var table2Id = $(this).find('.dropdown-table').eq(1).val(); // Secondo menu a tendina per la tabella
+                var attribute2Id = $(this).find('.dropdown-attribute').eq(1).val(); // Secondo menu a tendina per l'attributo
+
+                var constraintData = {
+                    table1: table1Id,
+                    attribute1: attribute1Id,
+                    table2: table2Id,
+                    attribute2: attribute2Id
+                };
+                sendDataTest.constraints.push(constraintData);
+                console.log(sendDataTest.constraints);
+            });*/
+            $('.flex-container').each(function(index) {
+                // Utilizzo l'index per costruire l'ID unico, basandomi sul tuo schema di naming
+                var uniqueId = 'group-' + index; // Assicurati che questo corrisponda a come hai generato l'ID
+                var table1Id = $('#' + uniqueId + '-menuTable1').val();
+                var attribute1Id = $('#' + uniqueId + '-menuAttribute1').val();
+                var table2Id = $('#' + uniqueId + '-menuTable2').val();
+                var attribute2Id = $('#' + uniqueId + '-menuAttribute2').val();
+
+                var constraintData = {
+                    table1: table1Id,
+                    attribute1: attribute1Id,
+                    table2: table2Id,
+                    attribute2: attribute2Id
+                };
+                sendDataTest.constraints.push(constraintData);
+                //console.log(sendDataTest.constraints);
             });
+
             return sendDataTest;
         }
 
@@ -798,20 +901,23 @@
             if (imageFile) {
                 formData.append("testImage", imageFile);
             }
+            // Aggiunge l'action al FormData
             formData.append("action" , "save_test");
             // Invio dei dati al file PHP tramite AJAX
             $.ajax({
                 type: 'POST',
-                url: '../controllers/test/TestController.php', 
-                data:{ data: formData, action: 'save_test'},
+                url: '../controllers/test/TestController.php', //action è gia stata appesa
+                data: formData,
                 contentType: false, // Importante per il corretto invio di FormData
                 processData: false,
                 success: function(response) {
-                    for (var pair of formData.entries()) {
-                        console.log(pair[0]+ ', ' + pair[1]);
-                    }
-                    console.log("Risposta del server:", response);
-                    // Gestire la risposta del server qui
+                    let object = {};
+                    formData.forEach(function(value, key){
+                        object[key] = value;
+                    });
+                    console.log(JSON.stringify(object, null, 2)); 
+                    alert(response); //risposta del server
+                    //window.location.reload(); // ricarica pagina
                 },
                 error: function(xhr, status, error) {
                     console.error("Errore durante l'invio dei dati:", status, error);
