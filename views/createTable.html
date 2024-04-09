@@ -7,6 +7,10 @@
     <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="styleBACK.css">
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="check_session.js"></script>
+
     <style>
         /* Stile per la tabella */
         table {
@@ -68,13 +72,18 @@
                 <img src="image/arrow.png" alt="Torna indietro" style="width: 25px; height: 25px;">
             </a>Indietro</span>
         </div> 
+        <div class="logout-form">
+            <form action="../controllers/utils/logout.php" method="post">
+                <button type="submit" name="logout">Esci</button>
+            </form>
+        </div>
     </header>
     <div class="main-container">
         <div style="display: flex; align-items: center;">
             <p style="margin-right: 10px; font-size: 1.3em; font-weight: bold;">
                 Crea Tabella</p>
-            <button type="button" onclick="addAttribute()">Aggiungi attributo</button>
-            <button type="button" onclick="addRow()">Aggiungi una riga</button>
+            <button class="black-button" type="button" onclick="addAttribute()">Aggiungi attributo</button>
+            <button class="black-button" type="button" onclick="addRow()">Aggiungi una riga</button>
             </div>
         
             <label for="title" >Titolo:</label>
@@ -94,7 +103,6 @@
         <h3>Università di Bologna</h3>
     </footer>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         var attributeCounter = 1;
         var rowCounter = 1;

@@ -7,6 +7,10 @@
     <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="styleBACK.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="check_session.js"></script>
+
     <style>
         .test-list {
             width: 80%;
@@ -94,6 +98,11 @@
                 <img src="image/arrow.png" alt="Torna indietro" style="width: 25px; height: 25px;">
             </a>Indietro</span>
         </div>  
+        <div class="logout-form">
+            <form action="../controllers/utils/logout.php" method="post">
+                <button type="submit" name="logout">Esci</button>
+            </form>
+        </div>
     </header>
 
     <div class="home-container">
@@ -119,18 +128,13 @@
         <h3>Università di Bologna</h3>
     </footer>
 
-    <!-- Includi jQuery per semplificare la gestione delle richieste AJAX -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>  
         $(document).ready(function() {
             // Effettua una richiesta AJAX per ottenere i dati dei test
             $.ajax({
                 type: "GET",
                 url: "../controllers/test/TestController.php",
-                data: { 
-                    endpoint: 'get_tests',
-                    prof_email: 'Docente@unibo.it'
-                },
+                data: { endpoint: 'get_tests'},
                 success: function(response) {
                     // Una volta ottenuti i dati, popola la sezione dei test
                     populateTestList(response);
@@ -158,9 +162,9 @@
                 testDetails.append(title, date, status);
 
                 var buttonContainer = $('<div class="button-container"></div>');
-                var viewButton = $('<button onclick="window.location.href=\'prof_viewTest.html\'"> Visualizza Test</button>');
-                var updateButton = $('<button onclick="window.location.href=\'prof_updateTest.html\'"> Modifica Test</button>');
-                var messageButton = $('<button onclick="window.location.href=\'prof_message.html\'">Messaggi</button>');
+                var viewButton = $('<button class="black-button" onclick="window.location.href=\'prof_viewTest.html\'"> Visualizza Test</button>');
+                var updateButton = $('<button class="black-button" onclick="window.location.href=\'prof_updateTest.html\'"> Modifica Test</button>');
+                var messageButton = $('<button class="black-button" onclick="window.location.href=\'prof_message.html\'">Messaggi</button>');
 
                 buttonContainer.append(viewButton, updateButton, messageButton);
 

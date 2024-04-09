@@ -7,7 +7,10 @@
     <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="styleBACK.css">
-    
+
+    <!-- Includi jQuery per semplificare la gestione delle richieste AJAX -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="check_session.js"></script>
 </head>
 
 <body>
@@ -20,7 +23,7 @@
             </a>Indietro</span>
         </div>  
         <div class="logout-form">
-            <form action="logout.php" method="post">
+            <form action="../controllers/utils/logout.php" method="post">
                 <button type="submit" name="logout">Esci</button>
             </form>
         </div> 
@@ -28,15 +31,15 @@
 
     <div class="home-container">
         <h2>Home Docente</h2>
-            <div class="button_home">
-                <button onclick="window.location.href='createTable.html'">Crea Tabella</button>
-                <button onclick="window.location.href='viewTable.html'">Visualizza Tabelle</button>
-                <button onclick="window.location.href='createTest.html'">Crea Test</button>
-                <button onclick="window.location.href='viewTest.html'">Visualizza Test</button>
-                <button onclick="window.location.href='messageIndex.php'">Messaggi</button>
-            </div>
+        <div class="button_home">
+            <button onclick="window.location.href='createTable.html'">Crea Tabella</button>
+            <button onclick="window.location.href='viewTable.html'">Visualizza Tabelle</button>
+            <button onclick="window.location.href='createTest.html'">Crea Test</button>
+            <button onclick="window.location.href='viewTest.html'">Visualizza Test</button>
+            <button onclick="window.location.href='messageIndex.php'">Messaggi</button>
         </div>
-
+    </div>
+    
     <footer>
         <p>Alma Mater Studiorum</p>
         <h3>Università di Bologna</h3>

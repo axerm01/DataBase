@@ -7,6 +7,10 @@
     <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="styleBACK.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="check_session.js"></script>
+
     <style>
         /* Styles for questions */
         .question {
@@ -199,7 +203,12 @@
             <span class="testo-indietro"><a href="javascript:history.back()">
                 <img src="image/arrow.png" alt="Torna indietro" style="width: 25px; height: 25px;">
             </a>Indietro</span>
-        </div>   
+        </div> 
+        <div class="logout-form">
+            <form action="../controllers/utils/logout.php" method="post">
+                <button type="submit" name="logout">Esci</button>
+            </form>
+        </div>  
     </header>
     <div class="main-container">
         <div class="main-content">
@@ -252,10 +261,6 @@
         </div>
     </div>
     
-
-    <!-- Includi jQuery per semplificare la gestione delle richieste AJAX -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
     <script>
         document.getElementById('testImage').addEventListener('change', function(event) {
             const reader = new FileReader();
