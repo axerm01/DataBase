@@ -1,9 +1,27 @@
         
+/* Stile per pulsante logout */
+.logout-form {
+    position: absolute; /* Posizionamento assoluto all'interno dell'header */
+    bottom: 5px; /* Distanza dal basso */
+    right: 100px; /* Distanza dal lato destro */
+}
+.logout-form button[name="logout"] {
+    text-decoration: none; /* Rimuove il sottolineamento del link */
+    background-color: #f44336; /* Rosso leggermente più chiaro per contrasto */
+    padding: 10px;
+    border-radius: 15px; /* Angoli arrotondati */
+    cursor: pointer; /* Cursor a forma di mano */
+    transition: background-color 0.3s; /* Transizione fluida al cambio di colore */
+}
+.logout-form button[name="logout"]:hover {
+    background-color: #d32f2f; /* Rosso più scuro all'hover */
+}
+
 /* Stile per link freccia indietro pagina precedente */
 .indietro {
     /* Posizionare l'elemento in basso a destra nell'header */
     position: absolute;
-    bottom: 5px;
+    bottom: 10px;
     left: 100px;
     /* Ridimensiona l'immagine contenuta in .indietro a 15x15 pixel */
     width: 20px;
@@ -26,6 +44,7 @@
     height: 100%;
     display: block; /* Rimuove lo spazio extra sotto l'immagine che potrebbe apparire */
 }
+
 .testo-indietro {
     position: absolute;
     /* Posizionare il testo in basso sotto l'immagine */

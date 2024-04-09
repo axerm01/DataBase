@@ -102,7 +102,7 @@ footer {
 }
 
 /* Styles for buttons */
-button {
+.home-container button {
     background-color: #333;
     color: #fff;
     border: none;
@@ -113,8 +113,8 @@ button {
     font-size: 12px;
     transition: background-color 0.3s; /* Effetto di transizione per il cambio di colore di sfondo */
 }
-button:hover {
-    background-color: #212121; /* Cambia il colore di sfondo quando il mouse passa sopra il bottone */
+.home-container button:hover {
+    background-color: #434343; /* Cambia il colore di sfondo quando il mouse passa sopra il bottone */
   }
 
 .button_home{
@@ -154,7 +154,7 @@ input[type="number"]
 }
 
 /* Stile per il pulsante di registrazione */
-input[type="submit"] {
+.signin-container input[type="submit"], .signin-container button{
     background-color: #333;
     color: #fff;
     padding: 7px 25px;

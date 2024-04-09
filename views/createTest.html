@@ -216,10 +216,11 @@
         <label for="title" style="font-size: 22px; font-weight: bolder;">Titolo Test:</label>
         <input type="text" id="title" name="title"><br>
         <!--il permesso di visualizzazione deve essere fuori da qui. (anche) quando vedo l'elenco dei test gia creati-->
-        <!--<p style="font-size: 18px; font-weight: bold; color: #484141b8;"> Permesso visualizzione risposte
-            <input type="checkbox" class="styled-checkbox">
+        <p style="font-size: 18px; font-weight: bold; color: #484141b8;"> 
+            Permesso visualizzione risposte
+            <input type="checkbox" id="viewAnswersPermission" class="styled-checkbox">
             <span class="checkmark"></span>
-        </p> -->
+        </p>
         
         <button onclick="addMenuTable()">Seleziona Tabelle Necessarie</button>
         <div id="menuContainer">
@@ -820,7 +821,8 @@
                 title: $('#title').val(),
                 questions: [], // Questo sarà riempito con le domande
                 tables: tables, // Assumo che 'tables' sia già un array di oggetti come mostrato
-                constraints: [] // Questo dovrà essere riempito con i vincoli definiti
+                constraints: [], // Questo dovrà essere riempito con i vincoli definiti
+                viewAnswersPermission: $('#viewAnswersPermission').is(':checked') // Raccoglie il valore del checkbox
             };
             // Raccoglie tutte le domande
             $('#questionsContainer .question').each(function() {
@@ -841,33 +843,7 @@
                     sendDataTest.questions.push({ type: "code", questionText: questionText, sqlCode: sqlCode });
                 }
             });
-            // Raccogliere dati dei vincoli
-            /*$('.flex-container').each(function() {
-                var constraintData = {
-                    table1: $(this).find('#menuTable1.id').val(), // Assumi di avere menu con classi specifiche o data-attributes
-                    attribute1: $(this).find('menuAttribute1.id').val(),
-                    table2: $(this).find('menuTable2.id').val(),
-                    attribute2: $(this).find('menuAttribute2.id').val()
-                };
-                sendDataTest.constraints.push(constraintData);
-                console.log(sendDataTest.constraints);
-            });*/
-            // Raccogliere dati dei vincoli
-            /*$('.flex-container').each(function() {
-                var table1Id = $(this).find('.dropdown-table').eq(0).val(); // Primo menu a tendina per la tabella
-                var attribute1Id = $(this).find('.dropdown-attribute').eq(0).val(); // Primo menu a tendina per l'attributo
-                var table2Id = $(this).find('.dropdown-table').eq(1).val(); // Secondo menu a tendina per la tabella
-                var attribute2Id = $(this).find('.dropdown-attribute').eq(1).val(); // Secondo menu a tendina per l'attributo
-
-                var constraintData = {
-                    table1: table1Id,
-                    attribute1: attribute1Id,
-                    table2: table2Id,
-                    attribute2: attribute2Id
-                };
-                sendDataTest.constraints.push(constraintData);
-                console.log(sendDataTest.constraints);
-            });*/
+            // Raccogliere dati dei vincoli  
             $('.flex-container').each(function(index) {
                 // Utilizzo l'index per costruire l'ID unico, basandomi sul tuo schema di naming
                 var uniqueId = 'group-' + index; // Assicurati che questo corrisponda a come hai generato l'ID
