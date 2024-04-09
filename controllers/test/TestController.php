@@ -14,8 +14,8 @@ switch ($method) {
         $endpoint = $_GET['endpoint'];
         switch ($endpoint) {
 
-            case 'get_tests': // GET di tutti i test di un certo professore la cui mail è passata da FE
-                $prof_email = filter_input(INPUT_GET, 'prof_email');
+            case 'get_tests': // GET di tutti i test di un certo professore
+                $prof_email = $_SESSION['email'];
                 $data = Test::getProfTests($prof_email);
                 break;
         }
