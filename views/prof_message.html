@@ -114,14 +114,6 @@
 
 <body>
     <header>
-        <script>
-            $(document).ready(function () {
-                // Recupera i parametri dall'URL
-                var urlParams = new URLSearchParams(window.location.search);
-                var testNome = urlParams.get('titolo');
-                $('#testNome').text(testNome);
-            });
-        </script>
         <h1>Studia con ESQL</h1>
         <div class="indietro">
             <!-- Usa "javascript:history.back()" come href per tornare indietro -->
@@ -141,7 +133,7 @@
     </div>
 
     <div class="attributes_student_message">
-        <h4>Titolo: <span id="testNome"></span></h4>
+        <h4>Messaggi degli studenti</h4>
         <h4>Scrivi il Messaggio</h4>
     </div>
     <div class="messages">
@@ -181,6 +173,7 @@
             var dataOra = new Date().toISOString(); // Ottiene la data e ora correnti nel formato ISO
 
             // Recupera i parametri dall'URL
+            var urlParams = new URLSearchParams(window.location.search);
             var testId = urlParams.get('id');
             var testNome = urlParams.get('titolo');
             var professorEmail = urlParams.get('mail');
@@ -207,6 +200,15 @@
                 dataType: 'json' // Aspettati una risposta JSON
             });
         }
+
+        $(document).ready(function () {
+            // Recupera i parametri dall'URL
+            var urlParams = new URLSearchParams(window.location.search);
+            var testId = urlParams.get('id');
+
+            // Ottieni i messaggi relativi al test quando la pagina viene caricata
+            getMessagesForTest(testId);
+        });
     </script>
     <footer>
         <p>Alma Mater Studiorum</p>
