@@ -11,7 +11,7 @@ class Reference
         if ($stmt === false) {
             die("Errore nella preparazione della query: " . $con->error);
         }
-        $stmt->bind_param('iiii', $tab1, $tab2, $att1,  $att2);
+        $stmt->bind_param('iiss', $tab1, $tab2, $att1,  $att2);
         if (!$stmt->execute()) {
             die("Errore nell'esecuzione della query: " . $stmt->error);
         }
@@ -27,7 +27,7 @@ class Reference
         if ($stmt === false) {
             die("Errore nella preparazione della query: " . $con->error);
         }
-        $stmt->bind_param('iiii', $tab1, $tab2, $att1,  $att2);
+        $stmt->bind_param('iiss', $tab1, $tab2, $att1,  $att2);
         if (!$stmt->execute()) {
             die("Errore nell'esecuzione della query: " . $stmt->error);
         }

@@ -10,35 +10,37 @@ header('Content-Type: application/json');
 
 switch ($method){
     case 'GET':
-        $endpoint = $_GET['action'];
-        $data = [];
-        switch ($endpoint) {
-            case 'get_tables': // GET delle tabelle create da un docente, restituisce id tabella e nome
-                $data = Table::getAllTables($_SESSION['email']);
-                break;
+        if (isset($_GET['action'])){
+            $endpoint = $_GET['action'];
+            $data = [];
+            switch ($endpoint) {
+                case 'get_tables': // GET delle tabelle create da un docente, restituisce id tabella e nome
+                    $data = Table::getAllTables($_SESSION['email']);
+                    break;
 
-            case 'get_table_columns': // GET delle colonne di una tabella indicata
-                $id = filter_input(INPUT_GET, 'tableId');
-                $data = Column::getTableColumns($id);
-                break;
+                case 'get_table_columns': // GET delle colonne di una tabella indicata
+                    $id = filter_input(INPUT_GET, 'tableId');
+                    $data = Column::getTableColumns($id);
+                    break;
 
-            case 'get_full_table': // GET del contenuto della tabella
-                $id = filter_input(INPUT_GET, 'tableId');
-                $columns = Column::getTableColumns($id);
-                $content = Table::getTableContent($id);
+                case 'get_full_table': // GET del contenuto della tabella
+                    $id = filter_input(INPUT_GET, 'tableId');
+                    $columns = Column::getTableColumns($id);
+                    $content = Table::getTableContent($id);
 
-                $data = array_merge(array($columns), $content);
-                break;
+                    $data = array_merge(array($columns), $content);
+                    break;
 
-            case 'check_name': // GET delle colonne di una tabella indicata
-                $name = filter_input(INPUT_GET, 'name');
-                $data = Table::checkIfNameExists($name);
-                //$data = $name;
-                break;
-
+                case 'check_name': // GET delle colonne di una tabella indicata
+                    $name = filter_input(INPUT_GET, 'name');
+                    $data = Table::checkIfNameExists($name);
+                    //$data = $name;
+                    break;
+            }
+            echo json_encode($data);  // Converte l'array $data in JSON e lo invia
+        } else {
+            echo json_encode("no action");
         }
-
-        echo json_encode($data);  // Converte l'array $data in JSON e lo invia
         break;
 
     case 'POST': //Creazione di una nuova tabella

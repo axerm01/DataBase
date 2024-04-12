@@ -86,12 +86,15 @@ END //
 DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE `CreateCodice`(
-in IDTestAtt int,
-in OutputAtt varchar(45)
+    in IDTestAtt int,
+    in IDAtt int,
+    in TextAtt varchar(45),
+    in OutputAtt varchar(45),
+    in DiffAtt varchar(45)
 )
 BEGIN
-INSERT INTO Codice (IDTest,Output)
-VALUES (IDTestAtt,OutputAtt);
+INSERT INTO Codice (IDTest,ID, Descrizione, Output, Difficolta)
+VALUES (IDTestAtt,IDAtt,TextAtt,OutputAtt,DiffAtt);
 END //
 
 CREATE PROCEDURE `DropCodice`(
@@ -201,16 +204,16 @@ END //
 DELIMITER ;
 DELIMITER //
 
-CREATE PROCEDURE `CreateGalleria`(
+CREATE PROCEDURE `AddToGalleria`(
 in IDTestAtt int,
-in FotoAtt varchar(45)
+in FotoAtt blob
 )
 BEGIN
 INSERT INTO Galleria(IDTest,Foto)
 VALUES (IDTestAtt, FotoAtt);
 END //
   
-CREATE PROCEDURE `ViewGalleria`(
+CREATE PROCEDURE `ViewFoto`(
 in IDTestAtt int
 )
 BEGIN
@@ -219,25 +222,13 @@ FROM Galleria
 WHERE IDTest = IDTestAtt;
 END //
 
-CREATE PROCEDURE `ViewFoto`(
-in IDTestAtt int,
-in FotoAtt varchar(45)
-)
-BEGIN
-SELECT *
-FROM Galleria
-WHERE IDTest = IDTestAtt
-and Foto = FotoAtt;
-END //
 
 CREATE PROCEDURE `DropFoto`(
-in IDAtt int,
-in FotoAtt varchar(45)
+in IDTestAtt int
 )
 BEGIN
-DELETE FROM Test
-WHERE ID = IDAtt
-and Foto = FotoAtt;
+DELETE FROM Galleria
+WHERE IDTest = IDTestAtt;
 END //
 
 DELIMITER ;
@@ -345,7 +336,7 @@ in NomeAttributo1Att varchar(45),
 in NomeAttributo2Att varchar(45)
 )
 BEGIN
-INSERT INTO referenze (IDT1, NomeAttributo1, IDT2, NomeAttributo2)
+INSERT IGNORE INTO referenze (IDT1, NomeAttributo1, IDT2, NomeAttributo2)
 VALUES (IDT1Att, NomeAttributo1Att, IDT2Att, NomeAttributo2Att);
 END //
 
@@ -383,7 +374,8 @@ NomeAttributo1 = NomeAttributo1Att and
 NomeAttributo2 = NomeAttributo2Att 
 );
 END //
-DELIMITER ; 
+DELIMITER ;
+
 DELIMITER //
 CREATE PROCEDURE `CreateAnswer`(
 in IDAtt int,
@@ -417,14 +409,15 @@ END //
 DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE `CreateSceltaMultipla`(
-in DescrizioneAtt varchar(45),
-in IDTestAtt int,
-in NumRisposteAtt int,
-in DifficoltaAtt int
+    in IDTestAtt int,
+    in IDAtt int,
+    in DescrizioneAtt varchar(45),
+    in NumRisposteAtt int,
+    in DifficoltaAtt varchar(45)
 )
 BEGIN
-INSERT INTO Scelta_Multipla (Descrizione,IDTest,NumRisposte,Difficolta)
-VALUES (DescrizioneAtt,IDTestAtt,NumRisposteAtt,DifficoltaAtt);
+INSERT INTO Scelta_Multipla (IDTest,ID,Descrizione,NumRisposte,Difficolta)
+VALUES (IDTestAtt,IDAtt,DescrizioneAtt,NumRisposteAtt,DifficoltaAtt);
 END //
 
 CREATE PROCEDURE `DropSceltaMultipla`(

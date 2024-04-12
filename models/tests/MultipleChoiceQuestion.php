@@ -22,17 +22,19 @@ class MultipleChoiceQuestion {
         $q = 'CALL CreateSceltaMultipla(?,?,?,?,?);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
+            return("Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('iisis',$IDTest,$ID, $description, $numAnswers, $difficulty);
         if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
+            return("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
 
         foreach ($answers as $answer) {
             Answer::saveMCAnswersData($answer['id'],$IDTest,$ID,$answer['text'],$answer['isCorrect'] );
         }
+
+        return "Saved correctly";
     }
 
     public static function deleteMCData($IDTest,$IDMC)

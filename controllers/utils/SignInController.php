@@ -1,6 +1,4 @@
 <?php
-// Includi il file di configurazione del database 
-///////////////////modifica con il file giusto 
 include 'connect.php';
 
 // Controlla se il modulo è stato inviato
@@ -45,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     else if ($_POST['role'] == 'professor') {
         $stmt = $con->prepare("CALL CreateDocente (?,?,?,?,?,?,?)");
         //$stmt->bind_param("sssssis", $_POST['name'], $_POST['surname'], $email, $_POST['course'], $_POST['department'], $_POST['phone'], $password_hash);
-        $stmt->bind_param("sssssis", $_POST['name'], $_POST['surname'], $email, $_POST['course'], $_POST['department'], $_POST['phone'], $password);
+        $stmt->bind_param("sssssss", $_POST['name'], $_POST['surname'], $email, $_POST['course'], $_POST['department'], $_POST['phone'], $password);
     }
 
     // Pezzo di codice che dovrebe restituire un riscontro
