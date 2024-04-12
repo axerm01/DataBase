@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizza Test</title>
+    <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- CSS -->
+    <style>
+        .questions-container {
+            width: 100%;
+            margin: auto;
+        }
+        .question ul {
+            list-style-type: none;
+            /* Rimuove i bullet points */
+            padding-left: 0;
+            /* Rimuove il padding predefinito */
+        }
+        .question {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 15px;
+            background-color: #fff;
+            width: 150%;
+        }
+        .question-description {
+            margin-bottom: 10px;
+        }
+        .question-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .question-description textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+            background-color: #f9f9f9;
+            color: #333;
+            resize: none;
+        }
+
+        .question-difficulty {
+            font-size: 16px;
+            margin-top: 5px;
+        }
+        .indietro {
+            position: absolute;
+            bottom: 5px;
+            right: 50px;
+            width: 20px;
+            height: 20px;
+        }
+        .indietro a {
+            display: block;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .testo-indietro {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            color: #ffffff;
+            font-size: 5px;
+        }
+        .question-input {
+            /*width: 500px; /* Make the input field occupy the full width of its container */
+            padding: 10px; /* Add padding for better visual appeal */
+            margin-top: 15px; /* Add some spacing below the input */
+            border: 1px solid #ccc; /* Add a border for clarity */
+            border-radius: 5px; /* Add rounded corners for a softer look */
+            box-sizing: border-box; /* Include padding and border in the width calculation */
+            font-size: 16px; /* Increase font size for better readability */
+            background-color: #f9f9f9; /* Add a light background color */
+            color: #333; /* Set text color */
+        }
+        .question input[type="text"] {
+            width: 500px;
+        }
+        /* Styles for answers */
+        .answer {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        /*Styles for check botton*/
+        .add-check-button {
+            background-color: #15c11e;
+            cursor: pointer; 
+            font-size: 12px;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        /* Styles for MySQL code textarea */
+        .code-textarea {
+            width: 100%; /* Make the textarea occupy the full width of its container */
+            height: 100px; /* Set the height as needed */
+            padding: 10px; /* Add padding for better visual appeal */
+            margin-top: 15px; /* Add some spacing above the textarea */
+            border: 1px solid #ccc; /* Add a border for clarity */
+            border-radius: 5px; /* Add rounded corners for a softer look */
+            box-sizing: border-box; /* Include padding and border in the width calculation */
+            font-size: 16px; /* Set font size */
+            background-color: #f9f9f9; /* Add a light background color */
+            color: #333; /* Set text color */
+        }
+
+        .table-container {
+            display: inline-block;
+            font-size: medium;
+            padding: 10px;
+            text-align: center;
+        }
+
+        table {
+            display: inline-table;
+            /* Mantiene le tabelle in linea */
+            border-collapse: collapse;
+            /* Per una migliore visualizzazione delle tabelle */
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            /* Stile dei bordi */
+            padding: 5px;
+            /* Padding delle celle */
+        }
+
+        th {
+            background-color: #f2f2f2;
+            /* Colore di sfondo delle celle dell'intestazione */
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Studia con ESQL</h1>
+        <div class="indietro">
+            <a href="javascript:history.back()">
+                <img src="image/arrow.png" alt="Torna indietro" style="width: 15px; height: 15px;">
+            </a>
+            <span class="testo-indietro">Indietro</span>
+        </div>
+        <div class="logout-form">
+            <form action="../controllers/utils/logout.php" method="post">
+                <button type="submit" name="logout">Esci</button>
+            </form>
+        </div>
+    </header>
+    <div class="view-container">
+        <div id="tablesDisplay">
+            <!-- Le tabelle saranno visualizzate qui -->
+        </div>
+    </div>
+    <div id="questionsContainer">
+        <!-- Contenitore per le domande -->
+    </div>
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">×</span>
+            <div id="tableContainer"></div> <!-- Contenitore per la tabella -->
+        </div>
+    </div>
+    <!-- Footer aggiunto -->
+    <footer>
+        <p>Alma Mater Studiorum</p>
+        <h3>Università di Bologna</h3>
+    </footer>
+
+    <script>
+
+        // Funzione per salvare il test
+        function saveTest() {
+            // Implementa questa funzione se necessario
+        }
+
+        // Funzione per aggiungere una domanda a risposta multipla
+        function addMultipleChoiceQuestion() {
+            var questionMultipleChoice = document.getElementById('questionMultipleChoice');
+            var clonedQuestionMultipleChoice = questionMultipleChoice.cloneNode(true);
+            document.getElementById('questionsContainer').appendChild(clonedQuestionMultipleChoice);
+        }
+
+        // Funzione per impostare la descrizione e la difficoltà della domanda
+        function setQuestionDescriptionAndDifficulty(description, difficulty, questionType) {
+            if (questionType === 'multipleChoice') {
+                document.getElementById('multipleChoiceDescription').value = description;
+                document.getElementById('multipleChoiceDifficulty').textContent = difficulty;
+            } else if (questionType === 'code') {
+                document.getElementById('codeDescription').value = description;
+                document.getElementById('codeDifficulty').textContent = difficulty;
+            }
+        }
+
+        // Funzione per caricare i dati dal JSON e popolare la pagina
+        function loadTestData(data) {
+            // Estrai il titolo del test
+            document.querySelector('h1').textContent = data.title;
+
+            // Popola le domande
+            var questionsContainer = document.getElementById('questionsContainer');
+            data.questions.forEach(function (question) {
+                var questionDiv = document.createElement('div');
+                questionDiv.classList.add('question');
+                var questionType = question.type;
+                var questionText = question.questionText;
+
+                // Aggiungi il testo della domanda
+                var questionTitle = document.createElement('div');
+                questionTitle.classList.add('question-title');
+                questionTitle.textContent = questionText;
+                questionDiv.appendChild(questionTitle);
+
+                // Aggiungi ulteriori dettagli sulla domanda in base al tipo
+                if (questionType === 'code') {
+                    var codeText = document.createElement('textarea');
+                    codeText.classList.add('code-textarea');
+                    codeText.textContent = question.sqlCode;
+                    questionDiv.appendChild(codeText);
+                } else if (questionType === 'mc') {
+                    var answersList = document.createElement('ul');
+                    question.answers.forEach(function (answer) {
+                        var answerItem = document.createElement('li');
+                        var answerInput = document.createElement('input');
+                        answerInput.setAttribute('type', 'radio');
+                        answerInput.setAttribute('name', 'answer'); // Assicura che solo una risposta possa essere selezionata
+                        answerInput.setAttribute('value', answer.text);
+                        answerItem.appendChild(answerInput);
+                        answerItem.appendChild(document.createTextNode(answer.text));
+                        answersList.appendChild(answerItem);
+                    });
+                    questionDiv.appendChild(answersList);
+                }
+
+                // Aggiungi la domanda al contenitore delle domande
+                questionsContainer.appendChild(questionDiv);
+            });
+            if (data.tables && data.tables.length > 0) {
+                //popola le tabelle
+                data.tables.forEach(function (table) {
+                    requestData(table);
+                });
+            }
+            function requestData(table) {
+                console.log("Oggetto tabella:", table);
+
+                $.ajax({
+                    type: "GET",
+                    url: "../controllers/table/TableController.php?action=get_full_table",
+                    data: { tableId: table.id },
+                    success: function (response) {
+                        console.log(response);
+                        // Crea un contenitore per i dettagli della tabella
+                        var tableContainer = $("<div class='table-container'></div>");
+                        tableContainer.append("<h3>" + table.name + "</h3>"); // Aggiunge il titolo della tabella
+
+                        // Create a table element
+                        var viewTable = $("<table></table>").attr("id", "table-" + table.IDTabella);
+                        if (Array.isArray(response[0])) {
+                            // Estrai i nomi e inseriscili in un nuovo array
+                            let nomi = response[0].map(obj => obj.Nome);
+
+                            // Creazione dinamica delle intestazioni della tabella
+                            var headerRow = $('<tr></tr>');
+                            nomi.forEach(function (nome) {
+                                headerRow.append('<th>' + nome + '</th>');
+                                console.log(nome);
+                            });
+                            viewTable.append(headerRow);
+                        } else {
+                            console.error('Formato JSON non valido');
+                        }
+
+                        var rows = response.slice(1); // per leggere dalla seconda riga in poi 
+
+                        // Add rows to the table based on received data
+                        $.each(rows, function (index, row) {
+                            var dataRow = '<tr>';
+                            // Per ogni proprietà dell'oggetto 'row', aggiungi una cella alla riga
+                            Object.keys(row).forEach(function (key) {
+                                console.log(row + "  " + key);
+                                dataRow += '<td>' + row[key] + '</td>';
+                            });
+                            dataRow += '</tr>';
+                            viewTable.append(dataRow);
+                        });
+
+                        // Clear previous table container and add the new table
+                        tableContainer.append(viewTable);
+
+                        // Aggiunge il contenitore della tabella alla pagina
+                        $("#tablesDisplay").append(tableContainer);
+                    },
+                    dataType: "json"
+                }).fail(function (jqxhr, textStatus, error) {
+                    var err = textStatus + ", " + error;
+                    console.log("Request Failed: " + err);
+                });
+            }
+        }
+
+        // JSON di esempio per testare la funzione
+        var testDataJSON = `{"title":"tette2","questions":[{"type":"code","questionText":"c","sqlCode":"select *\\nfrom jcj"},{"type":"mc","questionText":"bello","answers":[{"text":"no","isCorrect":false},{"text":"si","isCorrect":false},{"text":"forse","isCorrect":true}]}],"tables":[{"id":"1","name":"jcj"}],"constraints":[],"viewAnswersPermission":false}`;
+
+        // Converte il JSON in un oggetto JavaScript
+        var testData = JSON.parse(testDataJSON);
+
+        // Carica i dati del test sulla pagina
+        loadTestData(testData);
+    </script>
+</body>
+
+</html>
