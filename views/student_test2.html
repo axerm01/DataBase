@@ -176,6 +176,8 @@
             <span class="close-button">×</span>
             <div id="tableContainer"></div> <!-- Contenitore per la tabella -->
         </div>
+
+        <button onclick="requestTestData(19)">Vai</button>
     </div>
     <!-- Footer aggiunto -->
     <footer>
@@ -254,10 +256,10 @@
             if (data.tables && data.tables.length > 0) {
                 //popola le tabelle
                 data.tables.forEach(function (table) {
-                    requestData(table);
+                    requestTableData(table);
                 });
             }
-            function requestData(table) {
+            function requestTableData(table) {
                 console.log("Oggetto tabella:", table);
 
                 $.ajax({
@@ -315,14 +317,29 @@
             }
         }
 
+        function requestTestData(testId) {
+
+            $.ajax({
+                type: "GET",
+                url: "../controllers/test/StudentTestController.php?action=start_new_test",
+                data: { testId: testId },
+                success: function (response) {
+                    console.log(response);
+                    loadTestData(JSON.parse(response));
+                }
+                //, dataType: "json"
+            }).fail(function (jqxhr, textStatus, error) {
+                var err = textStatus + ", " + error;
+                console.log("Request Failed: " + err);
+            });
+        }
+
+
         // JSON di esempio per testare la funzione
-        var testDataJSON = `{"title":"tette2","questions":[{"type":"code","questionText":"c","sqlCode":"select *\\nfrom jcj"},{"type":"mc","questionText":"bello","answers":[{"text":"no","isCorrect":false},{"text":"si","isCorrect":false},{"text":"forse","isCorrect":true}]}],"tables":[{"id":"1","name":"jcj"}],"constraints":[],"viewAnswersPermission":false}`;
-
-        // Converte il JSON in un oggetto JavaScript
+        /*var testDataJSON = `{"title":"tette2","questions":[{"type":"code","questionText":"c","sqlCode":"select *\\nfrom jcj"},{"type":"mc","questionText":"bello","answers":[{"text":"no","isCorrect":false},{"text":"si","isCorrect":false},{"text":"forse","isCorrect":true}]}],"tables":[{"id":"1","name":"jcj"}],"constraints":[],"viewAnswersPermission":false}`;
         var testData = JSON.parse(testDataJSON);
+        loadTestData(testData);*/
 
-        // Carica i dati del test sulla pagina
-        loadTestData(testData);
     </script>
 </body>
 

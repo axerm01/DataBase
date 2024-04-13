@@ -398,12 +398,12 @@ DELETE FROM scelta
 WHERE IDTest = IDTestAtt and IDScMult = IDScMultAtt;
 END //
 
-CREATE PROCEDURE `ViewAnswer`(in IDTestAtt int,
-in TestoAtt varchar(45))
+CREATE PROCEDURE `ViewAnswers`(in IDTestAtt int,
+in IDScMultAtt int)
 BEGIN
-SELECT*
+SELECT *
 FROM scelta
-WHERE IDTest = IDTestAtt and Testo = TestoAtt;
+WHERE IDTest = IDTestAtt and IDScMult = IDScMultAtt;
 END //
 
 DELIMITER ;
@@ -435,6 +435,13 @@ BEGIN
 SELECT*
 FROM Scelta_Multipla
 WHERE IDTest = IDTestAtt and Descrizione = DescrizioneAtt;
+END //
+
+CREATE PROCEDURE `ViewAllSceltaMultipla`(in IDTestAtt int
+BEGIN
+SELECT *
+FROM Scelta_Multipla
+WHERE IDTest = IDTestAtt;
 END //
 
 DELIMITER ;
@@ -546,8 +553,23 @@ CREATE PROCEDURE `ViewSvolgimento`(in IDTestAtt int,
 in MailStudenteAtt varchar(45))
 BEGIN
 SELECT*
-FROM Scelta_Multipla
+FROM Svolgimento
 WHERE IDTest = IDTestAtt and MailStudente = MailStudenteAtt;
+END //
+
+CREATE PROCEDURE `ViewAllSvolgimento`(in MailStudenteAtt varchar(45))
+BEGIN
+SELECT*
+FROM Svolgimento
+WHERE MailStudente = MailStudenteAtt;
+END //
+
+CREATE PROCEDURE `ViewSvolgimentoByStatus`(in StatoAtt varchar(45),
+in MailStudenteAtt varchar(45))
+BEGIN
+SELECT*
+FROM Svolgimento
+WHERE Stato = StatoAtt and MailStudente = MailStudenteAtt;
 END //
 
 CREATE PROCEDURE `UpdateInizioSvolgimento`(in IDTestAtt int,
@@ -606,13 +628,12 @@ WHERE
 MailProfessore = mail;
 END//
 
-CREATE PROCEDURE `ViewTabella`(in ID smallint,in mail varchar(45))
+CREATE PROCEDURE `ViewTabella`(in ID int)
 BEGIN
 SELECT *
 FROM tabella
-WHERE (
-tabella.ID = ID and
-MailProfessore = mail);
+WHERE
+tabella.ID = ID ;
 END//
 
 DELIMITER ;

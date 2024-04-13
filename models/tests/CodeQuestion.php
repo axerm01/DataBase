@@ -33,7 +33,12 @@ class CodeQuestion  {
         $codiceQuery->bind_param('i', $testId);
         $codiceQuery->execute();
         $result = $codiceQuery->get_result();
-        $codiceData = $result->fetch_all(MYSQLI_ASSOC);
+        // Estrai i risultati
+        $codiceData = [];
+        while ($row = $result->fetch_assoc()) {
+            $row['type'] = "code";
+            $codiceData[] = $row;
+        }
         $codiceQuery->close();
 
         return $codiceData;
