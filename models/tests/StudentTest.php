@@ -106,23 +106,6 @@ class StudentTest {
 
         $codeQuestions = CodeQuestion::getTestQuestions($testId);
         $mcQuestions = MultipleChoiceQuestion::getTestQuestions($testId);
-        $mcAnswers = Answer::getTestMCAnswers($testId);
-        foreach ($mcQuestions as $qIndex => $question) {
-            // Inizializza l'attributo "answers" come un array vuoto
-            $mcQuestions[$qIndex]['answers'] = [];
-
-            // Cerca le risposte corrispondenti in $mcAnswers
-            foreach ($mcAnswers as $answer) {
-                if ($answer['IDScMult'] == $question['ID']) {
-                    // Aggiungi la risposta all'array "answers"
-                    $mcQuestions[$qIndex]['answers'][] = [
-                        'ID' => $answer['ID'],
-                        'Testo' => $answer['Testo'],
-                        'IsCorretta' => $answer['IsCorretta']
-                    ];
-                }
-            }
-        }
 
         $codeResponse = StudentAnswer::getTestCodeAnswers($testId, $stdEmail);
         $mcResponse = StudentAnswer::getTestMCAnswers($testId, $stdEmail);
@@ -156,13 +139,15 @@ class StudentTest {
         });
 
 
-        $tables = Table::getTestTables($testId);
-        $tableIDs =[];
-        foreach ($tables as $index => $table) {
-            if (isset($table['ID'])) {
-                $tables[$index]['columns'] = Column::getTableColumns($table['ID']);
-                $tables[$index]['content'] = Table::getTableContent($table['ID']);
-                $tableIDs = $table['ID'];
+        $TT = Table::getTestTables($testId);
+        $tableIDs = [];
+        $tables = [];
+        foreach ($TT as $index => $table) {
+            if (isset($table['IDTabella'])) {
+                $tables[$index] = Table::getTableData($table['IDTabella']);
+                $tables[$index]['columns'] = Column::getTableColumns($table['IDTabella']);
+                $tables[$index]['content'] = Table::getTableContent($table['IDTabella']);
+                $tableIDs[] = $table['IDTabella'];
             }
         }
 

@@ -102,9 +102,9 @@
             // Effettua una richiesta AJAX per ottenere i dati dei test
             $.ajax({
                 type: "GET",
-                url: "../controllers/test/TestController.php",
+                url: "../controllers/test/StudentTestController.php",
                 data: { 
-                    endpoint: 'get_tests',
+                    action: 'get_all_tests',
                     prof_email: 'Docente@unibo.it'
                 },
                 success: function(response) {

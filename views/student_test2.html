@@ -221,7 +221,7 @@
                 var questionDiv = document.createElement('div');
                 questionDiv.classList.add('question');
                 var questionType = question.type;
-                var questionText = question.questionText;
+                var questionText = question.Descrizione;
 
                 // Aggiungi il testo della domanda
                 var questionTitle = document.createElement('div');
@@ -324,10 +324,10 @@
                 url: "../controllers/test/StudentTestController.php?action=start_new_test",
                 data: { testId: testId },
                 success: function (response) {
-                    console.log(response);
-                    loadTestData(JSON.parse(response));
+                    console.log(JSON.stringify(response));
+                    loadTestData(response);
                 }
-                //, dataType: "json"
+                , dataType: "json"
             }).fail(function (jqxhr, textStatus, error) {
                 var err = textStatus + ", " + error;
                 console.log("Request Failed: " + err);

@@ -760,7 +760,7 @@ BEGIN
 END//
 
 CREATE PROCEDURE `CreateCodiceStudente`( 
-in StudenteAtt varchar(45),in IDTestAtt int ,in IDDomandaAtt int , in CodiceRispostaAtt int
+in StudenteAtt varchar(45),in IDTestAtt int ,in IDDomandaAtt int , in CodiceRispostaAtt varchar(500)
 )
 BEGIN
     INSERT INTO RISPOSTA_CODICE(Studente,IDDomanda,IDTest,CodiceRisposta)
