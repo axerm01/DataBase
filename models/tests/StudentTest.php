@@ -102,29 +102,31 @@ class StudentTest {
         return $test;
     }
     public static function resume($testId, $stdEmail) {
-        global $con; // Assumi che $con sia la tua connessione al database
 
         $codeQuestions = CodeQuestion::getTestQuestions($testId);
         $mcQuestions = MultipleChoiceQuestion::getTestQuestions($testId);
 
         $codeResponse = StudentAnswer::getTestCodeAnswers($testId, $stdEmail);
         $mcResponse = StudentAnswer::getTestMCAnswers($testId, $stdEmail);
+
         foreach ($codeQuestions as $qIndex => $question) {
             foreach ($codeResponse as $response) {
                 if ($question['ID'] == $response['IDDomanda']) {
                     $codeQuestions[$qIndex]['Risposta'] = [
-                        'Risposta' => $response['Risposta'],
+                        'Risposta' => $response['CodiceRisposta'],
                         'Esito' => $response['Esito']
                     ];
                     break; // Interrompe il ciclo interno una volta trovata la corrispondenza
                 }
             }
         }
+
+
         foreach ($mcQuestions as $qIndex => $question) {
             foreach ($mcResponse as $response) {
                 if ($question['ID'] == $response['IDDomanda']) {
                     $codeQuestions[$qIndex]['Risposta'] = [
-                        'Risposta' => $response['Risposta'],
+                        'Risposta' => $response['IDRisposta'],
                         'Esito' => $response['Esito']
                     ];
                     break; // Interrompe il ciclo interno una volta trovata la corrispondenza
@@ -176,15 +178,20 @@ class StudentTest {
         global $con;
         $q = 'CALL CreateSvolgimento(?,?,?,?,?);';
         $stmt = $con->prepare($q);
+        $response = "save ok";
         if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
+            $response = $con->error;
+            //die("Errore nella preparazione della query: " . $con->error);
         }
         $stato = self::OPEN;
         $stmt->bind_param('ssssi', $email, $stato, $dataPrima, $dataUltima, $testId);
         if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
+            $response = $stmt->error;
+            //die("Errore nell'esecuzione della query: " . $stmt->error);
         }
+
         $stmt->close();
+        return $response;
     }
     public static function updateStudentTestData($testId, $email) {
         global $con;

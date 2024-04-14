@@ -200,7 +200,8 @@ CREATE TABLE IF NOT EXISTS `RISPOSTA_SCELTA` (
   `IDDomanda` INT NOT NULL,
   `IDRisposta` int,
   `IDTest` INT NOT NULL,
-  PRIMARY KEY (`Studente`, `IDDomanda`,`IDRisposta`),
+  `Esito` Boolean default 0,
+  PRIMARY KEY (`Studente`, `IDDomanda`,`IDTest`),
   CONSTRAINT `FK_RispostaScelta_IDTest`
     FOREIGN KEY (`IDTest`)
     REFERENCES `TEST` (`ID`)
@@ -229,6 +230,7 @@ CREATE TABLE IF NOT EXISTS `RISPOSTA_CODICE` (
   `IDDomanda` INT NOT NULL,
   `CodiceRisposta` varchar(500),
   `IDTest` INT NOT NULL,
+  `Esito` Boolean default 0,
   PRIMARY KEY (`Studente`, `IDDomanda`,`IDTest`),
   CONSTRAINT `FK_RispostaCodice_IDTest`
     FOREIGN KEY (`IDTest`)

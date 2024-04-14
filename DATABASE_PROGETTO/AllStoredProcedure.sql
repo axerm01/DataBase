@@ -536,8 +536,12 @@ in DataUltimaRispostaAtt datetime,
 in IDTestAtt int
 )
 BEGIN
-INSERT INTO Scelta_Multipla (MailStudente,Stato,DataPrimaRisposta,DataUltimaRisposta,IDTest)
-VALUES (MailStudenteAtt,StatoAtt,DataPrimaRispostaAtt,DataUltimaRispostaAtt,IDTestAtt);
+INSERT INTO Svolgimento (MailStudente,Stato,DataPrimaRisposta,DataUltimaRisposta,IDTest)
+VALUES (MailStudenteAtt,StatoAtt,DataPrimaRispostaAtt,DataUltimaRispostaAtt,IDTestAtt)
+ON DUPLICATE KEY UPDATE
+Stato = VALUES(StatoAtt),
+DataPrimaRisposta = VALUES(DataPrimaRispostaAtt),
+DataUltimaRisposta = VALUES(DataUltimaRispostaAtt);
 END //
 
 CREATE PROCEDURE `DropSvolgimento`(
@@ -709,7 +713,7 @@ CREATE PROCEDURE `ViewStudentCodeAnswers`(
 in  IDTestAtt int,in StudenteAtt varchar(45)
 )
 BEGIN
-SELECT CodiceRisposta
+SELECT *
 FROM RISPOSTA_CODICE
 WHERE Studente = StudenteAtt and IDTest = IDTestAtt;
 END //
@@ -718,7 +722,7 @@ CREATE PROCEDURE `ViewStudentMCAnswers`(
 in  IDTestAtt int,in StudenteAtt varchar(45)
 )
 BEGIN
-SELECT IDRisposta
+SELECT *
 FROM RISPOSTA_SCELTA
 WHERE Studente = StudenteAtt and IDTest = IDTestAtt;
 END //
@@ -752,19 +756,19 @@ WHERE MailDocente = MailDocenteAtt;
 END //
 
 CREATE PROCEDURE `CreateRispostaStudente`( 
-in StudenteAtt varchar(45), in IDTestAtt int , in IDDomandaAtt int ,in IDRispostaAtt int
+in StudenteAtt varchar(45), in IDTestAtt int , in IDDomandaAtt int ,in IDRispostaAtt int, in EsitoAtt boolean
 )
 BEGIN
-    INSERT INTO RISPOSTA_SCELTA(Studente,IDDomanda,IDRisposta,IDTest)
-    VALUES (StudenteAtt,IDDomandaAtt,IDRispostaAtt,IDTestAtt);
+    INSERT INTO RISPOSTA_SCELTA(Studente,IDDomanda,IDRisposta,IDTest,Esito)
+    VALUES (StudenteAtt,IDDomandaAtt,IDRispostaAtt,IDTestAtt,EsitoAtt);
 END//
 
 CREATE PROCEDURE `CreateCodiceStudente`( 
-in StudenteAtt varchar(45),in IDTestAtt int ,in IDDomandaAtt int , in CodiceRispostaAtt varchar(500)
+in StudenteAtt varchar(45),in IDTestAtt int ,in IDDomandaAtt int , in CodiceRispostaAtt varchar(500), in EsitoAtt boolean
 )
 BEGIN
-    INSERT INTO RISPOSTA_CODICE(Studente,IDDomanda,IDTest,CodiceRisposta)
-    VALUES (StudenteAtt,IDDomandaAtt,IDTestAtt,CodiceRispostaAtt);
+    INSERT INTO RISPOSTA_CODICE(Studente,IDDomanda,IDTest,CodiceRisposta,Esito)
+    VALUES (StudenteAtt,IDDomandaAtt,IDTestAtt,CodiceRispostaAtt,EsitoAtt);
 END//
 
 

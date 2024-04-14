@@ -31,7 +31,7 @@ class StudentAnswer
 
     public static function saveStudentAnswers($answers, $testId, $email) {
         global $con; // Assumi che $con sia la tua connessione al database
-
+        $response = 'saved ok';
         mysqli_begin_transaction($con);
 
         try {
@@ -39,26 +39,28 @@ class StudentAnswer
                 if ($answer['type'] === 'mc') {
                     // Utilizza la stored procedure per le risposte a scelta multipla
                     $stmt = $con->prepare("CALL CreateRispostaStudente(?, ?, ?, ?, ?)");
-                    $stmt->bind_param('siiii', $email, $testId, $answer['IDDomanda'], $answer['response'], $answer['outcome']);
+                    $stmt->bind_param('siiii', $email, $testId, $answer['IDDomanda'], $answer['Response'], $answer['Esito']);
                 } elseif ($answer['type'] === 'code') {
                     // Utilizza la stored procedure per le risposte di tipo codice
                     $stmt = $con->prepare("CALL CreateCodiceStudente(?, ?, ?, ?, ?)");
-                    $stmt->bind_param('siisi', $email, $testId, $answer['IDDomanda'], $answer['response'], $answer['outcome']);
+                    $stmt->bind_param('siisi', $email, $testId, $answer['IDDomanda'], $answer['Response'], $answer['Esito']);
                 }
 
                 if (!$stmt->execute()) {
-                    throw new Exception("Errore nell'esecuzione della stored procedure: " . $stmt->error);
+                    return "Errore nell'esecuzione della stored procedure: " . $stmt->error;
                 }
 
                 $stmt->close();
             }
-
             mysqli_commit($con);
+
+
         } catch (Exception $e) {
             mysqli_rollback($con);
-            echo "Errore: " . $e->getMessage();
+            $response =  "Errore: " . $e->getMessage();
             // Gestione ulteriore dell'errore
         }
+        return $response;
     }
 
     public static function updateStudentAnswers($answers, $testId, $email) {
