@@ -86,12 +86,15 @@ END //
 DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE `CreateCodice`(
-in IDTestAtt int,
-in OutputAtt varchar(45)
+    in IDTestAtt int,
+    in IDAtt int,
+    in TextAtt varchar(45),
+    in OutputAtt varchar(45),
+    in DiffAtt varchar(45)
 )
 BEGIN
-INSERT INTO Codice (IDTest,Output)
-VALUES (IDTestAtt,OutputAtt);
+INSERT INTO Codice (IDTest,ID, Descrizione, Output, Difficolta)
+VALUES (IDTestAtt,IDAtt,TextAtt,OutputAtt,DiffAtt);
 END //
 
 CREATE PROCEDURE `DropCodice`(
@@ -201,16 +204,16 @@ END //
 DELIMITER ;
 DELIMITER //
 
-CREATE PROCEDURE `CreateGalleria`(
+CREATE PROCEDURE `AddToGalleria`(
 in IDTestAtt int,
-in FotoAtt varchar(45)
+in FotoAtt blob
 )
 BEGIN
 INSERT INTO Galleria(IDTest,Foto)
 VALUES (IDTestAtt, FotoAtt);
 END //
   
-CREATE PROCEDURE `ViewGalleria`(
+CREATE PROCEDURE `ViewFoto`(
 in IDTestAtt int
 )
 BEGIN
@@ -219,25 +222,13 @@ FROM Galleria
 WHERE IDTest = IDTestAtt;
 END //
 
-CREATE PROCEDURE `ViewFoto`(
-in IDTestAtt int,
-in FotoAtt varchar(45)
-)
-BEGIN
-SELECT *
-FROM Galleria
-WHERE IDTest = IDTestAtt
-and Foto = FotoAtt;
-END //
 
 CREATE PROCEDURE `DropFoto`(
-in IDAtt int,
-in FotoAtt varchar(45)
+in IDTestAtt int
 )
 BEGIN
-DELETE FROM Test
-WHERE ID = IDAtt
-and Foto = FotoAtt;
+DELETE FROM Galleria
+WHERE IDTest = IDTestAtt;
 END //
 
 DELIMITER ;
@@ -345,7 +336,7 @@ in NomeAttributo1Att varchar(45),
 in NomeAttributo2Att varchar(45)
 )
 BEGIN
-INSERT INTO referenze (IDT1, NomeAttributo1, IDT2, NomeAttributo2)
+INSERT IGNORE INTO referenze (IDT1, NomeAttributo1, IDT2, NomeAttributo2)
 VALUES (IDT1Att, NomeAttributo1Att, IDT2Att, NomeAttributo2Att);
 END //
 
@@ -383,7 +374,8 @@ NomeAttributo1 = NomeAttributo1Att and
 NomeAttributo2 = NomeAttributo2Att 
 );
 END //
-DELIMITER ; 
+DELIMITER ;
+
 DELIMITER //
 CREATE PROCEDURE `CreateAnswer`(
 in IDAtt int,
@@ -406,25 +398,26 @@ DELETE FROM scelta
 WHERE IDTest = IDTestAtt and IDScMult = IDScMultAtt;
 END //
 
-CREATE PROCEDURE `ViewAnswer`(in IDTestAtt int,
-in TestoAtt varchar(45))
+CREATE PROCEDURE `ViewAnswers`(in IDTestAtt int,
+in IDScMultAtt int)
 BEGIN
-SELECT*
+SELECT *
 FROM scelta
-WHERE IDTest = IDTestAtt and Testo = TestoAtt;
+WHERE IDTest = IDTestAtt and IDScMult = IDScMultAtt;
 END //
 
 DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE `CreateSceltaMultipla`(
-in DescrizioneAtt varchar(45),
-in IDTestAtt int,
-in NumRisposteAtt int,
-in DifficoltaAtt int
+    in IDTestAtt int,
+    in IDAtt int,
+    in DescrizioneAtt varchar(45),
+    in NumRisposteAtt int,
+    in DifficoltaAtt varchar(45)
 )
 BEGIN
-INSERT INTO Scelta_Multipla (Descrizione,IDTest,NumRisposte,Difficolta)
-VALUES (DescrizioneAtt,IDTestAtt,NumRisposteAtt,DifficoltaAtt);
+INSERT INTO Scelta_Multipla (IDTest,ID,Descrizione,NumRisposte,Difficolta)
+VALUES (IDTestAtt,IDAtt,DescrizioneAtt,NumRisposteAtt,DifficoltaAtt);
 END //
 
 CREATE PROCEDURE `DropSceltaMultipla`(
@@ -442,6 +435,13 @@ BEGIN
 SELECT*
 FROM Scelta_Multipla
 WHERE IDTest = IDTestAtt and Descrizione = DescrizioneAtt;
+END //
+
+CREATE PROCEDURE `ViewAllSceltaMultipla`(in IDTestAtt int
+BEGIN
+SELECT *
+FROM Scelta_Multipla
+WHERE IDTest = IDTestAtt;
 END //
 
 DELIMITER ;
@@ -536,8 +536,12 @@ in DataUltimaRispostaAtt datetime,
 in IDTestAtt int
 )
 BEGIN
-INSERT INTO Scelta_Multipla (MailStudente,Stato,DataPrimaRisposta,DataUltimaRisposta,IDTest)
-VALUES (MailStudenteAtt,StatoAtt,DataPrimaRispostaAtt,DataUltimaRispostaAtt,IDTestAtt);
+INSERT INTO Svolgimento (MailStudente,Stato,DataPrimaRisposta,DataUltimaRisposta,IDTest)
+VALUES (MailStudenteAtt,StatoAtt,DataPrimaRispostaAtt,DataUltimaRispostaAtt,IDTestAtt)
+ON DUPLICATE KEY UPDATE
+Stato = VALUES(StatoAtt),
+DataPrimaRisposta = VALUES(DataPrimaRispostaAtt),
+DataUltimaRisposta = VALUES(DataUltimaRispostaAtt);
 END //
 
 CREATE PROCEDURE `DropSvolgimento`(
@@ -553,8 +557,23 @@ CREATE PROCEDURE `ViewSvolgimento`(in IDTestAtt int,
 in MailStudenteAtt varchar(45))
 BEGIN
 SELECT*
-FROM Scelta_Multipla
+FROM Svolgimento
 WHERE IDTest = IDTestAtt and MailStudente = MailStudenteAtt;
+END //
+
+CREATE PROCEDURE `ViewAllSvolgimento`(in MailStudenteAtt varchar(45))
+BEGIN
+SELECT*
+FROM Svolgimento
+WHERE MailStudente = MailStudenteAtt;
+END //
+
+CREATE PROCEDURE `ViewSvolgimentoByStatus`(in StatoAtt varchar(45),
+in MailStudenteAtt varchar(45))
+BEGIN
+SELECT*
+FROM Svolgimento
+WHERE Stato = StatoAtt and MailStudente = MailStudenteAtt;
 END //
 
 CREATE PROCEDURE `UpdateInizioSvolgimento`(in IDTestAtt int,
@@ -613,13 +632,12 @@ WHERE
 MailProfessore = mail;
 END//
 
-CREATE PROCEDURE `ViewTabella`(in ID smallint,in mail varchar(45))
+CREATE PROCEDURE `ViewTabella`(in ID int)
 BEGIN
 SELECT *
 FROM tabella
-WHERE (
-tabella.ID = ID and
-MailProfessore = mail);
+WHERE
+tabella.ID = ID ;
 END//
 
 DELIMITER ;
@@ -695,7 +713,7 @@ CREATE PROCEDURE `ViewStudentCodeAnswers`(
 in  IDTestAtt int,in StudenteAtt varchar(45)
 )
 BEGIN
-SELECT CodiceRisposta
+SELECT *
 FROM RISPOSTA_CODICE
 WHERE Studente = StudenteAtt and IDTest = IDTestAtt;
 END //
@@ -704,7 +722,7 @@ CREATE PROCEDURE `ViewStudentMCAnswers`(
 in  IDTestAtt int,in StudenteAtt varchar(45)
 )
 BEGIN
-SELECT IDRisposta
+SELECT *
 FROM RISPOSTA_SCELTA
 WHERE Studente = StudenteAtt and IDTest = IDTestAtt;
 END //
@@ -738,19 +756,19 @@ WHERE MailDocente = MailDocenteAtt;
 END //
 
 CREATE PROCEDURE `CreateRispostaStudente`( 
-in StudenteAtt varchar(45), in IDTestAtt int , in IDDomandaAtt int ,in IDRispostaAtt int
+in StudenteAtt varchar(45), in IDTestAtt int , in IDDomandaAtt int ,in IDRispostaAtt int, in EsitoAtt boolean
 )
 BEGIN
-    INSERT INTO RISPOSTA_SCELTA(Studente,IDDomanda,IDRisposta,IDTest)
-    VALUES (StudenteAtt,IDDomandaAtt,IDRispostaAtt,IDTestAtt);
+    INSERT INTO RISPOSTA_SCELTA(Studente,IDDomanda,IDRisposta,IDTest,Esito)
+    VALUES (StudenteAtt,IDDomandaAtt,IDRispostaAtt,IDTestAtt,EsitoAtt);
 END//
 
 CREATE PROCEDURE `CreateCodiceStudente`( 
-in StudenteAtt varchar(45),in IDTestAtt int ,in IDDomandaAtt int , in CodiceRispostaAtt int
+in StudenteAtt varchar(45),in IDTestAtt int ,in IDDomandaAtt int , in CodiceRispostaAtt varchar(500), in EsitoAtt boolean
 )
 BEGIN
-    INSERT INTO RISPOSTA_CODICE(Studente,IDDomanda,IDTest,CodiceRisposta)
-    VALUES (StudenteAtt,IDDomandaAtt,IDTestAtt,CodiceRispostaAtt);
+    INSERT INTO RISPOSTA_CODICE(Studente,IDDomanda,IDTest,CodiceRisposta,Esito)
+    VALUES (StudenteAtt,IDDomandaAtt,IDTestAtt,CodiceRispostaAtt,EsitoAtt);
 END//
 
 

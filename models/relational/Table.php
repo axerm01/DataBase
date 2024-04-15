@@ -226,6 +226,35 @@ class Table {
         return $data;
     }
 
+    public static function getTableData($tableID) //restituisce id tabella e nome
+    {
+        global $con;
+        $q = 'CALL ViewTabella(?);';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('i', $tableID);
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+
+        $result = $stmt->get_result();
+        $content = [];
+        while ($row = $result->fetch_assoc()) {
+            $content[] = [
+                'IDTabella' => $row['ID'],
+                'Nome' => $row['Nome'],
+                'MailProfessore' => $row['MailProfessore'],
+                'DataCreazione' => $row['DataCreazione'],
+                'NumRighe' => $row['NumRighe']
+            ];
+        }
+        $stmt->close();
+
+        return $content;
+    }
+
     public static function getTestTables($testId) {
             global $con; // Assumi che $con sia la tua connessione al database
 
@@ -233,20 +262,15 @@ class Table {
             $tableQuery->bind_param('i', $testId);
             $tableQuery->execute();
             $result = $tableQuery->get_result();
-        $tableData = [];
-
-        while ($row = $result->fetch_assoc()) {
-            $tableData[] = [
-                'ID' => $row['ID'],
-                'MailProfessore' => $row['MailProfessore'],
-                'Nome' => $row['Nome'],
-                'DataCreazione' => $row['DataCreazione'],
-                'NumRighe' => $row['NumRighe']
-            ];
-        }
-        $tableQuery->close();
-        return $tableData;
-
+            $content = [];
+            while ($row = $result->fetch_assoc()) {
+                $content[] = [
+                    'IDTabella' => $row['IDTabella'],
+                    'IDTest' => $row['IDTest']
+                ];
+            }
+            $tableQuery->close();
+            return $content;
     }
 
     public static function deleteTable($tableId) {

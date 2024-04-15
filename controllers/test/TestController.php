@@ -3,6 +3,9 @@ session_start();
 include('../utils/connect.php');
 include '../../models/relational/Table.php';
 require '../../models/tests/Test.php';
+require '../../models/tests/CodeQuestion.php';
+require '../../models/tests/MultipleChoiceQuestion.php';
+require '../../models/relational/Reference.php';
 
 
 $method = $_SERVER['REQUEST_METHOD'];
@@ -11,16 +14,21 @@ header('Content-Type: application/json');
 
 switch ($method) {
     case 'GET':
-        $endpoint = $_GET['endpoint'];
-        switch ($endpoint) {
+        if (isset($_GET['action'])){
+            $endpoint = $_GET['action'];
+            switch ($endpoint) {
 
-            case 'get_tests': // GET di tutti i test di un certo professore
-                $prof_email = $_SESSION['email'];
-                $data = Test::getProfTests($prof_email);
-                break;
+                case 'get_tests': // GET di tutti i test di un certo professore la cui mail è nella sessione
+                    //$prof_email = filter_input(INPUT_GET, 'prof_email');
+                    $prof_email = $_SESSION['email'];
+                    $data = Test::getProfTests($prof_email);
+                    break;
+            }
+            echo json_encode($data);  // Converte l'array $data in JSON e lo invia
+
+        } else {
+            echo json_encode("no action");
         }
-
-        echo json_encode($data);  // Converte l'array $data in JSON e lo invia
         break;
 
     case 'POST':
@@ -31,12 +39,16 @@ switch ($method) {
                     $query = filter_input(INPUT_POST, 'query');
                     $data = testQuery($query);
                     echo json_encode($data);
-
                     break;
 
                 case 'save_test':
                     $data = $_POST['data'];
-                    $response = saveTest($data);
+                    if (isset($_FILES['testImage'])) {
+                        $imageFile = $_FILES['testImage'];
+                        $response = saveTest($data, $imageFile);
+                    } else {
+                        $response = saveTest($data, null);
+                    }
                     echo json_encode($response);
                     break;
             }
@@ -53,11 +65,11 @@ switch ($method) {
                 case 'update_test':
                     $data = $_POST['data'];
                     $response = updateTest($data, $testId);
-
                     break;
             }
+        } else {
+            echo json_encode("no action");
         }
-
         break;
 
     case 'DELETE':
@@ -93,19 +105,20 @@ switch ($method) {
                     }
                     break;
             }
-
+        } else {
+            echo json_encode("no action");
         }
         break;
 }
 
 //Inserisce a DB un nuovo test creato dal docente
-function saveTest($data) {
+function saveTest($data, $image) {
     try {
         // Decodifica il JSON ricevuto
         $decodedData = json_decode($data, true);
 
         $creationDate = date('Y-m-d H:i:s');
-        $testId = Test::saveTestData($decodedData['title'], $creationDate, true/*$decodedData['show_answers']*/, $_SESSION['email']);
+        $testId = Test::saveTestData($decodedData['title'], $creationDate, $decodedData['viewAnswersPermission'], $_SESSION['email'], $image);
 
         // Sezione dedicata al salvataggio delle tabelle relative al Test
         $tableIDs = [];
@@ -115,21 +128,25 @@ function saveTest($data) {
         Test::linkTablesToTest($tableIDs, $testId);
 
         // Sezione dedicata al salvataggio delle referenze relative al Test
-        foreach ($decodedData['constraints'] as $referenceData) {
-            if (isset($referenceData['tab1'], $referenceData['tab2'], $referenceData['att1'], $referenceData['att2'])) {
-                Reference::saveReferenceData($referenceData['tab1'], $referenceData['tab2'], $referenceData['att1'], $referenceData['att2']);
+        if(!empty($decodedData['constraints'])){
+            foreach ($decodedData['constraints'] as $referenceData) {
+                if (isset($referenceData['tab1'], $referenceData['tab2'], $referenceData['att1'], $referenceData['att2'])) {
+                    Reference::saveReferenceData($referenceData['tab1'], $referenceData['tab2'], $referenceData['att1'], $referenceData['att2']);
+                }
             }
         }
 
         // Sezione dedicata al salvataggio delle domande relative al Test
-        foreach ($decodedData['questions'] as $questionData) {
-            if ($questionData['type'] == 'code') {
-                CodeQuestion::saveCodeQuestion($testId,$questionData['id'], $questionData['questionText'], $questionData['sqlCode'], $questionData['difficulty']);
-                return 'ok';
-            } else if ($questionData['type'] == 'mc') {
-                MultipleChoiceQuestion::saveMCData($testId,$questionData['id'],$questionData['questionText'], count($questionData['answers']), $questionData['difficulty'], $questionData['answers'] );
+        if(!empty($decodedData['questions'])){
+            foreach ($decodedData['questions'] as $questionData) {
+                if ($questionData['type'] == 'code') {
+                    CodeQuestion::saveCodeQuestion($testId,$questionData['id'], $questionData['questionText'], $questionData['sqlCode'], $questionData['difficulty']);
+                } else if ($questionData['type'] == 'mc') {
+                    MultipleChoiceQuestion::saveMCData($testId,$questionData['id'],$questionData['questionText'], count($questionData['answers']), $questionData['difficulty'], $questionData['answers'] );
+                }
             }
         }
+
         $response = 'Saved correctly';
     } catch (Exception $exc){
         $response = 'Some error occoured. Error log: ' .$exc;
@@ -170,13 +187,11 @@ function updateTest($data, $testId) {
             foreach ($decodedData['questions'] as $questionData) {
                 if ($questionData['type'] == 'code') {
                     CodeQuestion::saveCodeQuestion($testId,$questionData['id'], $questionData['questionText'], $questionData['sqlCode'], $questionData['difficulty']);
-                    return 'ok';
                 } else if ($questionData['type'] == 'mc') {
                     MultipleChoiceQuestion::saveMCData($testId,$questionData['id'],$questionData['questionText'], count($questionData['answers']), $questionData['difficulty'], $questionData['answers'] );
                 }
             }
         }
-
         $response = 'Updated correctly';
     } catch (Exception $exc){
         $response = 'Some error occoured. Error log: ' .$exc;

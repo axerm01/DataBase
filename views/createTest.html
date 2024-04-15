@@ -551,9 +551,7 @@
             dropdownsDiv.appendChild(deleteButton); // Aggiunge il bottone di eliminazione al div dei dropdown
         }
 
-    </script>
 
-    <script>
         let questionMCCount = 0;
         let questionCodeCount = 0;
         function addMCQuestion() {
@@ -849,6 +847,7 @@
                 viewAnswersPermission: $('#viewAnswersPermission').is(':checked') // Raccoglie il valore del checkbox
             };
             // Raccoglie tutte le domande
+            let questionId = 1;
             $('#questionsContainer .question').each(function() {
                 const questionType = $(this).data('question-type'); // Legge il tipo di domanda
                 const questionText = $(this).find('.question-input').val();
@@ -856,16 +855,19 @@
 
                 if (questionType === 'mc') {
                     var answers = [];
+                    let answerId = 1;
                     $(this).find('.answer').each(function() {
                         var answerText = $(this).find('.answer-input').val();
                         var isCorrect = $(this).find('.correct-checkbox').is(':checked');
-                        answers.push({ text: answerText, isCorrect: isCorrect });
+                        answers.push({ id: answerId, text: answerText, isCorrect: isCorrect });
+                        answerId++;
                     });
-                    sendDataTest.questions.push({ type: "mc", questionText: questionText, answers: answers });
+                    sendDataTest.questions.push({ type: "mc", id: questionId, questionText: questionText, answers: answers, difficulty: difficultyLevel });
                 } else if (questionType === 'code') {
                     var sqlCode = $(this).find('.code-textarea').val();
-                    sendDataTest.questions.push({ type: "code", questionText: questionText, sqlCode: sqlCode });
+                    sendDataTest.questions.push({ type: "code", id: questionId, questionText: questionText, sqlCode: sqlCode, difficulty: difficultyLevel });
                 }
+                questionId++;
             });
             // Raccogliere dati dei vincoli  
             $('.flex-container').each(function(index) {
@@ -877,15 +879,16 @@
                 var attribute2Id = $('#' + uniqueId + '-menuAttribute2').val();
 
                 var constraintData = {
-                    table1: table1Id,
-                    attribute1: attribute1Id,
-                    table2: table2Id,
-                    attribute2: attribute2Id
+                    tab1: table1Id,
+                    att1: attribute1Id,
+                    tab2: table2Id,
+                    att2: attribute2Id
                 };
                 sendDataTest.constraints.push(constraintData);
                 //console.log(sendDataTest.constraints);
             });
 
+            console.log(sendDataTest);
             return sendDataTest;
         }
 
@@ -895,6 +898,7 @@
 
             // Aggiunge i dati testuali al FormData
             formData.append("data", JSON.stringify(sendDataTest));
+
 
             // Aggiunge il file immagine al FormData
             var imageFile = document.getElementById('testImage').files[0];
@@ -915,7 +919,8 @@
                     formData.forEach(function(value, key){
                         object[key] = value;
                     });
-                    console.log(JSON.stringify(object, null, 2)); 
+                    console.log(JSON.stringify(sendDataTest));
+                    //console.log(JSON.stringify(object, null, 2));
                     alert(response); //risposta del server
                     //window.location.reload(); // ricarica pagina
                 },

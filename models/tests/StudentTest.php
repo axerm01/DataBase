@@ -2,9 +2,7 @@
 include('../../controllers/utils/connect.php');
 include ('CodeQuestion.php');
 include ('MultipleChoiceQuestion.php');
-include ('Answer.php');
 include ('../../models/relational/Table.php');
-include ('../../models/relational/Column.php');
 include ('../../models/relational/Reference.php');
 
 class StudentTest {
@@ -74,38 +72,23 @@ class StudentTest {
     public static function start($testId) {
         $codeQuestions = CodeQuestion::getTestQuestions($testId);
         $mcQuestions = MultipleChoiceQuestion::getTestQuestions($testId);
-        $mcAnswers = Answer::getTestMCAnswers($testId);
-        foreach ($mcQuestions as $qIndex => $question) {
-            // Inizializza l'attributo "answers" come un array vuoto
-            $mcQuestions[$qIndex]['answers'] = [];
-
-            // Cerca le risposte corrispondenti in $mcAnswers
-            foreach ($mcAnswers as $answer) {
-                if ($answer['IDScMult'] == $question['ID']) {
-                    // Aggiungi la risposta all'array "answers"
-                    $mcQuestions[$qIndex]['answers'][] = [
-                        'ID' => $answer['ID'],
-                        'Testo' => $answer['Testo'],
-                        'IsCorretta' => $answer['IsCorretta']
-                    ];
-                }
-            }
-        }
 
         $questions = array_merge($codeQuestions, $mcQuestions);
+
         // Ordina l'array combinato in base all'ID
         usort($questions, function($a, $b) {
             return $a['ID'] - $b['ID'];
         });
 
-        $tables = Table::getTestTables($testId);
+        $TT = Table::getTestTables($testId);
         $tableIDs = [];
-        foreach ($tables as $index => $table) {
-            if (isset($table['ID'])) {
-                $tables[$index]['columns'] = Column::getTableColumns($table['ID']);
-                $tables[$index]['content'] = Table::getTableContent($table['ID']);
-                $tableIDs = $table['ID'];
-
+        $tables = [];
+        foreach ($TT as $index => $table) {
+            if (isset($table['IDTabella'])) {
+                $tables[$index] = Table::getTableData($table['IDTabella']);
+                $tables[$index]['columns'] = Column::getTableColumns($table['IDTabella']);
+                $tables[$index]['content'] = Table::getTableContent($table['IDTabella']);
+                $tableIDs[] = $table['IDTabella'];
             }
         }
 
@@ -119,46 +102,31 @@ class StudentTest {
         return $test;
     }
     public static function resume($testId, $stdEmail) {
-        global $con; // Assumi che $con sia la tua connessione al database
 
         $codeQuestions = CodeQuestion::getTestQuestions($testId);
         $mcQuestions = MultipleChoiceQuestion::getTestQuestions($testId);
-        $mcAnswers = Answer::getTestMCAnswers($testId);
-        foreach ($mcQuestions as $qIndex => $question) {
-            // Inizializza l'attributo "answers" come un array vuoto
-            $mcQuestions[$qIndex]['answers'] = [];
-
-            // Cerca le risposte corrispondenti in $mcAnswers
-            foreach ($mcAnswers as $answer) {
-                if ($answer['IDScMult'] == $question['ID']) {
-                    // Aggiungi la risposta all'array "answers"
-                    $mcQuestions[$qIndex]['answers'][] = [
-                        'ID' => $answer['ID'],
-                        'Testo' => $answer['Testo'],
-                        'IsCorretta' => $answer['IsCorretta']
-                    ];
-                }
-            }
-        }
 
         $codeResponse = StudentAnswer::getTestCodeAnswers($testId, $stdEmail);
         $mcResponse = StudentAnswer::getTestMCAnswers($testId, $stdEmail);
+
         foreach ($codeQuestions as $qIndex => $question) {
             foreach ($codeResponse as $response) {
                 if ($question['ID'] == $response['IDDomanda']) {
                     $codeQuestions[$qIndex]['Risposta'] = [
-                        'Risposta' => $response['Risposta'],
+                        'Risposta' => $response['CodiceRisposta'],
                         'Esito' => $response['Esito']
                     ];
                     break; // Interrompe il ciclo interno una volta trovata la corrispondenza
                 }
             }
         }
+
+
         foreach ($mcQuestions as $qIndex => $question) {
             foreach ($mcResponse as $response) {
                 if ($question['ID'] == $response['IDDomanda']) {
                     $codeQuestions[$qIndex]['Risposta'] = [
-                        'Risposta' => $response['Risposta'],
+                        'Risposta' => $response['IDRisposta'],
                         'Esito' => $response['Esito']
                     ];
                     break; // Interrompe il ciclo interno una volta trovata la corrispondenza
@@ -173,13 +141,15 @@ class StudentTest {
         });
 
 
-        $tables = Table::getTestTables($testId);
-        $tableIDs =[];
-        foreach ($tables as $index => $table) {
-            if (isset($table['ID'])) {
-                $tables[$index]['columns'] = Column::getTableColumns($table['ID']);
-                $tables[$index]['content'] = Table::getTableContent($table['ID']);
-                $tableIDs = $table['ID'];
+        $TT = Table::getTestTables($testId);
+        $tableIDs = [];
+        $tables = [];
+        foreach ($TT as $index => $table) {
+            if (isset($table['IDTabella'])) {
+                $tables[$index] = Table::getTableData($table['IDTabella']);
+                $tables[$index]['columns'] = Column::getTableColumns($table['IDTabella']);
+                $tables[$index]['content'] = Table::getTableContent($table['IDTabella']);
+                $tableIDs[] = $table['IDTabella'];
             }
         }
 
@@ -208,15 +178,20 @@ class StudentTest {
         global $con;
         $q = 'CALL CreateSvolgimento(?,?,?,?,?);';
         $stmt = $con->prepare($q);
+        $response = "save ok";
         if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
+            $response = $con->error;
+            //die("Errore nella preparazione della query: " . $con->error);
         }
         $stato = self::OPEN;
         $stmt->bind_param('ssssi', $email, $stato, $dataPrima, $dataUltima, $testId);
         if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
+            $response = $stmt->error;
+            //die("Errore nell'esecuzione della query: " . $stmt->error);
         }
+
         $stmt->close();
+        return $response;
     }
     public static function updateStudentTestData($testId, $email) {
         global $con;

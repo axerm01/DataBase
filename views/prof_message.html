@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messaggi Docente</title>
+    <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styleBACK.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <style>
+        .attributes_student_message {
+            width: 78%;
+            margin-right: auto;
+            /* Spingi il contenitore verso sinistra */
+            margin-left: auto;
+            /* Spingi il contenitore verso destra */
+            background-color: #fff;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            /* Centra gli elementi interni e crea spazio tra di essi */
+        }
+
+        .attributes_student_message h4 {
+            flex: 1;
+            /* Fai in modo che i paragrafi occupino spazi uguali all'interno del contenitore */
+            text-align: center;
+            /* Centra il testo all'interno dei paragrafi */
+        }
+
+        .button_student_message {
+            flex-grow: 0;
+            width: 79%;
+            display: flex;
+            float: right;
+            flex-direction: row;
+            /* Modifica da column a row */
+            justify-content: flex-end;
+            /* Aggiunto per centrare i bottoni orizzontalmente */
+            flex-wrap: nowrap;
+            /* Aggiunto per permettere ai bottoni di andare a capo se non c'è abbastanza spazio */
+        }
+
+        .Test_List {
+            width: 83%;
+            display: flex;
+            margin-right: 265px;
+            margin-left: 265px;
+            background-color: #fff;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .messages {
+            width: 83%;
+            display: flex;
+            margin-right: 265px;
+            margin-left: 265px;
+            border-radius: 5px;
+        }
+
+        .square {
+            width: 50%;
+            /* Larghezza del quadrato */
+            height: 300px;
+            /* Altezza del quadrato */
+            background-color: white;
+            /* Colore di sfondo bianco */
+            border: 2px solid black;
+            /* Bordo nero di 2 pixel */
+            margin-right: 30px;
+            margin-left: 30px;
+            border-radius: 5px;
+            /* Bordo arrotondato */
+            display: inline-block;
+            /* Utilizziamo flex per centrare il testo verticalmente */
+        }
+
+        .square #messaggio {
+            width: 90%;
+            /* Larghezza del textarea rispetto al quadrato */
+            height: 70%;
+            /* Altezza del textarea rispetto al quadrato */
+            padding: 10px;
+            /* Spaziatura interna per una migliore leggibilità */
+            resize: none;
+            /* Disabilita il ridimensionamento del textarea */
+            border: none;
+            /* Rimuove il bordo predefinito del textarea */
+            outline: none;
+            /* Rimuove l'outline del textarea */
+            font-size: inherit;
+            /* Utilizza la dimensione del carattere ereditata dal genitore */
+        }
+
+        .square #Titolo {
+            width: 90%;
+            /* Larghezza del textarea uguale alla larghezza della square */
+            height: 20px;
+            /* Altezza fissa del textarea */
+            padding: 10px;
+            resize: none;
+            /* Disabilita il ridimensionamento del textarea */
+            border: none;
+            outline: none;
+            font-size: inherit;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Studia con ESQL</h1>
+        <div class="indietro">
+            <!-- Usa "javascript:history.back()" come href per tornare indietro -->
+            <span class="testo-indietro"><a href="javascript:history.back()">
+                    <img src="image/arrow.png" alt="Torna indietro" style="width: 25px; height: 25px;">
+                </a>Indietro</span>
+        </div>
+        <div class="logout-form">
+            <form action="../controllers/utils/logout.php" method="post">
+                <button type="submit" name="logout">Esci</button>
+            </form>
+        </div>
+    </header>
+
+    <div class="message_container">
+        <h2>MESSAGGI</h2>
+    </div>
+
+    <div class="attributes_student_message">
+        <h4>Messaggi degli studenti</h4>
+        <h4>Scrivi il Messaggio</h4>
+    </div>
+    <div class="messages">
+        <div class="square">
+            <p id="testMessages"></p> 
+        </div>
+        <div class="square">
+            <textarea id="Titolo" name="TitoloMessaggio" placeholder="Inserisci il titolo"></textarea>
+            <textarea id="messaggio" name="messaggio" placeholder="Scrivi qui il tuo messaggio..."></textarea>
+        </div>
+    </div>
+    <div class="button_student_message">
+        <button onclick="submitForm()">Invia</button>
+    </div>
+
+
+    <script>
+        function getMessagesForTest(testId) {
+            $.ajax({
+                type: 'GET',
+                url: 'URL_DEL_TUO_ENDPOINT', // Inserisci l'URL del tuo endpoint per ottenere i messaggi
+                data: { testId: testId },
+                success: function (response) {
+                    // Visualizza i messaggi nella box dei messaggi
+                    $('#testMessages').html(response);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Errore durante il recupero dei messaggi:', error);
+                }
+            });
+        }
+
+        function submitForm() {
+            var titolo = $('#Titolo').val();
+            var testo = $('#messaggio').val();
+            // Imposta l'ID del test associato al messaggio (qui lo sto impostando arbitrariamente a 1, dovresti ottenere l'ID dal tuo codice)
+            var dataOra = new Date().toISOString(); // Ottiene la data e ora correnti nel formato ISO
+
+            // Recupera i parametri dall'URL
+            var urlParams = new URLSearchParams(window.location.search);
+            var testId = urlParams.get('id');
+            var testNome = urlParams.get('titolo');
+            var professorEmail = urlParams.get('mail');
+
+
+            var formData = {
+                title: titolo,
+                text: testo,
+                testId: testId,
+                dateTime: dataOra,
+                profEmail: professorEmail
+            };
+            $.ajax({
+                type: 'POST',
+                url: '../../DataBase-main/models/Message.php',
+                contentType: 'application/json', // Imposta il tipo di contenuto come JSON
+                data: JSON.stringify(formData), // Converte i dati del form in stringa JSON
+                success: function (response) {
+                    console.log(response); // Gestisci la risposta qui
+                },
+                error: function (xhr, status, error) {
+                    console.error('Errore:', error);
+                },
+                dataType: 'json' // Aspettati una risposta JSON
+            });
+        }
+
+        $(document).ready(function () {
+            // Recupera i parametri dall'URL
+            var urlParams = new URLSearchParams(window.location.search);
+            var testId = urlParams.get('id');
+
+            // Ottieni i messaggi relativi al test quando la pagina viene caricata
+            getMessagesForTest(testId);
+        });
+    </script>
+    <footer>
+        <p>Alma Mater Studiorum</p>
+        <h3>Università di Bologna</h3>
+    </footer>
+</body>
+
+</html>

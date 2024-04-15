@@ -133,8 +133,8 @@
             // Effettua una richiesta AJAX per ottenere i dati dei test
             $.ajax({
                 type: "GET",
-                url: "../controllers/test/TestController.php",
-                data: { endpoint: 'get_tests'},
+                url: "../controllers/test/TestController.php?action=get_tests",
+                data: { },
                 success: function(response) {
                     // Una volta ottenuti i dati, popola la sezione dei test
                     populateTestList(response);

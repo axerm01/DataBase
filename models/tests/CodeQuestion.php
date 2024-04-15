@@ -33,26 +33,32 @@ class CodeQuestion  {
         $codiceQuery->bind_param('i', $testId);
         $codiceQuery->execute();
         $result = $codiceQuery->get_result();
-        $codiceData = $result->fetch_all(MYSQLI_ASSOC);
+        // Estrai i risultati
+        $codiceData = [];
+        while ($row = $result->fetch_assoc()) {
+            $row['type'] = "code";
+            $codiceData[] = $row;
+        }
         $codiceQuery->close();
 
         return $codiceData;
     }
 
-    public static function saveCodeQuestion($IDTest, $ID, $text, $output, $difficulty)
+    public static function saveCodeQuestion($IDTest, $ID, $text, $sqlCode, $difficulty)
     {
         global $con;
         $q = 'CALL CreateCodice(?,?,?,?,?);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
+            return("Errore nella preparazione della query: " . $con->error);
         }
-        $stmt->bind_param('iisss', $IDTest, $ID, $text, $output, $difficulty);
+        $stmt->bind_param('iisss', $IDTest, $ID, $text, $sqlCode, $difficulty);
         if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
+            return("Errore nell'esecuzione della query: " . $stmt->error);
         }
 
         $stmt->close();
+        return "Saved correctly";
     }
     public static function deleteCodeQuestion($IDTest, $ID)
     {

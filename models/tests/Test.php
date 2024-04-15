@@ -3,7 +3,7 @@ include('../../controllers/utils/connect.php');
 
 class Test {
 
-    public static function saveTestData($title, $creationDate, $showAnswers, $professorEmail){
+    public static function saveTestData($title, $creationDate, $showAnswers, $professorEmail, $image){
 
         global $con;
         $q = 'CALL CreateTest(?,?,?,@lastID);';
@@ -20,6 +20,25 @@ class Test {
         $row = $result->fetch_assoc();
         $id = $row['lastID'];
         $stmt->close();
+
+        if($image != null) {
+            if (getimagesize($image['tmp_name'])) {
+                // Leggi il contenuto del file
+                $imageBlob = file_get_contents($image['tmp_name']);
+                $stmt = $con->prepare("CALL AddToGalleria(?, ?)");
+                if ($stmt === false) {
+                    die("Errore nella preparazione della query: " . $con->error);
+                }
+
+                $null = null; // mysqli richiede questo per i blob
+                $stmt->bind_param('ib', $id, $null);
+                $stmt->send_long_data(1, $imageBlob); // invia i dati BLOB
+                if (!$stmt->execute()) {
+                    die("Errore nell'esecuzione della query: " . $stmt->error);
+                }
+                $stmt->close();
+            }
+        }
 
         return $id;
     }
@@ -48,7 +67,6 @@ class Test {
         }
         // Chiudi lo statement e la connessione
         $stmt->close();
-        $con->close();
     }
 
     public static function getAllTests(){

@@ -9,13 +9,14 @@ class Answer {
         $q = 'CALL CreateAnswer(?,?,?,?,?);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
+            return("Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('iiisi', $ID, $IDTest, $IDMC, $text, $isCorrect);
         if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
+            return("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
+        return "Saved correctly";
     }
 
     public static function deleteMCAnswersData($IDTest, $IDMC)

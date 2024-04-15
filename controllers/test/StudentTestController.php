@@ -38,7 +38,8 @@ switch ($method) {
 
             case 'resume_test':
                 $testId = filter_input(INPUT_GET, 'testId');
-                $stdEmail = $_SESSION['email'];
+                //$stdEmail = $_SESSION['email'];
+                $stdEmail = 'gioele@studio.unibo.it';
                 $data = StudentTest::resume($testId, $stdEmail);
                 break;
 
@@ -50,21 +51,24 @@ switch ($method) {
     case 'POST':
         if (isset($_POST['action']) && isset($_POST['testId'])){
             $action = $_POST['action'];
-            $email = $_SESSION['email'];
+            //$email = $_SESSION['email'];
+            $email = $_POST['email'];
             $testId = $_POST['testId'];
 
             switch ($action) {
                 case 'create_student_test':
                     $dataPrima = $_POST['data_prima'];
                     $dataUltima = $_POST['data_ultima'];
-                    StudentTest::saveStudentTestData($dataPrima, $dataUltima, $testId, $email);
-                    echo json_encode("student test created correctly");
+                    //$response = $dataPrima.', '.$dataUltima.', '.$testId.', '.$email;
+                    $response = StudentTest::saveStudentTestData($dataPrima, $dataUltima, $testId, $email);
+                    echo json_encode($response);
                     break;
 
                 case 'save_response':
-                    $answers = json_decode($_POST['student_answers'], true);
-                    StudentAnswer::saveStudentAnswers($answers, $testId, $email);
-                    echo json_encode("response saved correctly");
+                    $stringAnswers = json_decode($_POST['student_answers'], true);
+                    $answers = $stringAnswers['answers'];
+                    $response = StudentAnswer::saveStudentAnswers($answers, $testId, $email);
+                    echo json_encode($response);
                     break;
             }
         } else {

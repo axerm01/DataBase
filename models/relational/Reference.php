@@ -11,7 +11,7 @@ class Reference
         if ($stmt === false) {
             die("Errore nella preparazione della query: " . $con->error);
         }
-        $stmt->bind_param('iiii', $tab1, $tab2, $att1,  $att2);
+        $stmt->bind_param('iiss', $tab1, $tab2, $att1,  $att2);
         if (!$stmt->execute()) {
             die("Errore nell'esecuzione della query: " . $stmt->error);
         }
@@ -27,7 +27,7 @@ class Reference
         if ($stmt === false) {
             die("Errore nella preparazione della query: " . $con->error);
         }
-        $stmt->bind_param('iiii', $tab1, $tab2, $att1,  $att2);
+        $stmt->bind_param('iiss', $tab1, $tab2, $att1,  $att2);
         if (!$stmt->execute()) {
             die("Errore nell'esecuzione della query: " . $stmt->error);
         }
@@ -41,7 +41,7 @@ class Reference
         $tableIdsString = implode(',', array_map('intval', $tableIds));
 
         // Prepara la query SQL
-        $query = "SELECT * FROM Referenze WHERE IDTab1 IN ($tableIdsString) OR IDTab2 IN ($tableIdsString)";
+        $query = "SELECT * FROM Referenze WHERE IDT1 IN ($tableIdsString) OR IDT2 IN ($tableIdsString)";
 
         // Esegui la query
         $result = $con->query($query);
