@@ -4,7 +4,7 @@ CREATE TABLE Abitanti (
     Cognome VARCHAR(50),
     NumeroFigli INT,
     Stipendio DECIMAL(10, 2)
-);negro
+);
 INSERT INTO Abitanti (Nome, Cognome, NumeroFigli, Stipendio)
 VALUES
     ('Marco', 'Ricci', 2, 48000.00),
