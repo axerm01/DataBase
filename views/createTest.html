@@ -66,32 +66,51 @@
             background-color: #007bff;
             cursor: pointer;
             font-size: 12px;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
         }
         /*Styles for check botton*/
         .add-check-button {
             background-color: #15c11e;
             cursor: pointer; 
             font-size: 12px;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
         }
         /* Styles for "Elimina Quesito" button */
         .delete-question-button {
-            background-color: #a51b1bc3;
+            background-color: #de1515;
             cursor: pointer;
             font-size: 12px;
             width: 80px;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
         }
         .delete-button {
-            background-color: #a51b1bc3;
+            background-color: #de1515;
             cursor: pointer; /*modifica il cursore del mouse quando va sopra*/
             font-size: 10px;
             width: 70px;
             padding: 5px;
-            margin-left: 25px;
+            color: #fff;
+            border: white;
+            padding: 8px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
         }
 
         /* Styles for delete answer button */
         .delete-answer-button {
-            background-color: #dc3545;
+            background-color: #de1515;
             color: #fff;
             border: none;
             padding: 8px 15px;
@@ -231,19 +250,19 @@
             <span class="checkmark"></span>
         </p>
         
-        <button onclick="addMenuTable()">Seleziona Tabelle Necessarie</button>
+        <button class="black-button" onclick="addMenuTable()">Seleziona Tabelle Necessarie</button>
         <div id="menuContainer">
             <!-- Div per il menu a tendina, inizialmente vuoto -->
         </div>
         
         <br>
-        <button onclick="addConstraints()">Aggiungi Vincoli integrità</button>
+        <button class="black-button" onclick="addConstraints()">Aggiungi Vincoli integrità</button>
         <div id="constraintsContainer">
             <!-- Qui verranno aggiunti i menu a tendina -->
         </div>
         
-        <button  onclick="addCodeQuestion()">Aggiungi Quesito Codice</button>
-        <button  onclick="addMCQuestion()">Aggiungi Quesito Risposta Multipla</button>
+        <button class="black-button" onclick="addCodeQuestion()">Aggiungi Quesito Codice</button>
+        <button class="black-button" onclick="addMCQuestion()">Aggiungi Quesito Risposta Multipla</button>
     </div>
 
 
