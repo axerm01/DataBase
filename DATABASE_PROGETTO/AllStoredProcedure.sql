@@ -728,20 +728,20 @@ WHERE Studente = StudenteAtt and IDTest = IDTestAtt;
 END //
 
 CREATE PROCEDURE `UpdateRispostaStudente`( 
-in StudenteAtt varchar(45), in IDDomandaAtt int ,in IDRispostaAtt int
+in StudenteAtt varchar(45), in IDDomandaAtt int, in IDTestAtt int, in IDRispostaAtt int, in EsitoAtt boolean
 )
 BEGIN
 UPDATE RISPOSTA_SCELTA
-SET IDRisposta = IDRispostaAtt
-WHERE Studente = StudenteAtt and IDDomanda = IDDomandaAtt;
+SET IDRisposta = IDRispostaAtt, Esito = EsitoAtt
+WHERE Studente = StudenteAtt and IDDomanda = IDDomandaAtt and IDTest = IDTestAtt;
 END //
 
 CREATE PROCEDURE `UpdateCodiceStudente`( 
-in StudenteAtt varchar(45),in IDDomandaAtt int ,in IDTestAtt int, in RispostaAtt varchar(500)
+in StudenteAtt varchar(45),in IDDomandaAtt int, in IDTestAtt int, in RispostaAtt varchar(500), in EsitoAtt boolean
 )
 BEGIN
 UPDATE RISPOSTA_CODICE
-SET CodiceRisposta = RispostaAtt
+SET CodiceRisposta = RispostaAtt, Esito = EsitoAtt
 WHERE Studente = StudenteAtt and IDDomanda = IDDomandaAtt and IDTest = IDTestAtt;
 END //
 

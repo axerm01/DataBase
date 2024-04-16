@@ -77,13 +77,17 @@ switch ($method) {
         break;
 
     case 'PUT':
-        if (isset($_GET['testId']) && isset($_GET['action'])){
-            $testId = $_GET['testId'];
+        if (isset($_GET['action'])){
             $action = $_GET['action'];
-            $email = $_SESSION['email'];
+            //$email = $_SESSION['email'];
+
 
             switch ($action) {
                 case 'status_in_progress': // inutile, fa il trigger dal DB
+                    $json = file_get_contents('php://input');
+                    $data = json_decode($json, true);
+                    $testId = $data->testId;
+                    $email = $data->email;
                     StudentTest::updateStudentTestStatus($testId, $email);
                     echo json_encode('updated status: in progress');
                     break;
@@ -91,10 +95,11 @@ switch ($method) {
                 case 'update_response':
                     $json = file_get_contents('php://input');
                     $data = json_decode($json, true);
-                    $stdEmail = $_SESSION['email'];
-                    StudentTest::updateStudentTestData($testId, $email);
-                    StudentAnswer::updateStudentAnswers($data, $testId, $email);
-                    echo "update correctly";
+                    $testId = $_GET['testId'];
+                    $email = $data['email'];
+                    $response = StudentTest::updateStudentTestData($testId, $email);
+                    $response .= StudentAnswer::updateStudentAnswers($data['answers'], $testId, $email);
+                    echo json_encode($response);
                     break;
             }
         }

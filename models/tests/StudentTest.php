@@ -205,6 +205,7 @@ class StudentTest {
             die("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
+        return 'updated correctly, ';
     }
     public static function updateStudentTestStatus($testId, $email) {
         global $con;

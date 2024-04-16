@@ -40,14 +40,16 @@ class StudentAnswer
                     // Utilizza la stored procedure per le risposte a scelta multipla
                     $stmt = $con->prepare("CALL CreateRispostaStudente(?, ?, ?, ?, ?)");
                     $stmt->bind_param('siiii', $email, $testId, $answer['IDDomanda'], $answer['Response'], $answer['Esito']);
+                    $response = 'updated mc, ';
                 } elseif ($answer['type'] === 'code') {
                     // Utilizza la stored procedure per le risposte di tipo codice
                     $stmt = $con->prepare("CALL CreateCodiceStudente(?, ?, ?, ?, ?)");
                     $stmt->bind_param('siisi', $email, $testId, $answer['IDDomanda'], $answer['Response'], $answer['Esito']);
+                    $response .= 'updated code, ';
                 }
 
                 if (!$stmt->execute()) {
-                    return "Errore nell'esecuzione della stored procedure: " . $stmt->error;
+                    $response =  "Errore nell'esecuzione della stored procedure: " . $stmt->error;
                 }
 
                 $stmt->close();
@@ -67,21 +69,27 @@ class StudentAnswer
         global $con; // Assumi che $con sia la tua connessione al database
 
         mysqli_begin_transaction($con);
+        $response = '';
 
         try {
             foreach ($answers as $answer) {
                 if ($answer['type'] === 'mc') {
                     // Utilizza la stored procedure per le risposte a scelta multipla
                     $stmt = $con->prepare("CALL UpdateRispostaStudente(?, ?, ?, ?, ?)");
-                    $stmt->bind_param('siiii', $email, $answer['IDDomanda'], $testId, $answer['response'], $answer['outcome']);
+                    $stmt->bind_param('siiii', $email, $answer['IDDomanda'], $testId, $answer['Response'], $answer['Esito']);
+                    $response .= 'updated mc, ';
                 } elseif ($answer['type'] === 'code') {
                     // Utilizza la stored procedure per le risposte di tipo codice
                     $stmt = $con->prepare("CALL UpdateCodiceStudente(?, ?, ?, ?, ?)");
-                    $stmt->bind_param('siisi', $email,  $answer['IDDomanda'], $testId, $answer['response'], $answer['outcome']);
+                    $stmt->bind_param('siisi', $email,  $answer['IDDomanda'], $testId, $answer['Response'], $answer['Esito']);
+                    $response .= 'updated code, ';
+                }
+                else {
+                    $response = 'not updated';
                 }
 
                 if (!$stmt->execute()) {
-                    throw new Exception("Errore nell'esecuzione della stored procedure: " . $stmt->error);
+                    return "Errore nell'esecuzione della stored procedure: " . $stmt->error;
                 }
 
                 $stmt->close();
@@ -90,9 +98,10 @@ class StudentAnswer
             mysqli_commit($con);
         } catch (Exception $e) {
             mysqli_rollback($con);
-            echo "Errore: " . $e->getMessage();
+            $response =  "Errore: " . $e->getMessage();
             // Gestione ulteriore dell'errore
         }
+        return $response;
     }
 
 }

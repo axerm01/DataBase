@@ -177,7 +177,7 @@
             <div id="tableContainer"></div> <!-- Contenitore per la tabella -->
         </div>
 
-        <button onclick="requestTestData(19)">Vai</button>
+        <button onclick="testPut()">Vai</button>
     </div>
     <!-- Footer aggiunto -->
     <footer>
@@ -332,23 +332,15 @@
             });
         }
 
-        // funzione di test usata per vedere se va l'endpoint save_response
-        /*function testSaveStudentAnswer(testId) {
-            var formData = new FormData();
-            var answ = '{"answers":[{"IDDomanda":1,"Response":"select * from cane;","type":"code","Esito":0},{"IDDomanda":1,"Response":1,"type":"mc","Esito":1}]}';
-
-            // Aggiunge i dati testuali al FormData
-            formData.append("action", 'save_response');
-            formData.append("testId", testId);
-            formData.append("email", 'gioele@studio.unibo.it');
-            formData.append("student_answers", answ);
+        // funzione di test usata per vedere se va l'endpoint update_response
+        function testPut() {
+            var answ = '{"email":"gioele@studio.unibo.it","answers":[{"IDDomanda":1,"Response":"select * from pollo;","type":"code","Esito":0},{"IDDomanda":2,"Response":1,"type":"mc","Esito":1}]}';
 
             $.ajax({
-                type: "POST",
-                url: "../controllers/test/StudentTestController.php",
-                data: formData,
-                contentType: false, // Importante per il corretto invio di FormData
-                processData: false,
+                type: "PUT",
+                url: "../controllers/test/StudentTestController.php?action=update_response&testId=19",
+                data: answ,
+                contentType: 'application/json',
                 success: function (response) {
                     console.log(response);
                 }
@@ -356,7 +348,7 @@
                 var err = textStatus + ", " + error;
                 console.log("Request Failed: " +err);
             });
-        }*/
+        }
 
 
         // JSON di esempio per testare la funzione
