@@ -86,10 +86,10 @@ switch ($method) {
                 case 'status_in_progress': // inutile, fa il trigger dal DB
                     $json = file_get_contents('php://input');
                     $data = json_decode($json, true);
-                    $testId = $data->testId;
-                    $email = $data->email;
-                    StudentTest::updateStudentTestStatus($testId, $email);
-                    echo json_encode('updated status: in progress');
+                    $testId = $_GET['testId'];
+                    $email = $data['email'];
+                    $response = StudentTest::updateStudentTestStatus($testId, $email);
+                    echo json_encode($response);
                     break;
 
                 case 'update_response':
