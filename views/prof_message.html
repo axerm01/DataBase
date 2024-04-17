@@ -152,9 +152,11 @@
 
     <script>
         function getMessagesForTest(testId) {
+            var urlParams = new URLSearchParams(window.location.search);
+            var testId = urlParams.get('id');
             $.ajax({
                 type: 'GET',
-                url: 'URL_DEL_TUO_ENDPOINT', // Inserisci l'URL del tuo endpoint per ottenere i messaggi
+                url: '../DataBase-main/controllers/utils/MessageController.php', // Inserisci l'URL del tuo endpoint per ottenere i messaggi
                 data: { testId: testId },
                 success: function (response) {
                     // Visualizza i messaggi nella box dei messaggi
@@ -169,7 +171,6 @@
         function submitForm() {
             var titolo = $('#Titolo').val();
             var testo = $('#messaggio').val();
-            // Imposta l'ID del test associato al messaggio (qui lo sto impostando arbitrariamente a 1, dovresti ottenere l'ID dal tuo codice)
             var dataOra = new Date().toISOString(); // Ottiene la data e ora correnti nel formato ISO
 
             // Recupera i parametri dall'URL
@@ -180,15 +181,14 @@
 
 
             var formData = {
+                action: 'new_professor_message',
                 title: titolo,
                 text: testo,
                 testId: testId,
-                dateTime: dataOra,
-                profEmail: professorEmail
             };
             $.ajax({
                 type: 'POST',
-                url: '../../DataBase-main/models/Message.php',
+                url: '../DataBase-main/controllers/utils/MessageController.php',
                 contentType: 'application/json', // Imposta il tipo di contenuto come JSON
                 data: JSON.stringify(formData), // Converte i dati del form in stringa JSON
                 success: function (response) {
@@ -206,7 +206,7 @@
             var urlParams = new URLSearchParams(window.location.search);
             var testId = urlParams.get('id');
 
-            // Ottieni i messaggi relativi al test quando la pagina viene caricata
+            // Ottieni i messaggi relativi   al test quando la pagina viene caricata
             getMessagesForTest(testId);
         });
     </script>
