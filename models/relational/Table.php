@@ -92,7 +92,7 @@ class Table {
                 foreach ($rowData as $index => $value) {
                     // Controlla il tipo di dato per ogni colonna e formatta il valore di conseguenza
                     $type = $columns[$index]['type'];
-                    if (strpos($type, 'smaillint') !== false || strpos($type, 'float') !== false || strpos($type, 'decimal') !== false || strpos($type, 'double') !== false) {
+                    if (strpos($type, 'smallint') !== false || strpos($type, 'float') !== false || strpos($type, 'decimal') !== false || strpos($type, 'double') !== false) {
                         // Tipi numerici: assumiamo che il valore sia già un numero valido
                         $valueList[] = $value;
                     } else {
