@@ -1,5 +1,6 @@
 <?php
-include('../../controllers/utils/connect.php');
+include_once('../../controllers/utils/connect.php');
+include_once '../../models/tests/StudentTest.php';
 
 class Test {
 
@@ -114,77 +115,56 @@ class Test {
         return $data;
     }
 
-    public static function showInfo($testId){
+    public static function getTestContent($testId){
+        return StudentTest::start($testId);
+    }
+
+    public static function updateTestTitle($testId, $title) {
+        global $con; // Assumi che $con sia la tua connessione al database (mysqli)
+
+        // Preparazione della query SQL
+        $stmt = $con->prepare("UPDATE TEST SET Titolo = ? WHERE ID = ?");
+
+        // Verifica se la preparazione della query ha avuto successo
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+
+        // Associa i parametri alla query preparata
+        $stmt->bind_param('si', $title, $testId);
+
+        // Esegui la query
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+
+        // Chiusura dello statement
+        $stmt->close();
+
+        return "Aggiornamento del titolo completato con successo.";
+    }
+
+    public static function deleteTableTestLink($list, $testId){
         global $con;
-        $q = 'select * from test where ID = ?';
-        $stmt = $con->prepare($q);
-        if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
+        try {
+            // Inizia la transazione
+            $con->begin_transaction();
+            // Prepara lo statement SQL
+            $stmt = $con->prepare("DELETE FROM TABELLE_TEST WHERE IDTest = ? AND IDTabella = ?");
+            foreach ($list as $tableId) {
+                // Bind dei parametri e esecuzione dello statement
+                $stmt->bind_param("ii", $testId, $tableId);
+                $stmt->execute();
+            }
+            // Committa la transazione
+            $con->commit();
+        } catch (Exception $e) {
+            // Qualcosa è andato storto: esegui il rollback
+            $con->rollback();
+            echo "Errore: " . $e->getMessage();
         }
-        $stmt->bind_param('i', $testId );
-        if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
-        }
-
-        $result = $stmt->get_result();
-        $data = [];
-
-        while ($row = $result->fetch_assoc()) {
-            $data[] = $row;  // Aggiunge ogni riga all'array $data
-        }
+        // Chiudi lo statement e la connessione
         $stmt->close();
-
-        return $data;
-    }
-
-    public static function updateTestData($testId, $title, $showAnswers) {
-        global $con; // Assumi che $con sia la tua connessione al database (mysqli)
-
-        // Preparazione della query SQL
-        $stmt = $con->prepare("UPDATE TEST SET Titolo = ?, VisualizzaRisposte = ? WHERE ID = ?");
-
-        // Verifica se la preparazione della query ha avuto successo
-        if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
-        }
-
-        // Associa i parametri alla query preparata
-        $stmt->bind_param('sii', $title, $showAnswers, $testId);
-
-        // Esegui la query
-        if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
-        }
-
-        // Chiusura dello statement
-        $stmt->close();
-
-        return "Aggiornamento completato con successo.";
-    }
-
-    public static function deleteTableTestLink($IDtest, $IDTabella) {
-        global $con; // Assumi che $con sia la tua connessione al database (mysqli)
-
-        // Preparazione della query SQL
-        $stmt = $con->prepare("DELETE FROM TABELLE_TEST WHERE IDTest = ? AND IDTabella = ?");
-
-        // Verifica se la preparazione della query ha avuto successo
-        if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
-        }
-
-        // Associa i parametri alla query preparata
-        $stmt->bind_param('ii', $IDtest, $IDTabella);
-
-        // Esegui la query
-        if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
-        }
-
-        // Chiusura dello statement
-        $stmt->close();
-
-        return "Record eliminati con successo.";
     }
 
 

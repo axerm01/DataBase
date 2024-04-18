@@ -1,6 +1,6 @@
 <?php
 include('../../controllers/utils/connect.php');
-include ('../../models/relational/Column.php');
+include_once ('../../models/relational/Column.php');
 
 class Table {
 
@@ -27,22 +27,6 @@ class Table {
         }
 
         return $id;
-    }
-
-    //da verificare se basta un trigger per fare update di numRows
-    public static function updateTableData($tableId, $numRows, $columns)
-    {
-        global $con;
-        $q = 'CALL UpdateTable(?,?);';
-        $stmt = $con->prepare($q);
-        if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
-        }
-        $stmt->bind_param('ii',$tableId, $numRows);
-        if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
-        }
-        $stmt->close();
     }
 
     public static function createNewTable($name, $columns) {
@@ -116,6 +100,7 @@ class Table {
         return $response;
     }
 
+    //non richiesto, non implementare
     public static function updateTableRows($rows, $columns, $name) {
         global $con;
         mysqli_begin_transaction($con);
@@ -156,6 +141,19 @@ class Table {
         return $response;
     }
 
+    public static function deleteTable($tableId) {
+        $name = Table::getTableName($tableId);
+        global $con; // Assumi che $con sia la tua connessione al database
+        $tableQuery = $con->prepare("CALL DropTable(?,?)");
+        $tableQuery->bind_param('is', $tableId, $name);
+        $tableQuery->execute();
+        $tableQuery->close();
+
+        return 'deleted successfully';
+    }
+
+
+
     public static function getAllTables($profEmail) //restituisce id tabella e nome
     {
         global $con;
@@ -182,7 +180,8 @@ class Table {
         return $content;
     }
 
-    public static function getTableContent($tableID){
+    public static function getTableName($tableID)
+    {
         global $con;
 
         // Prima, ottieni il nome della tabella in base al suo ID
@@ -204,7 +203,12 @@ class Table {
             die("Nessuna tabella trovata con l'ID specificato");
         }
         $stmt1->close();
+        return $tableName;
+    }
 
+    public static function getTableContent($tableID){
+        global $con;
+        $tableName = Table::getTableName($tableID);
 
         $q = "SELECT * FROM ".$tableName;
         $stmt = $con->prepare($q);
@@ -226,17 +230,18 @@ class Table {
         return $data;
     }
 
-    public static function getTableData($tableID) //restituisce id tabella e nome
+    public static function getTableHeader($tableID) //restituisce i dati di Tabella
     {
         global $con;
+        $response = "ok";
         $q = 'CALL ViewTabella(?);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
+            $response = "Errore nella preparazione della query: " . $con->error;
         }
         $stmt->bind_param('i', $tableID);
         if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
+            $response = "Errore nell'esecuzione della query: " . $stmt->error;
         }
 
         $result = $stmt->get_result();
@@ -271,14 +276,6 @@ class Table {
             }
             $tableQuery->close();
             return $content;
-    }
-
-    public static function deleteTable($tableId) {
-        global $con; // Assumi che $con sia la tua connessione al database
-        $tableQuery = $con->prepare("CALL DropTable(?)");
-        $tableQuery->bind_param('i', $tableId);
-        $tableQuery->execute();
-        $tableQuery->close();
     }
 
     public static function checkIfNameExists($nome) {

@@ -2,7 +2,7 @@
 session_start();
 
 include '../utils/connect.php';
-include '../../models/relational/Table.php';
+include_once '../../models/relational/Table.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -77,8 +77,8 @@ switch ($method){
     case 'DELETE': //Delete di una tabella dato il suo ID
         if (isset($_GET['tableId'])){
             $tableId = $_GET['tableId'];
-            Table::deleteTable($tableId);
-            echo json_encode('deleted successfully');
+            $response = Table::deleteTable($tableId);
+            echo json_encode($response);
         }
         break;
 }

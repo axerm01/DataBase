@@ -1,5 +1,5 @@
 <?php
-include ('Answer.php');
+include_once ('Answer.php');
 
 class MultipleChoiceQuestion {
 
@@ -63,6 +63,64 @@ class MultipleChoiceQuestion {
 
         foreach ($answers as $answer) {
             Answer::saveMCAnswersData($answer['id'],$IDTest,$ID,$answer['text'],$answer['isCorrect'] );
+        }
+
+        return "Saved correctly";
+    }
+
+    public static function updateMCText($IDTest,$ID, $description)
+    {
+        global $con;
+        $q = 'CALL UpdateSceltaMultiplaDescrizione(?,?,?);';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            return("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('iis',$IDTest,$ID, $description);
+        if (!$stmt->execute()) {
+            return("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+        $stmt->close();
+
+        return "Saved correctly";
+    }
+
+    public static function updateMCDiff($IDTest,$ID, $diff)
+    {
+        global $con;
+        $q = 'CALL UpdateSceltaMultiplaDifficolta(?,?,?);';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            return("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('iis',$IDTest,$ID, $diff);
+        if (!$stmt->execute()) {
+            return("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+        $stmt->close();
+
+        return "Saved correctly";
+    }
+    public static function updateMCNumAnswers($IDTest,$ID, $numAnswDifferential)
+    {
+        global $con;
+        $q = 'CALL UpdateSceltaMultiplaNumeroRisposte(?,?,?);';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            return("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('iii',$IDTest,$ID, $numAnswDifferential);
+        if (!$stmt->execute()) {
+            return("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+        $stmt->close();
+
+        return "Saved correctly";
+    }
+    public static function updateMCAnswers($IDTest,$IDMC, $answers)
+    {
+        foreach ($answers as $answer) {
+            Answer::updateMCAnswerData($answer['id'],$IDTest,$IDMC,$answer['text'],$answer['isCorrect'] );
         }
 
         return "Saved correctly";

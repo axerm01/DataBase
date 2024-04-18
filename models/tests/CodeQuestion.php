@@ -60,6 +60,57 @@ class CodeQuestion  {
         $stmt->close();
         return "Saved correctly";
     }
+
+    public static function updateCodeQuestionText($IDTest, $ID, $text)
+    {
+        global $con;
+        $q = 'CALL UpdateDescrizioneCodice(?,?,?);';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            return("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('iis', $IDTest, $ID, $text);
+        if (!$stmt->execute()) {
+            return("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+
+        $stmt->close();
+        return "Saved correctly";
+    }
+
+    public static function updateCodeQuestionSql($IDTest, $ID, $sql)
+    {
+        global $con;
+        $q = 'CALL UpdateDescrizioneCodice(?,?,?);';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            return("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('iis', $IDTest, $ID, $sql);
+        if (!$stmt->execute()) {
+            return("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+
+        $stmt->close();
+        return "Saved correctly";
+    }
+
+    public static function updateCodeQuestionDiff($IDTest, $ID, $diff)
+    {
+        global $con;
+        $q = 'CALL UpdateDescrizioneCodice(?,?,?);';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            return("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('iis', $IDTest, $ID, $diff);
+        if (!$stmt->execute()) {
+            return("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+
+        $stmt->close();
+        return "Saved correctly";
+    }
     public static function deleteCodeQuestion($IDTest, $ID)
     {
         global $con;

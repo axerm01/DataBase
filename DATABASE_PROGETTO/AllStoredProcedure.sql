@@ -614,7 +614,7 @@ BEGIN
     SET IDAtt = LAST_INSERT_ID();
 END//
 
-CREATE PROCEDURE `DropTable`(IN ID smallint)
+CREATE PROCEDURE `DropTable`(IN ID smallint, IN nome varchar(45))
 BEGIN
 
 DELETE FROM tabella
@@ -622,6 +622,8 @@ WHERE tabella.ID = ID;
 
 DELETE FROM ATTRIBUTO
 WHERE IDTabella = ID;
+
+DROP TABLE IF EXISTS nome;
 END //
 
 CREATE PROCEDURE `ViewAllTables`(in mail varchar(45))

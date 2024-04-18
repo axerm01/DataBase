@@ -1,9 +1,9 @@
 <?php
 include('../../controllers/utils/connect.php');
-include ('CodeQuestion.php');
-include ('MultipleChoiceQuestion.php');
-include ('../../models/relational/Table.php');
-include ('../../models/relational/Reference.php');
+include_once ('CodeQuestion.php');
+include_once ('MultipleChoiceQuestion.php');
+include_once ('../../models/relational/Table.php');
+include_once ('../../models/relational/Reference.php');
 
 class StudentTest {
     const OPEN = 'Open';
@@ -85,7 +85,7 @@ class StudentTest {
         $tables = [];
         foreach ($TT as $index => $table) {
             if (isset($table['IDTabella'])) {
-                $tables[$index] = Table::getTableData($table['IDTabella']);
+                $tables[$index] = Table::getTableHeader($table['IDTabella']);
                 $tables[$index]['columns'] = Column::getTableColumns($table['IDTabella']);
                 $tables[$index]['content'] = Table::getTableContent($table['IDTabella']);
                 $tableIDs[] = $table['IDTabella'];
@@ -146,7 +146,7 @@ class StudentTest {
         $tables = [];
         foreach ($TT as $index => $table) {
             if (isset($table['IDTabella'])) {
-                $tables[$index] = Table::getTableData($table['IDTabella']);
+                $tables[$index] = Table::getTableHeader($table['IDTabella']);
                 $tables[$index]['columns'] = Column::getTableColumns($table['IDTabella']);
                 $tables[$index]['content'] = Table::getTableContent($table['IDTabella']);
                 $tableIDs[] = $table['IDTabella'];

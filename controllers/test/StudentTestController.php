@@ -1,9 +1,9 @@
 <?php
 session_start();
 include('../utils/connect.php');
-include '../../models/tests/Test.php';
-include '../../models/tests/StudentTest.php';
-include '../../models/tests/StudentAnswer.php';
+include_once '../../models/tests/Test.php';
+include_once '../../models/tests/StudentTest.php';
+include_once '../../models/tests/StudentAnswer.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 

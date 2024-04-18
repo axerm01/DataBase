@@ -177,7 +177,7 @@
             <div id="tableContainer"></div> <!-- Contenitore per la tabella -->
         </div>
 
-        <button onclick="testPut()">Vai</button>
+        <button onclick="test()">Vai</button>
     </div>
     <!-- Footer aggiunto -->
     <footer>
@@ -333,13 +333,13 @@
         }
 
         // funzione di test usata per vedere se va l'endpoint update_response
-        function testPut() {
+        function test() {
             var answ = '{"email":"gioele@studio.unibo.it","answers":[{"IDDomanda":1,"Response":"select * from pollo;","type":"code","Esito":0},{"IDDomanda":2,"Response":1,"type":"mc","Esito":1}]}';
 
             $.ajax({
-                type: "PUT",
-                url: "../controllers/test/StudentTestController.php?action=status_in_progress&testId=19",
-                data: answ,
+                type: "DELETE",
+                url: "../controllers/test/StudentTestController.php?action=start_new_test&testId=19",
+                data: { },
                 contentType: 'application/json',
                 success: function (response) {
                     console.log(response);
