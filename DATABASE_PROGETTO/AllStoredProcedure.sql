@@ -206,7 +206,7 @@ DELIMITER //
 
 CREATE PROCEDURE `AddToGalleria`(
 in IDTestAtt int,
-in FotoAtt Varchar(100)
+in FotoAtt BLOB
 )
 BEGIN
 INSERT INTO Galleria(IDTest,Foto)
