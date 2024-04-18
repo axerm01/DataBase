@@ -789,4 +789,58 @@ ELSE
 END IF;
 END //
 
+CREATE PROCEDURE UpdateOutputCodice(IN IdCodice int, in testId int, IN OutputAtt varchar(45))
+BEGIN
+UPDATE CODICE
+SET CODICE.Output = OutputAtt
+WHERE ID = IdCodice and  IDTest = testId;
+END //
+
+CREATE PROCEDURE UpdateDescrizioneCodice(IN IdCodice int, in testId int, IN DesrizioneAtt varchar(45))
+BEGIN
+UPDATE CODICE
+SET Descrizione = DescrizioneAtt
+WHERE ID = IdCodice and  IDTest = testId;
+END //
+
+CREATE PROCEDURE UpdateDifficoltaCodice(IN IdCodice int, in testId int, IN DifficoltaAtt int)
+BEGIN
+UPDATE CODICE
+SET Difficolta = DifficoltaAtt
+WHERE ID = IdCodice and  IDTest = testId;
+END //
+
+CREATE PROCEDURE UpdateAnswer(IN IdAtt int, in testId int, IN IDScMultAtt int, in testoAtt varchar(45),in IsCorrettaAtt int)
+BEGIN
+UPDATE SCELTA
+SET Testo = testoAtt AND IsCorretta = IsCorrettaAtt
+WHERE ID = IdAtt and  IDTest = testId and IDScMult = IDScMultAtt;
+END //
+
+CREATE PROCEDURE UpdateSceltaMultiplaNumeroRisposte(IN IdAtt int, in testId int,in Numero int)
+BEGIN
+UPDATE SCELTA_MULTIPLA
+SET NumRisposte = NumRisposte + numero
+WHERE ID = IdAtt and  IDTest = testId;
+END //
+
+CREATE PROCEDURE UpdateSceltaMultiplaDifficolta(IN IdAtt int, in testId int,in DifficoltaAtt varchar(45))
+BEGIN
+UPDATE SCELTA_MULTIPLA
+SET Difficolta = DifficoltaAtt
+WHERE ID = IdAtt and  IDTest = testId;
+END //
+
+CREATE PROCEDURE UpdateSceltaMultiplaDescrizione(IN IdAtt int, in testId int,in DescrizioneAtt varchar(45))
+BEGIN
+UPDATE SCELTA_MULTIPLA
+SET Descrizione = DesrizioneAtt
+WHERE ID = IdAtt and  IDTest = testId;
+END //
+
+CREATE PROCEDURE DropSingleAnswer(IN IdAtt int, in testId int, IN IDScMultAtt int)
+BEGIN
+DELETE FROM SCELTA
+WHERE ID = IdAtt and  IDTest = testId and IDScMult = IDScMultAtt;
+END //    
 DELIMITER ;
