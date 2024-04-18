@@ -113,8 +113,8 @@
         <div class="test-header">
             <div class="test-header-60">
                 <h4>Titolo</h4>        
-                <h4>Data Inizio</h4>
-                <h4>Stato Test</h4>
+                <h4>Data Creazione</h4>
+                <!--h4>Visualizzazione Test</h4-->
             </div>
             <div class="test-header-40">
                 <h4>Azioni</h4> 
@@ -157,15 +157,14 @@
 
                 var title = $('<p>' + test.Titolo + '</p>');
                 var date = $('<p>' + test.DataCreazione + '</p>');
-                var status = $('<p>' + test.VisualizzaRisposte + '</p>');
+                //var status = $('<p>' + test.VisualizzaRisposte + '</p>');
 
-                testDetails.append(title, date, status);
+                testDetails.append(title, date /*,status*/);
 
                 var buttonContainer = $('<div class="button-container"></div>');
                 //var viewButton = $('<button class="black-button" onclick="window.location.href=\'prof_viewTest.html\'"> Visualizza Test</button>');
-                var updateButton = $('<button class="black-button" onclick="window.location.href=\'prof_updateTest.html\'"> Modifica Test</button>');
-                var messageButton = $('<button class="black-button" onclick="window.location.href=\'prof_message.html\'">Messaggi</button>');
-
+                var updateButton = $('<button class="black-button" onclick="window.location.href=\'prof_updateTest.html?id=' + test.ID + '&titolo=' + encodeURIComponent(test.Titolo) + '&mail=' + encodeURIComponent(test.MailDocente) + '\'"> Modifica Test</button>');
+                var messageButton = $('<button class="black-button" onclick="window.location.href=\'prof_message.html?id=' + test.ID + '&titolo=' + encodeURIComponent(test.Titolo) + '&mail=' + encodeURIComponent(test.MailDocente) + '\'">Messaggi</button>');
                 buttonContainer.append(/*viewButton,*/ updateButton, messageButton);
 
                 testContainer.append(testDetails, buttonContainer);
