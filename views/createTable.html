@@ -60,6 +60,16 @@
         .checkbox-label {
             font-size: 14px;
         }
+        .deleteButton{
+            color: white;
+            background-color: #be2525;
+            border: none;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 80%;
+            margin-left: 5px;
+            transform: scale(0.8);
+        }
     </style>
 </head>
 
@@ -116,6 +126,15 @@
             // Aggiungi il menu a discesa per selezionare il tipo di attributo
             var select = document.createElement('select');
             select.name = 'attribute_type';
+
+            // Opzione predefinita non selezionabile
+            var defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.text = 'Tipo Attributo';
+            defaultOption.disabled = true;
+            defaultOption.selected = true;
+            select.appendChild(defaultOption);
+
             var option1 = document.createElement('option');
             option1.value = 'INTEGER';
             option1.text = 'INTEGER';
@@ -125,9 +144,12 @@
             var option3 = document.createElement('option');
             option3.value = 'DATETIME';
             option3.text = 'DATETIME';
+
+            
             select.appendChild(option1);
             select.appendChild(option2);
             select.appendChild(option3);
+
             newCell.appendChild(select);
 
             // Aggiungi la casella di spunta per PK
@@ -142,7 +164,7 @@
             newCell.appendChild(checkbox);
             newCell.appendChild(label);
             // Inserisce bottone eliminazione
-            newCell.innerHTML += '<button type="delete" onclick="deleteColumn(this)">X</button>';
+            newCell.innerHTML += '<button class="deleteButton" onclick="deleteColumn(this)">X</button>';
 
             for (var i = 1; i < table.rows.length; i++) {
                 var cell = table.rows[i].insertCell(-1);
@@ -157,7 +179,7 @@
             var newCell = newRow.insertCell(0);
             newCell.innerHTML = rowCounter;
 
-            newCell.innerHTML += '<button type="delete" onclick="deleteRow(this)">X</button>';
+            newCell.innerHTML += '<button class="deleteButton" onclick="deleteRow(this)">X</button>';
 
             for (var i = 1; i < table.rows[0].cells.length; i++) {
                 var cell = newRow.insertCell(i);
@@ -264,4 +286,3 @@
     
 </body>
 </html>
-
