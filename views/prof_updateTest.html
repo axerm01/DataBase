@@ -22,6 +22,19 @@
             background-color: #f9f9f9; /* Set background color for the question box */
             margin-right: 10px;
         }
+        .question-test {
+            width: 90%;
+            margin-top: 10px;
+            border: 1px solid #ccc; /* Add border around the question */
+            border-radius: 5px; /* Add rounded corners for the question box */
+            padding: 10px 20px 10px 20px; /* Add padding inside the question box */
+            background-color: #f9f9f9; /* Set background color for the question box */
+            text-align: center;
+        }
+        .question-test p {
+            font-size: 18px;
+            font-weight: bold;
+        }
         /* Styles for question input */
         .question-input {
             /*width: 500px; /* Make the input field occupy the full width of its container */
@@ -153,10 +166,19 @@
             border: 1px solid #ddd; /* Stile dei bordi */
             padding: 5px; /* Padding delle celle */
         }
-
-        th {
-            background-color: #f2f2f2; /* Colore di sfondo delle celle dell'intestazione */
+        td{
+            background-color: #fff; /* Colore di sfondo delle celle dell'intestazione */
         }
+        th{
+            background-color: #868686; /* Colore di sfondo delle celle dell'intestazione */
+        }
+        .title-row th {
+            border: none; /* Rimuove i bordi dalle celle nella riga del titolo */
+            background-color: #c2c2c2; /* Colore di sfondo per la riga del titolo */
+            font-weight: bold;
+            text-align: center; /* Centra il testo nella cella del titolo */
+        }
+
         .difficulty-select {
             margin-top: 6px;
             width: 100px; /* Aggiungi larghezza */
@@ -220,7 +242,42 @@
             justify-content: center; /* Centra i contenitori delle tabelle orizzontalmente */
             align-items: flex-start; /* Opzionale, allinea i contenitori delle tabelle in alto */
         }
+        .title{
+            font-size: 28px; 
+            font-weight: bold;
+            color: rgb(0, 0, 0);
+            text-shadow: 2px 2px 4px rgba(76, 76, 76, 0.5);
+        }
+        #testContainer {
+            display: flex;
+            flex-direction: row; /* Imposta le tabelle in orizzontale */
+            flex-wrap: wrap; /* Permette agli elementi di andare a capo quando necessario */
+            width: 90%;
+            padding: 20px;
+            margin: auto;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            align-items: flex-start; /* Allinea le tabelle all'inizio del contenitore in verticale */
+            justify-content: flex-start; /* Allinea le tabelle all'inizio del contenitore in orizzontale */
+        }
+
+
+        .tableContainer-test {
+            background-color: #cdcdcdad;
+            margin: 10px; /* Aggiunge un margine tra le tabelle */
+            width: auto; /* Imposta la larghezza automaticamente in base al contenuto interno */
+        }
+
+        .refContainer-test {
+            background-color: #cdcdcdad;
+            margin: 5px; /* Aggiunge un margine tra le tabelle */
+            padding: 0px 10px 0px 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Opzionale: aggiunge un'ombra per un effetto sollevato */
+            width: auto; /* Imposta la larghezza automaticamente in base al contenuto interno */
+        }
+        
     </style>
+        
 </head>
 
 <body>
@@ -241,31 +298,23 @@
 
     <div class="main-container">
         <div class="main-content">
-            <span style="margin-right: 10px; font-size: 28px; font-weight: bold;">Modifica Test</span>
-            <div>
-                Posto in cui inserire il titolo da prendere tramite la sessione
-                <!-- Posto in cui inserire il titolo da prendere tramite la sessione -->
+            <div id="testTitle">
+                <span style="margin-right: 10px; text-shadow: none;">Modifica Test: </span>
+                <!-- Posto in cui inserire il titolo da prendere tramite url -->
             </div>
              <!--il permesso di visualizzazione deve essere fuori da qui. (anche) quando vedo l'elenco dei test gia creati-->
             <p style="font-size: 18px; font-weight: bold; color: #484141b8;"> 
                 <input type="checkbox" id="viewAnswersPermission" class="styled-checkbox">
                 <span class="checkmark">Permesso visualizzione risposte</span>
             </p>
-            <div class="image-container">
-                <label for="testImage" style="font-size: small;">Carica immagine:</label>
-                <br>
-                <input type="file" id="testImage" name="testImage" accept="image/*">
-                <br>
-                <!-- Elemento per l'anteprima dell'immagine -->
-                <img id="imagePreview" src="#" alt="Anteprima Immagine" class="image-preview">
-            </div>
         </div>
         
     </div>
-
+    <div id="testContainer">
+        <!-- Qui -->
+    </div>
 
     <div id="questionsContainer">
-        Inserire un metodo che richiama i quesiti del test.
         <!-- Qui verranno aggiunti i container per le question -->
     </div>
     <button id="submitTestButton">Salva Modifiche Test</button> <!-- Bottone salvataggio -->
@@ -292,18 +341,182 @@
             <div id="tableContainer"></div> <!-- Contenitore per la tabella -->
         </div>
     </div>
+ 
     
+
+
+
     <script>
-        document.getElementById('testImage').addEventListener('change', function(event) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const preview = document.getElementById('imagePreview');
-                preview.src = e.target.result;
-                preview.style.display = 'block';
-            };
-            reader.readAsDataURL(event.target.files[0]);
+        document.addEventListener('DOMContentLoaded', function() {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+
+            const testTitolo = urlParams.get('titolo');
+            const testID = urlParams.get('id');
+
+            // Seleziona l'elemento e aggiunge il titolo come nuovo nodo di testo
+            const titleElement = document.getElementById('testTitle');
+            if (titleElement && testTitolo) {
+                const titleText = document.createTextNode(decodeURIComponent(testTitolo));
+                // Aggiunge il nodo di testo all'elemento esistente
+                titleElement.appendChild(titleText);
+                titleElement.classList.add('title');
+            }
+            $.ajax({
+                type: "GET",
+                url: "../controllers/test/TestController.php?action=get_test_content",
+                data: { testId: testID },
+                success: function(response) {
+                    console.log(response);
+
+                    // Estrai l'array 'tables' dalla risposta
+                    var tables = response.tables;
+                    if (tables) {
+                        tables.forEach(function(table) {
+                            // Crea la tabella e aggiunge un'intestazione con il nome
+                            var container = $('<div></div>').addClass('tableContainer-test');
+                            var viewTable = $("<table></table>").attr("id", "table-" + table.IDTabella);
+                            var titleTable = table[0].Nome;
+                            var headerRow = $("<tr></tr>").addClass("title-row").append(`<th colspan="100%">${titleTable}</th>`);
+                            viewTable.append(headerRow);
+
+                            // Aggiungi una riga per le colonne
+                            var columnRow = $("<tr></tr>");
+                            table.columns.forEach(function(column) {
+                                columnRow.append('<th>' + column.Nome + '</th>');
+                            });
+                            viewTable.append(columnRow);
+
+                            // Aggiungi righe di contenuto
+                            table.content.forEach(function(row) {
+                                var contentRow = $("<tr>");
+                                Object.keys(row).forEach(function(key) {
+                                    contentRow.append('<td>' + row[key] + '</td>');
+                                });
+                                viewTable.append(contentRow);
+                            });
+
+                            // Aggiungi la tabella costruita al contenitore
+                            container.append(viewTable);
+                            $("#testContainer").append(container);
+                        });
+                    } else {
+                        console.error('No tables found or JSON is invalid');
+                    }
+
+                    var constraints = response.references;
+                    if (constraints) {
+                        constraints.forEach(function(ref) {
+                            // Crea la tabella e aggiunge un'intestazione con il nome
+                            var container = $('<div></div>').addClass('refContainer-test');
+                            const nomeT1 = getTableNameById(ref.IDT1, response.tables);
+                            const nomeT2 = getTableNameById(ref.IDT2, response.tables);
+                            var referenceText = `${nomeT1 || 'ID sconosciuto'}: [ ${ref.NomeAttributo1} ] ---> ${nomeT2 || 'ID sconosciuto'}: [ ${ref.NomeAttributo2} ]`;
+                            var textElement = $("<p></p>").text(referenceText);
+                            container.append(textElement);
+                            $("#testContainer").append(container);
+                            
+                        });
+                    } else {
+                        console.error('No constraints found or JSON is invalid');
+                    }
+
+                    var questions = response.questions;
+                    if (questions) {
+                        questions.forEach(function(quest) {
+                            // Crea la tabella e aggiunge un'intestazione con il nome
+                            var container = $('<div></div>').addClass('question-test');
+                            console.log(quest);
+                            var textQuestion = $("<p></p>").text("Quesito: " + quest.Descrizione);
+                            container.append(textQuestion);
+                            var difficultyQuestion = quest.Difficolta;
+                            //VISUALIZZARE LA DIFFICOLTà QUANDO è DATA COME ENUM
+
+                            if(quest.type === 'code'){
+                                $.ajax({
+                                type: 'POST', // Tipo di richiesta HTTP
+                                url: '../controllers/test/TestController.php',
+                                data: { query: quest.Output , action: 'test_query'}, // Dati inviati al server
+                                success: function(response) {
+                                    container.append(createTable(response));
+                                },
+                                error: function(xhr, status, error) {
+                                    // Gestione degli errori
+                                    if (xhr.status === 0) {
+                                        alert('Errore di rete durante la verifica del codice.');
+                                    } else {
+                                        alert('Errore durante la verifica del codice.');
+                                    }
+                                },
+                                dataType: 'json' // Tipo di dati attesi dalla risposta
+                            });
+                            }else if(quest.type === 'mc'){
+                                
+                            }
+                            //container.append(textQuestion);
+                            $("#testContainer").append(container);
+                            
+                        });
+                    } else {
+                        console.error('No constraints found or JSON is invalid');
+                    }
+                },
+                dataType: "json"
+            });
+
+
         });
+        function createTable(response) {
+            // Assumi che tutti gli oggetti abbiano lo stesso set di chiavi
+            // Usa le chiavi del primo oggetto per le intestazioni delle colonne
+            const columns = response.length > 0 ? Object.keys(response[0]) : [];
+
+            const table = document.createElement('table');
+            table.className = 'custom-table';
+
+            // Creazione delle intestazioni della tabella
+            const thead = document.createElement('thead');
+            const trHead = document.createElement('tr');
+            columns.forEach(colName => {
+                const th = document.createElement('th');
+                th.textContent = colName;
+                trHead.appendChild(th);
+            });
+            thead.appendChild(trHead);
+            table.appendChild(thead);
+
+            // Creazione del corpo della tabella
+            const tbody = document.createElement('tbody');
+            response.forEach(obj => {
+                const tr = document.createElement('tr');
+                columns.forEach(column => {
+                    const td = document.createElement('td');
+                    td.textContent = obj[column];
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+
+            // Restituisce l'elemento <table> creato
+            return table;
+        }
+    
+        function getTableNameById(id, tables) {
+            // Itera attraverso l'array delle tabelle
+            for (let table of tables) {
+                // Accede all'oggetto alla chiave '0' di ciascun elemento dell'array
+                if (parseInt(table[0].IDTabella) === parseInt(id)) {
+                    return table[0].Nome;
+                }
+            }
+            return null; // Restituisce null se non viene trovato nessun ID corrispondente
+        }
     </script>
+
+
+
+
     <script>
         // Variabile per memorizzare il nome della tabella selezionata
         var selectedTable = "";
@@ -348,7 +561,7 @@
                         tables.push(selectedTable); // Memorizza le tabelle selezionate
                         updateMenuTable1();
                         console.log("Tabella selezionata: ", selectedTable);
-                        requestData(selectedTable.id); // Invia i dati della tabella selezionata
+                        requestData(selectedTable.id,selectedTable.name); // Invia i dati della tabella selezionata
                         // Crea e aggiungi il bottone di eliminazione per questa specifica tabella selezionata
                         //deleteTable(selectedTable.id);
                     });
@@ -383,7 +596,7 @@
         }
 
         // Funzione per inviare la variabile selectedTable al file PHP
-        function requestData(selectedID) {
+        function requestData(selectedID,selectedName) {
             // AJAX request to send data to the PHP file and receive table data
             $.ajax({
                 type: "GET", // Metodo HTTP utilizzato
@@ -408,7 +621,10 @@
                 tableContainer.append($("<br>"));
                 // Assuming the response is an array of objects, where each object represents a table row
                 // Create a table element
+                    var titleTable = selectedName;
+                    var headerTitle = $("<tr></tr>").addClass("title-row").append(`<th colspan="100%">${titleTable}</th>`);
                     var viewTable = $("<table></table>").attr("id", "table-" + selectedID);
+                    viewTable.append(headerTitle);
                     if (Array.isArray(response[0])) {
                         // Estrai i nomi e inseriscili in un nuovo array
                         let nomi = response[0].map(obj => obj.Nome);
@@ -919,10 +1135,10 @@
                 formData.append("testImage", imageFile);
             }
             // Aggiunge l'action al FormData
-            formData.append("action" , "save_test");
+            formData.append("action" , "update_test");
             // Invio dei dati al file PHP tramite AJAX
             $.ajax({
-                type: 'PUT',
+                type: 'POST',
                 url: '../controllers/test/TestController.php', //action è gia stata appesa
                 data: formData,
                 contentType: false, // Importante per il corretto invio di FormData
