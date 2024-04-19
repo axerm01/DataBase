@@ -41,16 +41,117 @@
         margin-left: 25px;
     }
     .title{
-        font-size: 24px; /* Dimensione del carattere */
-        color: #333; /* Colore del testo */
-        background-color: white;
-        width: 80%;
-        padding-top: 10px;
-        padding-left: 20px;
-        padding-right: 20px;
-        margin: 0 0 0 0;
-        text-align: center;
+        font-size: 20px; /* Dimensione del carattere */
+        padding: 5px 0px 0px 20px;
     }
+    #tablesDisplay{
+        font-size: 16px; /* Dimensione del carattere */
+        color: #000000;
+        background-color: white;
+        width: fit-content;
+        padding: 0px 20px 0px 20px;
+        font-weight: bold;
+    }
+
+    /* Stili per la lista */
+    ul {
+        list-style-type: none; /* Rimuove i marcatori di lista */
+        padding: 0; /* Rimuove il padding di default */
+        margin: 20px; /* Aggiunge un margine intorno alla lista per distanziarla dagli altri elementi */
+    }
+
+    /* Stili per ogni elemento della lista */
+    li {
+        margin-bottom: 5px; /* Spazio tra gli elementi della lista */
+        background-color: #f9f9f9; /* Colore di sfondo leggero per ogni elemento della lista */
+        padding: 5px; /* Padding interno per ogni elemento */
+        border-radius: 5px; /* Bordi arrotondati */
+        display: flex; /* Usa flexbox per allineare il contenuto della lista */
+        align-items: center; /* Centra verticalmente il contenuto di ciascun elemento della lista */
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Sfumatura leggera per un effetto sollevato */
+        width: fit-content;
+    }
+
+    /* Stili per i bottoni */
+    button {
+        margin-left: 10px; /* Spazio tra il nome e i bottoni e tra i bottoni stessi */
+        padding: 5px 10px; /* Padding interno per i bottoni */
+        border: none; /* Rimuove il bordo di default */
+        color: white; /* Colore del testo bianco */
+        font-weight: bold; /* Testo in grassetto */
+        cursor: pointer; /* Mostra il puntatore come un cursore quando si passa sopra il bottone */
+        transition: background-color 0.3s; /* Transizione per il cambio di colore su hover */
+    }
+
+    /* Stili specifici per il bottone Visualizza */
+    button.view {
+        background-color: #15c11e;
+        cursor: pointer; 
+        font-size: 10px;
+        color: #fff;
+        border: none;
+        padding: 6px 17px;
+        border-radius: 5px;
+        transition: background-color 0.3s; /* Verde per il bottone Visualizza */
+    }
+
+    button.view:hover {
+        background-color: #108516; /* Verde più scuro al passaggio del mouse */
+    }
+
+    /* Stili specifici per il bottone Elimina */
+    button.delete {
+        background-color: #de1515;
+        cursor: pointer;
+        font-size: 10px;
+        width: 80px;
+        color: #fff;
+        border: none;
+        padding: 6px 17px;
+        border-radius: 5px;
+        transition: background-color 0.3s; /* Rosso per il bottone Elimina */
+    }
+
+    button.delete:hover {
+        background-color: #941b1b; /* Rosso più scuro al passaggio del mouse */
+    }
+
+    /* Stile del modale */
+    .modal {
+            display: none; /* Nascosto di default */
+            position: fixed; /* Rimane fermo in posizione */
+            z-index: 1; /* Sopra tutto */
+            left: 0;
+            top: 0;
+            width: 100%; /* Larghezza */
+            height: 100%; /* Altezza piena */
+            overflow: auto; /* Abilita lo scroll se necessario */
+            background-color: rgb(0,0,0); /* Colore di sfondo */
+            background-color: rgba(0,0,0,0.4); /* Colore di sfondo con opacità */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% dal top e centrato orizzontalmente */
+            padding: 20px;
+            border: 1px solid #888;
+            max-width: fit-content; /* Puoi regolare questa larghezza come preferisci */
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
     </style>
 </head>
 
@@ -69,13 +170,20 @@
             </form>
         </div> 
     </header>
-    <p class="title">Tabelle create:</p>
-    <div class="view-container">
-        
-        <div id="tablesDisplay">
-            <!-- Le tabelle saranno visualizzate qui -->
+    
+    
+    <div id="tablesDisplay">
+        <p class="title">Tabelle create:</p>
+        <!-- Le tabelle saranno visualizzate qui -->
+    </div>
+    <!-- Modale per la visualizzazione della tabella -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">×</span>
+            <div id="tableContainer"></div> <!-- Contenitore per la tabella -->
         </div>
     </div>
+    
 
     <footer>
         <p>Alma Mater Studiorum</p>
@@ -84,26 +192,150 @@
 
     <script>  
     
-    $(document).ready(function() {
-        $.ajax({
-            type: "GET",
-            url: "../controllers/table/TableController.php?action=get_tables",
-            data: { },
-            success: function(data) {
-                console.log("Successo GET nomi:", data);
-                $.each(data, function(index, table) {
-                    //logica per visualizzare il contenuto di ogni tabella
-                    requestData(table); // Utilizza il nome della tabella per richiedere i dettagli
+        $(document).ready(function() {
+            $.ajax({
+                type: "GET",
+                url: "../controllers/table/TableController.php?action=get_tables",
+                data: { },
+                success: function(data) {
+                    console.log("Successo GET nomi:", data);
+                    var list = $("<ul></ul>"); // Crea un elemento lista non ordinata
+                    $.each(data, function(index, table) {
+                        var listItem = $("<li></li>"); // Crea un elemento della lista
+                        listItem.text(table.Nome); // Imposta il nome della tabella come testo dell'elemento della lista
+                        
+                        // Crea il bottone Visualizza
+                        var viewButton = $("<button></button>").addClass("view").text("Visualizza");
+                        viewButton.on("click", function() {
+                            viewTable(table.IDTabella);
+                        });
 
-                });
+                        // Crea il bottone Elimina
+                        var deleteButton = $("<button></button>").addClass("delete").text("Elimina");
+                        deleteButton.on("click", function() {
+                            deleteTable(table.IDTabella);
+                        });
+
+                        // Aggiungi i bottoni all'elemento della lista
+                        listItem.append(viewButton);
+                        listItem.append(deleteButton);
+
+                        // Aggiungi l'elemento della lista alla lista principale
+                        list.append(listItem);
+                    });
+
+                    // Aggiungi la lista al corpo del documento o a un elemento specifico
+                    $("#tablesDisplay").append(list);
+                },
+                dataType: "json"
+            }).fail(function(jqxhr, textStatus, error) {
+                var err = textStatus + ", " + error;
+                console.log("Request Failed: " + err);
+            });
+        });
+
+        function viewTable(tableId) {
+            console.log("Visualizza tabella con ID:", tableId);
+            $.ajax({
+            type: "GET",
+            url: "../controllers/table/TableController.php?action=get_full_table",
+            data: { tableId: tableId },
+            success: function(response) {
+                console.log(response);
+                showTableModal(response);
             },
             dataType: "json"
-        }).fail(function(jqxhr, textStatus, error) {
-            var err = textStatus + ", " + error;
-            console.log("Request Failed: " + err);
-        });
-    });
+            }).fail(function(jqxhr, textStatus, error) {
+                var err = textStatus + ", " + error;
+                console.log("Request Failed: " + err);
+            });
+        }
 
+        function deleteTable(tableId) {
+            console.log("Elimina tabella con ID:", tableId);
+            $.ajax({
+            type: "DELETE",
+            url: "../controllers/table/TableController.php",
+            data: { tableId: tableId },
+            success: function(response) {
+                console.log(response);
+                //window.location.reload();
+            },
+            dataType: "json"
+            }).fail(function(jqxhr, textStatus, error) {
+                var err = textStatus + ", " + error;
+                console.log("Request Failed: " + err);
+            });
+        }
+    </script>
+    <script>
+
+        function showTableModal(response) {
+            // Creazione della tabella come prima
+            const table = createTable(response);
+
+            // Trova il contenitore della tabella nel modale e aggiungi la tabella
+            const tableContainer = document.getElementById('tableContainer');
+            tableContainer.innerHTML = ''; // Pulisce vecchie tabelle se presenti
+            tableContainer.appendChild(table);
+
+            // Mostra il modale
+            const modal = document.getElementById('modal');
+            modal.style.display = 'block';
+
+            // Imposta l'evento per chiudere il modale
+            const closeButton = document.querySelector('.close-button');
+            closeButton.onclick = function() {
+                modal.style.display = 'none';
+            };
+
+            // Chiude il modale anche quando si clicca fuori dal suo contenuto
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            };
+        }
+
+        function createTable(response) {
+            // Assumi che tutti gli oggetti abbiano lo stesso set di chiavi
+            // Usa le chiavi del primo oggetto per le intestazioni delle colonne
+            const columns = Object.keys(response[1]);;
+
+            const table = document.createElement('table');
+            table.className = 'custom-table';
+
+            // Creazione delle intestazioni della tabella
+            const thead = document.createElement('thead');
+            const trHead = document.createElement('tr');
+            columns.forEach(colName => {
+                const th = document.createElement('th');
+                th.textContent = colName;
+                trHead.appendChild(th);
+            });
+            thead.appendChild(trHead);
+            table.appendChild(thead);
+
+            // Creazione del corpo della tabella
+            const tbody = document.createElement('tbody');
+            response.forEach(obj => {
+                const tr = document.createElement('tr');
+                columns.forEach(column => {
+                    const td = document.createElement('td');
+                    td.textContent = obj[column];
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+
+            // Restituisce l'elemento <table> creato
+            return table;
+        }
+
+    </script>
+
+<script> 
     function requestData(table) {
         $.ajax({
             type: "GET",
