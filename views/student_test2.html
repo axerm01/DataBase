@@ -334,12 +334,12 @@
 
         // funzione di test usata per vedere se va l'endpoint update_response
         function test() {
-            var answ = '{"email":"gioele@studio.unibo.it","answers":[{"IDDomanda":1,"Response":"select * from pollo;","type":"code","Esito":0},{"IDDomanda":2,"Response":1,"type":"mc","Esito":1}]}';
+            var mex = '{"testId":1, "titolo":"Mytitolo", "testo":"ciao ciao"}';
 
             $.ajax({
-                type: "DELETE",
-                url: "../controllers/test/StudentTestController.php?action=start_new_test&testId=19",
-                data: { },
+                type: "POST",
+                url: "../controllers/utils/MessageController.php?action=send_prof_message",
+                data: { mex },
                 contentType: 'application/json',
                 success: function (response) {
                     console.log(response);

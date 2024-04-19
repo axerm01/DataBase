@@ -181,14 +181,14 @@
 
 
             var formData = {
-                action: 'new_professor_message',
+                action: 'send_prof_message',
                 title: titolo,
                 text: testo,
                 testId: testId,
             };
             $.ajax({
                 type: 'POST',
-                url: '../DataBase-main/controllers/utils/MessageController.php',
+                url: '../controllers/utils/MessageController.php',
                 contentType: 'application/json', // Imposta il tipo di contenuto come JSON
                 data: JSON.stringify(formData), // Converte i dati del form in stringa JSON
                 success: function (response) {

@@ -38,8 +38,8 @@ switch ($method) {
 
             case 'resume_test':
                 $testId = filter_input(INPUT_GET, 'testId');
-                //$stdEmail = $_SESSION['email'];
-                $stdEmail = 'gioele@studio.unibo.it';
+                $stdEmail = $_SESSION['email'];
+                //$stdEmail = 'gioele@studio.unibo.it';
                 $data = StudentTest::resume($testId, $stdEmail);
                 break;
 

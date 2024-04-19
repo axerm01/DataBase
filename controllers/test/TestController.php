@@ -279,7 +279,7 @@ function updateTest($data, $testId) {
 function testQuery($q){
     global $con;
 
-    if (stripos($q, 'DROP') !== false || stripos($q, 'DELETE') !== false || stripos($q, 'UPDATE') !== false) {
+    if (stripos($q, 'INSERT') !== false || stripos($q, 'DROP') !== false || stripos($q, 'DELETE') !== false || stripos($q, 'UPDATE') !== false) {
         return 'Query non consentita';
     }
 
