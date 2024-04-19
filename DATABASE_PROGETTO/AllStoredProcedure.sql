@@ -437,7 +437,7 @@ FROM Scelta_Multipla
 WHERE IDTest = IDTestAtt and Descrizione = DescrizioneAtt;
 END //
 
-CREATE PROCEDURE `ViewAllSceltaMultipla`(in IDTestAtt int
+CREATE PROCEDURE `ViewAllSceltaMultipla`(in IDTestAtt int)
 BEGIN
 SELECT *
 FROM Scelta_Multipla
