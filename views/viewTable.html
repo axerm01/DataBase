@@ -257,12 +257,12 @@
                 console.log("Elimina tabella con ID:", tableId);
                 $.ajax({
                     type: "DELETE",
-                    url: "../controllers/table/TableController.php",
-                    data: { tableId: tableId },
+                    url: "../controllers/table/TableController.php?tableId="+tableId,
+                    data: { },
                     success: function(response) {
                         console.log(response);
                         //alert("Tabella eliminata con successo.");
-                        //window.location.reload(); // Ricarica la pagina per vedere le modifiche
+                        window.location.reload(); // Ricarica la pagina per vedere le modifiche
                     },
                     dataType: "json"
                 }).fail(function(jqxhr, textStatus, error) {
