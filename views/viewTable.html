@@ -116,8 +116,8 @@
         background-color: #941b1b; /* Rosso più scuro al passaggio del mouse */
     }
 
-    /* Stile del modale */
-    .modal {
+        /* Stile del modale */
+        .modal {
             display: none; /* Nascosto di default */
             position: fixed; /* Rimane fermo in posizione */
             z-index: 1; /* Sopra tutto */
@@ -163,7 +163,7 @@
             <span class="testo-indietro"><a href="javascript:history.back()">
                 <img src="image/arrow.png" alt="Torna indietro" style="width: 25px; height: 25px;">
             </a>Indietro</span>
-        </div>   
+        </div>  
         <div class="logout-form">
             <form action="../controllers/utils/logout.php" method="post">
                 <button type="submit" name="logout">Esci</button>
@@ -252,21 +252,29 @@
         }
 
         function deleteTable(tableId) {
-            console.log("Elimina tabella con ID:", tableId);
-            $.ajax({
-            type: "DELETE",
-            url: "../controllers/table/TableController.php",
-            data: { tableId: tableId },
-            success: function(response) {
-                console.log(response);
-                //window.location.reload();
-            },
-            dataType: "json"
-            }).fail(function(jqxhr, textStatus, error) {
-                var err = textStatus + ", " + error;
-                console.log("Request Failed: " + err);
-            });
+            // Mostra un messaggio di conferma
+            if (confirm("Sei sicuro di voler eliminare questa tabella?")) {
+                console.log("Elimina tabella con ID:", tableId);
+                $.ajax({
+                    type: "DELETE",
+                    url: "../controllers/table/TableController.php",
+                    data: { tableId: tableId },
+                    success: function(response) {
+                        console.log(response);
+                        //alert("Tabella eliminata con successo.");
+                        //window.location.reload(); // Ricarica la pagina per vedere le modifiche
+                    },
+                    dataType: "json"
+                }).fail(function(jqxhr, textStatus, error) {
+                    var err = textStatus + ", " + error;
+                    console.log("Request Failed: " + err);
+                });
+            } else {
+                // L'utente ha annullato l'azione
+                console.log("Eliminazione annullata.");
+            }
         }
+
     </script>
     <script>
 
@@ -333,63 +341,6 @@
             return table;
         }
 
-    </script>
-
-<script> 
-    function requestData(table) {
-        $.ajax({
-            type: "GET",
-            url: "../controllers/table/TableController.php?action=get_full_table",
-            data: { tableId: table.IDTabella },
-            success: function(response) {
-                console.log(response);
-                // Crea un contenitore per i dettagli della tabella
-                var tableContainer = $("<div class='table-container'></div>");
-                tableContainer.append("<h3>" + table.Nome + "</h3>"); // Aggiunge il titolo della tabella
-
-                // Create a table element
-                var viewTable = $("<table></table>").attr("id", "table-" + table.IDTabella);
-                    if (Array.isArray(response[0])) {
-                        // Estrai i nomi e inseriscili in un nuovo array
-                        let nomi = response[0].map(obj => obj.Nome);
-
-                        // Creazione dinamica delle intestazioni della tabella
-                        var headerRow = $('<tr></tr>');
-                        nomi.forEach(function(nome) {
-                            headerRow.append('<th>' + nome + '</th>');
-                            console.log(nome);
-                        });
-                        viewTable.append(headerRow);
-                    } else {
-                        console.error('Formato JSON non valido');
-                    }
-
-                    var rows = response.slice(1); // per leggere dalla seconda riga in poi 
-
-                    // Add rows to the table based on received data
-                    $.each(rows, function(index, row) {
-                        var dataRow = '<tr>';
-                        // Per ogni proprietà dell'oggetto 'row', aggiungi una cella alla riga
-                        Object.keys(row).forEach(function(key) {
-                            console.log(row +"  " + key);
-                            dataRow += '<td>' + row[key] + '</td>';
-                        });
-                        dataRow += '</tr>';
-                        viewTable.append(dataRow);
-                    });
-
-                // Clear previous table container and add the new table
-                    tableContainer.append(viewTable);
-
-                // Aggiunge il contenitore della tabella alla pagina
-                $("#tablesDisplay").append(tableContainer);
-            },
-            dataType: "json"
-        }).fail(function(jqxhr, textStatus, error) {
-            var err = textStatus + ", " + error;
-            console.log("Request Failed: " + err);
-        });
-    }
     </script>
 </body>
 </html>

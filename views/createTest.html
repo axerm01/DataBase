@@ -166,14 +166,8 @@
             margin-right: 5px;
             margin-left: 5px;
         }
-        .image-preview {
-            max-width: 200px;
-            max-height: 200px;
-            margin-top: 20px;
-            border: 2px solid #ccc; /* Bordo simile a quello usato per i dropdown */
-            border-radius: 5px; /* Bordi arrotondati come i menu a tendina */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Ombra per dare profondità, simile al container */
-        }
+        
+        
         /* Stile del modale */
         .modal {
             display: none; /* Nascosto di default */
@@ -211,6 +205,67 @@
         }
 
 
+        /* Stile per l'area di caricamento dell'immagine */
+        .image-container {
+            background-color: #f3f3f3;  /* Un grigio leggermente più chiaro rispetto al corpo per differenziarlo */
+            border: 2px dashed #d3d3d3; /* Una bordatura tratteggiata che sembra leggera e meno invadente */
+            padding: 10px;
+            margin: 0px 0px 10px 20px;
+            width: 70%;
+            text-align: center;
+            justify-content: center; /* Allinea orizzontalmente al centro */
+            align-items: center; /* Allinea verticalmente al centro */
+        }
+        .file-input {
+            opacity: 0;
+            position: absolute;
+            width: 0;
+            height: 0;
+            z-index: -1;  /* lo manda dietro gli altri elementi, rendendolo non cliccabile */
+        }
+        /* Stile per l'etichetta del file input */
+        .file-input-label {
+            background-color: #3a8e3d; /* Un verde vivace per attirare l'attenzione all'azione */
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 14px;
+            font-family: Arial, sans-serif; /* Coerenza con il font della pagina */
+            transition: background-color 0.3s;
+        }
+
+        .file-input-label:hover {
+            background-color: #367c39; /* Un verde più scuro al passaggio del mouse */
+        }
+
+        /* Stile per il nome del file caricato */
+        .file-name {
+            display: block;
+            color: #555; /* Colore scuro per un buon contrasto su sfondo chiaro */
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        /* Stile per l'anteprima dell'immagine */
+        .image-preview {
+            max-width: 250px;
+            height: auto;
+            margin-top: 10px;
+            margin-left: auto;
+            margin-right: auto;
+            border-radius: 5px; /* Bordi leggermente arrotondati per un aspetto morbido */
+            display: none;
+            border: 2px solid #ccc; 
+            border-radius: 5px;  
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+        }
+        .main-content{
+            display: flex;
+            align-items: center; /* Allinea verticalmente al centro */
+        }
+
     </style>
 </head>
 
@@ -233,12 +288,11 @@
         <div class="main-content">
             <span style="margin-right: 10px; font-size: 28px; font-weight: bold;">Crea Test</span>
             <div class="image-container">
-                <label for="testImage" style="font-size: small;">Carica immagine:</label>
-                <br>
-                <input type="file" id="testImage" name="testImage" accept="image/*">
-                <br>
+                <label for="testImage" class="file-input-label">Carica immagine</label>
+                <input type="file" id="testImage" name="testImage" accept="image/*" class="file-input">
+                <span id="fileName" class="file-name">Nessun file selezionato</span>
                 <!-- Elemento per l'anteprima dell'immagine -->
-                <img id="imagePreview" src="#" alt="Anteprima Immagine" class="image-preview">
+                <img id="imagePreview" src="#" class="image-preview">
             </div>
         </div>
         <label for="title" style="font-size: 22px; font-weight: bolder;">Titolo Test:</label>
@@ -275,19 +329,25 @@
     
     <script>
         document.getElementById('testImage').addEventListener('change', function(event) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const preview = document.getElementById('imagePreview');
-                preview.src = e.target.result;
-                preview.style.display = 'block';
-            };
-            reader.readAsDataURL(event.target.files[0]);
+            if (event.target.files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(event.target.files[0]);
+    
+                // Mostra il nome del file selezionato
+                const fileNameDisplay = document.getElementById('fileName');
+                fileNameDisplay.textContent = event.target.files[0].name;
+            }
         });
     </script>
     <script>
         // Variabile per memorizzare il nome della tabella selezionata
         var selectedTable = "";
-        var tables = []; // Array per tenere traccia delle scelte
+        var tables = []; // Array per tenere traccia delle tabelle scelte
     
         function addMenuTable() {
             // Effettua una richiesta AJAX per ottenere i nomi delle tabelle dal file PHP
@@ -547,7 +607,8 @@
             dropdownsDiv.appendChild(deleteButton); // Aggiunge il bottone di eliminazione al div dei dropdown
         }
 
-
+    </script>
+    <script>
         let questionMCCount = 0;
         let questionCodeCount = 0;
         function addMCQuestion() {
@@ -697,7 +758,7 @@
             addCodeAnswerButton.textContent = 'Verifica Codice';
             addCodeAnswerButton.classList.add('add-check-button');
             addCodeAnswerButton.onclick = function() {
-                codeCheck();
+                codeCheck(this);
             };
             questionDiv.appendChild(addCodeAnswerButton);
 
@@ -740,9 +801,13 @@
             container.appendChild(questionDiv);
         }
 
-        function codeCheck() {
+        function codeCheck(buttonElement) {
+            // Trova il contenitore della domanda relativo al bottone
+            const questionDiv = buttonElement.closest('.question');
+            // Trova il textarea all'interno di questo contenitore specifico
+            const textarea = questionDiv.querySelector('.code-textarea');
             // Ottenere il codice MySQL inserito dall'utente
-            const query = document.querySelector('.code-textarea').value;
+            const query = textarea.value;
 
             // Effettuare una chiamata AJAX per inviare il codice al server
             $.ajax({
@@ -771,6 +836,8 @@
                 dataType: 'json' // Tipo di dati attesi dalla risposta
             });
         }
+    </script>
+    <script>
         function showTableModal(response) {
             // Creazione della tabella come prima
             const table = createTable(response);
@@ -833,14 +900,17 @@
             // Restituisce l'elemento <table> creato
             return table;
         }
-    
+    </script>
+    <script>
+        
+
         function pickupData() {
             var sendDataTest = {
                 title: $('#title').val(),
                 questions: [], // Questo sarà riempito con le domande
                 tables: tables, // Assumo che 'tables' sia già un array di oggetti come mostrato
                 constraints: [], // Questo dovrà essere riempito con i vincoli definiti
-                viewAnswersPermission: $('#viewAnswersPermission').is(':checked') // Raccoglie il valore del checkbox
+                viewAnswersPermission: false 
             };
             // Raccoglie tutte le domande
             let questionId = 1;
@@ -900,9 +970,12 @@
             var imageFile = document.getElementById('testImage').files[0];
             if (imageFile) {
                 formData.append("testImage", imageFile);
+                console.log(imageFile);
             }
             // Aggiunge l'action al FormData
             formData.append("action" , "save_test");
+            
+
             // Invio dei dati al file PHP tramite AJAX
             $.ajax({
                 type: 'POST',
@@ -921,15 +994,41 @@
                     //window.location.reload(); // ricarica pagina
                 },
                 error: function(xhr, status, error) {
-                    console.error("Errore durante l'invio dei dati:", status, error);
-                    // Gestire eventuali errori qui
+                    // Registro l'errore nel console
+                    console.error("Errore AJAX:", {
+                        httpRequestStatus: status,
+                        errorThrown: error,
+                        xhrObject: xhr
+                    });
+
+                    // Messaggio di errore dettagliato dalla risposta del server se disponibile
+                    var message = "Si è verificato un errore. ";
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        message += xhr.responseJSON.message;
+                    } else if (xhr.responseText) {
+                        try {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.message) {
+                                message += response.message;
+                            } else {
+                                message += "Dettagli non disponibili.";
+                            }
+                        } catch (e) {
+                            message += "Dettagli non disponibili.";
+                        }
+                    } else {
+                        message += "Dettagli non disponibili.";
+                    }
+
+                    // Visualizzare un messaggio di errore all'utente
+                    alert(message);
                 }
             });
         }
         // Chiama la funzione definita sopra quando il bottone viene cliccato
-        $('#submitTestButton').click(function(e) {
-            e.preventDefault(); // Previene il comportamento di sottomissione standard del form
-            submitFormTest();
+        document.getElementById('submitTestButton').addEventListener('click', function(e) {
+            e.preventDefault(); // Previene il comportamento di default del form
+            submitFormTest(); // Chiama la funzione di sottomissione
         });
     </script>
 </body>

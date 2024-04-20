@@ -1069,7 +1069,7 @@
     
         function pickupData() {
             var sendDataTest = {
-                title: $('#title').val(),
+                title: testTitolo, // VOLENDO POSSO PASSARE ANCHE L'ID----------------------------------------------------------------------------
                 questions: [], // Questo sarà riempito con le domande
                 tables: tables, // Assumo che 'tables' sia già un array di oggetti come mostrato
                 constraints: [], // Questo dovrà essere riempito con i vincoli definiti
@@ -1116,7 +1116,6 @@
                 sendDataTest.constraints.push(constraintData);
                 //console.log(sendDataTest.constraints);
             });
-
             console.log(sendDataTest);
             return sendDataTest;
         }
