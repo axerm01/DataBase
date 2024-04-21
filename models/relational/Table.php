@@ -143,13 +143,28 @@ class Table {
 
     public static function deleteTable($tableId) {
         $name = Table::getTableName($tableId);
+        $result = 'deleted ok';
         global $con; // Assumi che $con sia la tua connessione al database
         $tableQuery = $con->prepare("CALL DropTable(?,?)");
+        if ($tableQuery === false) {
+            $result = "Errore nella preparazione della query: " . $con->error;
+        }
         $tableQuery->bind_param('is', $tableId, $name);
-        $tableQuery->execute();
+        if (!$tableQuery->execute()) {
+            $result = "Errore nell'esecuzione della query: " . $tableQuery->error;
+        }
         $tableQuery->close();
 
-        return 'deleted successfully';
+        $tableQuery = $con->prepare("DROP TABLE IF EXISTS ".$name);
+        if ($tableQuery === false) {
+            $result = "Errore nella preparazione della query 2: " . $con->error;
+        }
+        if (!$tableQuery->execute()) {
+            $result = "Errore nell'esecuzione della query 2: " . $tableQuery->error;
+        }
+        $tableQuery->close();
+
+        return $result;
     }
 
 

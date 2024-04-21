@@ -623,8 +623,6 @@ WHERE tabella.ID = ID;
 
 DELETE FROM ATTRIBUTO
 WHERE IDTabella = ID;
-
-DROP TABLE IF EXISTS nome;
 END //
 
 CREATE PROCEDURE `ViewAllTables`(in mail varchar(45))
