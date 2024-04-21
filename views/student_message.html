@@ -8,6 +8,8 @@
     <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="styleBACK.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
     <style>        
         .attributes_student_message {
             width: 78%;
@@ -78,10 +80,10 @@
             /* Utilizziamo flex per centrare il testo verticalmente */
         }
 
-        .square textarea {
+        .square #messaggio {
             width: 90%;
             /* Larghezza del textarea rispetto al quadrato */
-            height: 90%;
+            height: 70%;
             /* Altezza del textarea rispetto al quadrato */
             padding: 10px;
             /* Spaziatura interna per una migliore leggibilità */
@@ -93,6 +95,19 @@
             /* Rimuove l'outline del textarea */
             font-size: inherit;
             /* Utilizza la dimensione del carattere ereditata dal genitore */
+        }
+
+        .square #Titolo {
+            width: 90%;
+            /* Larghezza del textarea uguale alla larghezza della square */
+            height: 20px;
+            /* Altezza fissa del textarea */
+            padding: 10px;
+            resize: none;
+            /* Disabilita il ridimensionamento del textarea */
+            border: none;
+            outline: none;
+            font-size: inherit;
         }
     </style>
 </head>
@@ -123,9 +138,10 @@
     </div>
     <div class="messages">
         <div class="square">
-            <p>messaggi</p>
+            <p id="testMessages"></p>
         </div>
         <div class="square">
+            <textarea id="Titolo" name="TitoloMessaggio" placeholder="Inserisci il titolo"></textarea>
             <textarea id="messaggio" name="messaggio" placeholder="Scrivi qui il tuo messaggio..."></textarea>
         </div>
     </div>
@@ -135,25 +151,58 @@
 
 
     <script>
-        function submitForm() {
-            var titolo = "prova"; // Recupera il valore del titolo dal campo di input
-            var testo = "CIAIIAIAIA"; // Recupera il valore del testo dal campo di input
-            var testId = 1; // Imposta l'ID del test associato al messaggio (qui lo sto impostando arbitrariamente a 1, dovresti ottenere l'ID dal tuo codice)
-            var dataOra = new Date().toISOString(); // Ottiene la data e ora correnti nel formato ISO
-            var studenteEmail = "davide@studio.unibo.it"; // Imposta l'email dello studente che invia il messaggio (qui lo sto impostando arbitrariamente a "studente@example.com", dovresti ottenerlo dal tuo codice)
 
-            var formData = {
-                title: titolo,
-                text: testo,
-                testId: testId,
-                dateTime: dataOra,
-                studentEmail: studenteEmail
-            };
+        function getMessagesForTest(testId) {
+            $.ajax({
+                type: 'GET',
+                url: '../controllers/utils/MessageController.php?action=get_messages', // Inserisci l'URL del tuo endpoint per ottenere i messaggi
+                data: { action: 'get_messages', testId: testId },
+                success: function (response) {
+                    // Visualizza i messaggi nella box dei messaggi
+                    console.log(response);
+                    var formattedText = "";
+                    response.forEach(function(message) {
+                        formattedText += "Titolo: " + message.Titolo + "<br>" +
+                            "Testo: " + message.Testo + "<br>" +
+                            "Data: " + message.Data + "<br>" +
+                            "ID Test: " + message.IDTest + "<br>" +
+                            "Mail Studente: " + message.MailDocente + "<br><br>";
+                    });
+                    $('#testMessages').html(formattedText);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Errore durante il recupero dei messaggi:', error);
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            // Recupera i parametri dall'URL
+            var urlParams = new URLSearchParams(window.location.search);
+            //var testId = urlParams.get('id');
+            var testId = 2;
+
+            // Ottieni i messaggi relativi   al test quando la pagina viene caricata
+            getMessagesForTest(testId);
+        });
+
+        function submitForm() {
+            var urlParams = new URLSearchParams(window.location.search);
+            var titolo = $('#Titolo').val();
+            var testo = $('#messaggio').val();
+            //var testId = urlParams.get('id');
+            var testId = 2
+
+            var formData = new FormData();
+            formData.append('message', JSON.stringify({titolo: titolo, testo: testo, testId: testId}));
+            formData.append('action', "send_student_message");
+
             $.ajax({
                 type: 'POST',
-                url:'../../DataBase-main/models/Message.php',
-                contentType: 'application/json', // Imposta il tipo di contenuto come JSON
-                data: JSON.stringify(formData), // Converte i dati del form in stringa JSON
+                url:'../controllers/utils/MessageController.php',
+                    contentType: false, // Importante per il corretto invio di FormData
+                    processData: false,
+                    data: formData, // Converte i dati del form in stringa JSON
                 success: function (response) {
                     console.log(response); // Gestisci la risposta qui
                 },
@@ -163,6 +212,8 @@
                 dataType: 'json' // Aspettati una risposta JSON
             });
         }
+
+
     </script>
     <footer>
         <p>Alma Mater Studiorum</p>

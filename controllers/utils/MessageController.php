@@ -23,11 +23,11 @@ switch ($method) {
             $data = "no data";
             switch ($endpoint) {
                 case 'get_messages': // GET di tutti i messaggi destinati a un utente
+                    $testId = $_GET['testId'];
                     if ($role == 'student') {
-                        $data = Message::getProfMessages();
+                        $data = Message::getProfMessages($testId);
                     }
                     if ($role == 'professor') {
-                        $testId = $_GET['testId'];
                         $data = Message::getStudentMessages($testId);
                     }
                     break;

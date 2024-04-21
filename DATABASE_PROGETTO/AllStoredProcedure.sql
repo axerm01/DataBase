@@ -272,13 +272,13 @@ IDTest = IDTestAtt
 END //
 
 CREATE PROCEDURE `ViewMessaggiDocente`(
-in MailDocenteAtt int
+in IDTestAtt int
 )
 BEGIN
 SELECT *
 FROM messaggio_docente
 WHERE
-MailDocente = MailDocenteAtt;
+    IDTest = IDTestAtt;
 END //
 DELIMITER //
 
