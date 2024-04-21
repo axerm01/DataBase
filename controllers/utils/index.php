@@ -1,16 +1,14 @@
 <?php
 session_start(); // Avvia la sessione
+include_once('connect.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];
     $role = $_POST['role'];
 
-    // Connessione al database, da modificare con param reali
-    include('connect.php');
     global $con;
-
-    // Preparazione e binding della query
+    // reparazione e binding della query
     if($role == 'professor'){
         $stmt = $con->prepare("SELECT password FROM Docente WHERE mail = ?");
     }
@@ -50,5 +48,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
     $con->close();
 }
-
-?>

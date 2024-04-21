@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('../../models/Message.php');
+include_once('../../models/users/Message.php');
 
 // Controlla se l'utente è loggato
 if(isset($_SESSION['email']) && isset($_SESSION['role'])){
@@ -27,7 +27,8 @@ switch ($method) {
                         $data = Message::getProfMessages();
                     }
                     if ($role == 'professor') {
-                        $data = Message::getStudentMessages($email);
+                        $testId = $_GET['testId'];
+                        $data = Message::getStudentMessages($testId);
                     }
                     break;
             }

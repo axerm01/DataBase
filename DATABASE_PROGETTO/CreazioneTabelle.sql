@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS `CODICE` (
   `Output` VARCHAR(45) DEFAULT NULL,
     `Descrizione` VARCHAR(45) DEFAULT NULL,
   `IDTest` INT NOT NULL,
-  `Difficolta` INT NOT NULL,
+  `Difficolta` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`ID`, `IDTest`),
   CONSTRAINT `FK_Codice_IDTest`
     FOREIGN KEY (`IDTest`)
@@ -165,7 +165,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `SCELTA_MULTIPLA` (
   `ID` INT NOT NULL,
   `Descrizione` VARCHAR(45) NOT NULL,
-  `Difficoltà` VARCHAR(45) NOT NULL,
+  `Difficolta` VARCHAR(45) NOT NULL,
   `NumRisposte` INT NOT NULL DEFAULT 0,
   `IDTest` INT NOT NULL,
   PRIMARY KEY (`ID`, `IDTest`),

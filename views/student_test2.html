@@ -337,9 +337,9 @@
             var mex = '{"testId":1, "titolo":"Mytitolo", "testo":"ciao ciao"}';
 
             $.ajax({
-                type: "POST",
-                url: "../controllers/utils/MessageController.php?action=send_prof_message",
-                data: { mex },
+                type: "GET",
+                url: "../controllers/test/TestController.php?action=get_test_content&testId=34",
+                data: { },
                 contentType: 'application/json',
                 success: function (response) {
                     console.log(response);

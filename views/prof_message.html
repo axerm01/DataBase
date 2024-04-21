@@ -152,53 +152,52 @@
 
     <script>
         function getMessagesForTest(testId) {
-            var urlParams = new URLSearchParams(window.location.search);
-            var testId = urlParams.get('id');
             $.ajax({
                 type: 'GET',
-                url: '.././controllers/utils/MessageController.php', // Inserisci l'URL del tuo endpoint per ottenere i messaggi
-                data: { action: 'get_messages' },
+                url: '../controllers/utils/MessageController.php?action=get_messages', // Inserisci l'URL del tuo endpoint per ottenere i messaggi
+                data: { action: 'get_messages', testId: testId },
                 success: function (response) {
                     // Visualizza i messaggi nella box dei messaggi
-                    $('#testMessages').html(response);
+                    console.log(response);
+                    var formattedText = "";
+                    response.forEach(function(message) {
+                        formattedText += "Titolo: " + message.Titolo + "<br>" +
+                            "Testo: " + message.Testo + "<br>" +
+                            "Data: " + message.Data + "<br>" +
+                            "ID Test: " + message.IDTest + "<br>" +
+                            "Mail Studente: " + message.MailStudente + "<br><br>";
+                    });
+                    $('#testMessages').html(formattedText);
                 },
                 error: function (xhr, status, error) {
                     console.error('Errore durante il recupero dei messaggi:', error);
                 }
             });
         }
-
         function submitForm() {
     var titolo = $('#Titolo').val();
     var testo = $('#messaggio').val();
-    var dataOra = new Date().toISOString(); // Ottiene la data e ora correnti nel formato ISO
 
     // Recupera i parametri dall'URL
     var urlParams = new URLSearchParams(window.location.search);
     var testId = urlParams.get('id');
-    var testNome = urlParams.get('titolo');
     var professorEmail = urlParams.get('mail');
-
-    var formData = {
-        message: {
-            titolo: titolo,
-            testo: testo,
-            testId: testId
-        }
-    };
+    var formData = new FormData();
+    formData.append('message', JSON.stringify({titolo: titolo, testo: testo, testId: testId}));
+    formData.append('action', "send_prof_message");
 
     $.ajax({
         method: 'POST',
-        url: '.././controllers/utils/MessageController.php?action=send_prof_message', // Modifica qui
-        contentType: 'application/json', // Imposta il tipo di contenuto come JSON
-        data: JSON.stringify(formData), // Converte i dati del form in stringa JSON
+        url: '../controllers/utils/MessageController.php',
+        contentType: false, // Importante per il corretto invio di FormData
+        processData: false,
+        data: formData, // Converte i dati del form in stringa JSON
         success: function (response) {
-            console.log(response); // Gestisci l    a risposta qui
+            console.log(response); // Gestisci la risposta qui
         },
         error: function (xhr, status, error) {
             console.error('Errore:', error);
-        },
-        dataType: 'json' // Aspettati una risposta JSON
+        }
     });
 }
 

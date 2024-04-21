@@ -320,14 +320,15 @@ IDTest = IDTestAtt
 END //
 
 CREATE PROCEDURE `ViewMessaggiStudente`(
-in MailStudenteAtt int
+in IDTestAtt int
 )
 BEGIN
 SELECT *
 FROM messaggio_Studente
 WHERE
-MailStudente = MailStudenteAtt;
-END //DELIMITER //
+IDTest = IDTestAtt;
+END
+//DELIMITER //
 
 CREATE PROCEDURE `CreateReference`( 
 in IDT1Att int,
@@ -385,7 +386,7 @@ in TestoAtt varchar(45),
 in ISCorrectAtt int
 )
 BEGIN
-INSERT INTO scelta (ID,Testo,IDTest,IDScMul, IsCorretta)
+INSERT INTO scelta (ID,Testo,IDTest,IDScMult, IsCorretta)
 VALUES (IDAtt,TestoAtt,IDTestAtt,IDScMulAtt, ISCorrectAtt);
 END //
 

@@ -1,6 +1,5 @@
 <?php
-include('../controllers/utils/connect.php');
-
+include_once('../../controllers/utils/connect.php');
 class Message {
 
     public static function getProfMessages() {
@@ -17,10 +16,10 @@ class Message {
         return $messages;
     }
 
-    public static function getStudentMessages($prof_email) {
+    public static function getStudentMessages($testId) {
         global $con; // Assumi che $con sia l'oggetto di connessione al database mysqli
         $stmt = $con->prepare("CALL ViewMessaggiStudente(?)");
-        $stmt->bind_param('s', $prof_email);
+        $stmt->bind_param('i', $testId);
         $stmt->execute();
 
         $result = $stmt->get_result();
@@ -43,13 +42,18 @@ class Message {
     }
 
     public static function sendProfMessage($testId, $prof_email, $titolo, $testo, $data) {
-        return "va bene";
         global $con; // Assumi che $con sia l'oggetto di connessione al database mysqli
-        $stmt = $con->prepare("CALL CreateMessaggioDocente(?, ?, ?, ?, ?)");
-        $stmt->bind_param('sssds', $titolo, $testo, $data, $testId, $prof_email);
+        $response = "All ok";
 
-        $result = $stmt->execute();
+        $stmt = $con->prepare("CALL CreateMessaggioDocente(?, ?, ?, ?, ?)");
+        if ($stmt === false) {
+            $response = "Errore nella preparazione della query: " . $con->error;
+        }
+        $stmt->bind_param('sssis', $titolo, $testo, $data, $testId, $prof_email);
+        if (!$stmt->execute()) {
+            $response = "Errore nell'esecuzione della query: " . $stmt->error;
+        }
         $stmt->close();
-        return $result;
+        return $response;
     }
 }
