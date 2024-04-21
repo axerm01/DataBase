@@ -22,19 +22,34 @@
             background-color: #f9f9f9; /* Set background color for the question box */
             margin-right: 10px;
         }
-        .question-test {
+        .question-test-code, .question-test-mc {
             width: 90%;
             margin-top: 10px;
             border: 1px solid #ccc; /* Add border around the question */
             border-radius: 5px; /* Add rounded corners for the question box */
             padding: 10px 20px 10px 20px; /* Add padding inside the question box */
             background-color: #f9f9f9; /* Set background color for the question box */
+        }
+        .question-test-code {
             text-align: center;
         }
-        .question-test p {
+        .question-test-mc {
+            text-align: left;
+        }
+        .question-test-code p, .question-test-mc p{
             font-size: 18px;
             font-weight: bold;
         }
+        .question-test-mc span{
+            margin-left: 8%;
+        }
+
+        .correct-answer {
+            color: green;
+            font-weight: bold;
+        }
+
+
         /* Styles for question input */
         .question-input {
             /*width: 500px; /* Make the input field occupy the full width of its container */
@@ -347,12 +362,13 @@
 
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const queryString = window.location.search;
-            const urlParams = new URLSearchParams(queryString);
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
 
-            const testTitolo = urlParams.get('titolo');
-            const testID = urlParams.get('id');
+        const testTitolo = urlParams.get('titolo');
+        const testID = urlParams.get('id');
+        document.addEventListener('DOMContentLoaded', function() {
+            
 
             // Seleziona l'elemento e aggiunge il titolo come nuovo nodo di testo
             const titleElement = document.getElementById('testTitle');
@@ -424,34 +440,53 @@
                     var questions = response.questions;
                     if (questions) {
                         questions.forEach(function(quest) {
-                            // Crea la tabella e aggiunge un'intestazione con il nome
-                            var container = $('<div></div>').addClass('question-test');
                             console.log(quest);
-                            var textQuestion = $("<p></p>").text("Quesito: " + quest.Descrizione);
-                            container.append(textQuestion);
-                            var difficultyQuestion = quest.Difficolta;
-                            //VISUALIZZARE LA DIFFICOLTà QUANDO è DATA COME ENUM
 
                             if(quest.type === 'code'){
+                                // Crea la tabella e aggiunge un'intestazione con il nome
+                                var container = $('<div></div>').addClass('question-test-code');
+                                var textQuestion = $("<p></p>").text("Quesito: " + quest.Descrizione + " ");
+                                container.append(textQuestion);
                                 $.ajax({
-                                type: 'POST', // Tipo di richiesta HTTP
-                                url: '../controllers/test/TestController.php',
-                                data: { query: quest.Output , action: 'test_query'}, // Dati inviati al server
-                                success: function(response) {
-                                    container.append(createTable(response));
-                                },
-                                error: function(xhr, status, error) {
-                                    // Gestione degli errori
-                                    if (xhr.status === 0) {
-                                        alert('Errore di rete durante la verifica del codice.');
-                                    } else {
-                                        alert('Errore durante la verifica del codice.');
-                                    }
-                                },
-                                dataType: 'json' // Tipo di dati attesi dalla risposta
-                            });
+                                    type: 'POST', // Tipo di richiesta HTTP
+                                    url: '../controllers/test/TestController.php',
+                                    data: { query: quest.Output , action: 'test_query'}, // Dati inviati al server
+                                    success: function(response) {
+                                        container.append(createTable(response));
+                                    },
+                                    error: function(xhr, status, error) {
+                                        // Gestione degli errori
+                                        if (xhr.status === 0) {
+                                            alert('Errore di rete durante la verifica del codice.');
+                                        } else {
+                                            alert('Errore durante la verifica del codice.');
+                                        }
+                                    },
+                                    dataType: 'json' // Tipo di dati attesi dalla risposta
+                                });
+                                var difficultyQuestion = $("<span></span>").text("Difficolta: " + quest.Difficolta);
+                                container.append(difficultyQuestion);
                             }else if(quest.type === 'mc'){
+                                // Crea la tabella e aggiunge un'intestazione con il nome
+                                var container = $('<div></div>').addClass('question-test-mc');
+                                var textQuestion = $("<p></p>").text("Quesito: " + quest.Descrizione);
+                                container.append(textQuestion);
+                                var difficultyQuestion = $("<span></span>").text("Difficolta: " + quest.Difficolta);
+                                container.append(difficultyQuestion);
+                                $.each(quest.answers, function(index, ans) {
+                                    console.log(ans.Testo)
+                                // Crea un elemento di lista per ogni risposta
+                                    var option = $('<p></p>').text(ans.Testo);
+                                    ///////////each per itinerare le opzioni delle risposte
+                                    // Se la risposta è corretta, aggiungi una spunta verde e la classe per lo stile
+                                    if (ans.IsCorretta === 1) {
+                                        option.append(' ✔').addClass('correct-answer');
+                                    }
+                                    container.append(option);
+                                });
                                 
+                                
+
                             }
                             //container.append(textQuestion);
                             $("#testContainer").append(container);
@@ -973,9 +1008,14 @@
             container.appendChild(questionDiv);
         }
 
-        function codeCheck() {
+        
+        function codeCheck(buttonElement) {
+            // Trova il contenitore della domanda relativo al bottone
+            const questionDiv = buttonElement.closest('.question');
+            // Trova il textarea all'interno di questo contenitore specifico
+            const textarea = questionDiv.querySelector('.code-textarea');
             // Ottenere il codice MySQL inserito dall'utente
-            const query = document.querySelector('.code-textarea').value;
+            const query = textarea.value;
 
             // Effettuare una chiamata AJAX per inviare il codice al server
             $.ajax({
@@ -1004,6 +1044,8 @@
                 dataType: 'json' // Tipo di dati attesi dalla risposta
             });
         }
+    </script>
+    <script>
         function showTableModal(response) {
             // Creazione della tabella come prima
             const table = createTable(response);
