@@ -113,6 +113,13 @@ FROM codice
 WHERE IDTest = IDTestAtt;
 END //
 
+CREATE PROCEDURE `ViewSqlCodice`(in IDTestAtt int)
+BEGIN
+SELECT codice.output
+FROM codice
+WHERE IDTest = IDTestAtt;
+END //
+
 CREATE PROCEDURE `ViewCodice`(in IDAtt int)
 BEGIN
 SELECT*
@@ -841,5 +848,12 @@ CREATE PROCEDURE DropSingleAnswer(IN IdAtt int, in testId int, IN IDScMultAtt in
 BEGIN
 DELETE FROM SCELTA
 WHERE ID = IdAtt and  IDTest = testId and IDScMult = IDScMultAtt;
-END //    
+END //
+
+CREATE PROCEDURE GetCorrectAnswers(in testId int)
+BEGIN
+SELECT IDScMult, ID FROM SCELTA
+WHERE IDTest = testId AND IsCorretta = TRUE;
+END //
+
 DELIMITER ;
