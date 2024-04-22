@@ -106,6 +106,7 @@
             padding: 8px 20px;
             border-radius: 5px;
             transition: background-color 0.3s;
+            margin-left: 10px;
         }
 
         /* Styles for delete answer button */
@@ -140,9 +141,10 @@
         .table-container {
             display: inline-block;
             flex-wrap: nowrap;
-            margin-top: 20px;
+            margin: 10px 5px 0px 5px;
             font-size: small;
             justify-content: center;
+            font-weight: bold;
         }
         table {
             display: inline-table; /* Mantiene le tabelle in linea */
@@ -152,6 +154,9 @@
         th, td {
             border: 1px solid #ddd; /* Stile dei bordi */
             padding: 5px; /* Padding delle celle */
+        }
+        td {
+            font-weight:lighter;
         }
 
         th {
@@ -265,7 +270,7 @@
             display: flex;
             align-items: center; /* Allinea verticalmente al centro */
         }
-
+        
     </style>
 </head>
 
@@ -436,52 +441,21 @@
                 var tableContainer = $("<div class='table-container'></div>").attr("id", "container-" + selectedID);
         
                 // Crea il bottone di eliminazione
-                var deleteButton = $("<button class='delete-button'>Elimina Tabella</button>");
+                var deleteButton = $("<button class='delete-button'>Elimina</button>");
                 deleteButton.click(function() {
                     // Rimuovi la tabella e il bottone dall'array tables e dal DOM
                     tables = tables.filter(table => table.id !== selectedID);
                     tableContainer.remove(); // Rimuovi il contenitore che include la tabella e il bottone
                     updateMenuTable1();// Aggiorna il menu a tendina delle tabelle
                 });
+                
                 // Aggiungi il bottone di eliminazione al contenitore della tabella
-                tableContainer.append(deleteButton);
+                tableContainer.append(selectedName, deleteButton);
                 tableContainer.append($("<br>"));
                 // Assuming the response is an array of objects, where each object represents a table row
                 // Create a table element
-                    var titleTable = selectedName;
-                    var headerTitle = $("<tr></tr>").addClass("title-row").append(`<th colspan="100%">${titleTable}</th>`);
-                    var viewTable = $("<table></table>").attr("id", "table-" + selectedID);
-                    viewTable.append(headerTitle);
-                    if (Array.isArray(response[0])) {
-                        // Estrai i nomi e inseriscili in un nuovo array
-                        let nomi = response[0].map(obj => obj.Nome);
-
-                        // Creazione dinamica delle intestazioni della tabella
-                        var headerRow = $('<tr></tr>');
-                        nomi.forEach(function(nome) {
-                            headerRow.append('<th>' + nome + '</th>');
-                        });
-                        viewTable.append(headerRow);
-                    } else {
-                        console.error('Formato JSON non valido');
-                    }
-
-                    var rows = response.slice(1); // per leggere dalla seconda riga in poi 
-
-                    // Add rows to the table based on received data
-                    $.each(rows, function(index, row) {
-                        var dataRow = '<tr>';
-                        // Per ogni proprietà dell'oggetto 'row', aggiungi una cella alla riga
-                        Object.keys(row).forEach(function(key) {
-                            dataRow += '<td>' + row[key] + '</td>';
-                        });
-                        dataRow += '</tr>';
-                        viewTable.append(dataRow);
-                    });
-
-                // Clear previous table container and add the new table
-                    tableContainer.append(viewTable);
-                    $("#menuContainer").append(tableContainer);
+                tableContainer.append(createTable(response));
+                $("#menuContainer").append(tableContainer);
                 // Expecting response in JSON format
             },
                 dataType: "json" // Specifica il tipo di dati attesi in risposta
@@ -489,6 +463,41 @@
                 var err = textStatus + ", " + error;
                 console.log("Request Failed: " + err);
             });
+        }
+        function createTable(response) {
+            // Assumi che tutti gli oggetti abbiano lo stesso set di chiavi
+            // Usa le chiavi del primo oggetto per le intestazioni delle colonne
+            const columns = Object.keys(response[1]);;
+    
+            const table = document.createElement('table');
+            table.className = 'custom-table';
+            
+            // Creazione delle intestazioni della tabella
+            const thead = document.createElement('thead');
+            const trHead = document.createElement('tr');
+            columns.forEach(colName => {
+                const th = document.createElement('th');
+                th.textContent = colName;
+                trHead.appendChild(th);
+            });
+            thead.appendChild(trHead);
+            table.appendChild(thead);
+
+            // Creazione del corpo della tabella
+            const tbody = document.createElement('tbody');
+            response.slice(1).forEach(obj => {
+                const tr = document.createElement('tr');
+                columns.forEach(column => {
+                    const td = document.createElement('td');
+                    td.textContent = obj[column];
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+
+            // Restituisce l'elemento <table> creato
+            return table;
         }
 
         function addConstraints() {
@@ -840,7 +849,7 @@
     <script>
         function showTableModal(response) {
             // Creazione della tabella come prima
-            const table = createTable(response);
+            const table = createTableModal(response);
 
             // Trova il contenitore della tabella nel modale e aggiungi la tabella
             const tableContainer = document.getElementById('tableContainer');
@@ -865,7 +874,7 @@
             };
         }
 
-        function createTable(response) {
+        function createTableModal(response) {
             // Assumi che tutti gli oggetti abbiano lo stesso set di chiavi
             // Usa le chiavi del primo oggetto per le intestazioni delle colonne
             const columns = response.length > 0 ? Object.keys(response[0]) : [];

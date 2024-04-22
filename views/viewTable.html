@@ -116,42 +116,45 @@
         background-color: #941b1b; /* Rosso più scuro al passaggio del mouse */
     }
 
-        /* Stile del modale */
-        .modal {
-            display: none; /* Nascosto di default */
-            position: fixed; /* Rimane fermo in posizione */
-            z-index: 1; /* Sopra tutto */
-            left: 0;
-            top: 0;
-            width: 100%; /* Larghezza */
-            height: 100%; /* Altezza piena */
-            overflow: auto; /* Abilita lo scroll se necessario */
-            background-color: rgb(0,0,0); /* Colore di sfondo */
-            background-color: rgba(0,0,0,0.4); /* Colore di sfondo con opacità */
-        }
+    /* Stile del modale */
+    .modal {
+        display: none; /* Nascosto di default */
+        position: fixed; /* Rimane fermo in posizione */
+        z-index: 1; /* Sopra tutto */
+        left: 0;
+        top: 0;
+        width: 100%; /* Larghezza */
+        height: 100%; /* Altezza piena */
+        overflow: auto; /* Abilita lo scroll se necessario */
+        background-color: rgb(0,0,0); /* Colore di sfondo */
+        background-color: rgba(0,0,0,0.4); /* Colore di sfondo con opacità */
+    }
 
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto; /* 15% dal top e centrato orizzontalmente */
-            padding: 20px;
-            border: 1px solid #888;
-            max-width: fit-content; /* Puoi regolare questa larghezza come preferisci */
-        }
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto; /* 15% dal top e centrato orizzontalmente */
+        padding: 20px;
+        border: 1px solid #888;
+        max-width: fit-content; /* Puoi regolare questa larghezza come preferisci */
+    }
 
-        .close-button {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
+    .close-button {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
 
-        .close-button:hover,
-        .close-button:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
+    .close-button:hover,
+    .close-button:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    .caption-table{
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
     </style>
 </head>
 
@@ -207,7 +210,7 @@
                         // Crea il bottone Visualizza
                         var viewButton = $("<button></button>").addClass("view").text("Visualizza");
                         viewButton.on("click", function() {
-                            viewTable(table.IDTabella);
+                            viewTable(table);
                         });
 
                         // Crea il bottone Elimina
@@ -234,15 +237,15 @@
             });
         });
 
-        function viewTable(tableId) {
-            console.log("Visualizza tabella con ID:", tableId);
+        function viewTable(table) {
+            console.log("Visualizza tabella con ID:", table.IDTabella);
             $.ajax({
             type: "GET",
             url: "../controllers/table/TableController.php?action=get_full_table",
-            data: { tableId: tableId },
+            data: { tableId: table.IDTabella },
             success: function(response) {
                 console.log(response);
-                showTableModal(response);
+                showTableModal(response, table.Nome);
             },
             dataType: "json"
             }).fail(function(jqxhr, textStatus, error) {
@@ -278,9 +281,9 @@
     </script>
     <script>
 
-        function showTableModal(response) {
+        function showTableModal(response, tName) {
             // Creazione della tabella come prima
-            const table = createTable(response);
+            const table = createTable(response, tName);
 
             // Trova il contenitore della tabella nel modale e aggiungi la tabella
             const tableContainer = document.getElementById('tableContainer');
@@ -305,17 +308,21 @@
             };
         }
 
-        function createTable(response) {
+        function createTable(response, tName) {
             // Assumi che tutti gli oggetti abbiano lo stesso set di chiavi
             // Usa le chiavi del primo oggetto per le intestazioni delle colonne
             const columns = Object.keys(response[1]);;
 
             const table = document.createElement('table');
             table.className = 'custom-table';
+            const caption = document.createElement('caption');
+            caption.textContent = tName;
+            caption.className = 'caption-table';
 
             // Creazione delle intestazioni della tabella
             const thead = document.createElement('thead');
             const trHead = document.createElement('tr');
+            thead.prepend(caption);
             columns.forEach(colName => {
                 const th = document.createElement('th');
                 th.textContent = colName;
@@ -326,7 +333,7 @@
 
             // Creazione del corpo della tabella
             const tbody = document.createElement('tbody');
-            response.forEach(obj => {
+            response.slice(1).forEach(obj => {
                 const tr = document.createElement('tr');
                 columns.forEach(column => {
                     const td = document.createElement('td');
