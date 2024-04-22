@@ -454,7 +454,9 @@
                 tableContainer.append($("<br>"));
                 // Assuming the response is an array of objects, where each object represents a table row
                 // Create a table element
-                tableContainer.append(createTable(response));
+                    const col = response.length > 1 ? Object.keys(response[1]) : [];
+                    //ultimo paramentro il nome è null perche preferisco inserirlo vicino al bottone
+                    tableContainer.append(createTableMain(response.slice(1),col,null));
                 $("#menuContainer").append(tableContainer);
                 // Expecting response in JSON format
             },
@@ -463,41 +465,6 @@
                 var err = textStatus + ", " + error;
                 console.log("Request Failed: " + err);
             });
-        }
-        function createTable(response) {
-            // Assumi che tutti gli oggetti abbiano lo stesso set di chiavi
-            // Usa le chiavi del primo oggetto per le intestazioni delle colonne
-            const columns = Object.keys(response[1]);;
-    
-            const table = document.createElement('table');
-            table.className = 'custom-table';
-            
-            // Creazione delle intestazioni della tabella
-            const thead = document.createElement('thead');
-            const trHead = document.createElement('tr');
-            columns.forEach(colName => {
-                const th = document.createElement('th');
-                th.textContent = colName;
-                trHead.appendChild(th);
-            });
-            thead.appendChild(trHead);
-            table.appendChild(thead);
-
-            // Creazione del corpo della tabella
-            const tbody = document.createElement('tbody');
-            response.slice(1).forEach(obj => {
-                const tr = document.createElement('tr');
-                columns.forEach(column => {
-                    const td = document.createElement('td');
-                    td.textContent = obj[column];
-                    tr.appendChild(td);
-                });
-                tbody.appendChild(tr);
-            });
-            table.appendChild(tbody);
-
-            // Restituisce l'elemento <table> creato
-            return table;
         }
 
         function addConstraints() {
@@ -849,7 +816,8 @@
     <script>
         function showTableModal(response) {
             // Creazione della tabella come prima
-            const table = createTableModal(response);
+            const col = response.length > 0 ? Object.keys(response[0]) : [];
+            const table = createTableMain(response, col, null);
 
             // Trova il contenitore della tabella nel modale e aggiungi la tabella
             const tableContainer = document.getElementById('tableContainer');
@@ -874,17 +842,19 @@
             };
         }
 
-        function createTableModal(response) {
-            // Assumi che tutti gli oggetti abbiano lo stesso set di chiavi
-            // Usa le chiavi del primo oggetto per le intestazioni delle colonne
-            const columns = response.length > 0 ? Object.keys(response[0]) : [];
-
+        function createTableMain(resp,columns,tName) {
             const table = document.createElement('table');
             table.className = 'custom-table';
-
+            const caption = document.createElement('caption');
+            caption.textContent = tName;
+            caption.className = 'caption-table';
+            
             // Creazione delle intestazioni della tabella
             const thead = document.createElement('thead');
             const trHead = document.createElement('tr');
+            if(caption.textContent){
+                thead.prepend(caption);
+            }
             columns.forEach(colName => {
                 const th = document.createElement('th');
                 th.textContent = colName;
@@ -895,7 +865,7 @@
 
             // Creazione del corpo della tabella
             const tbody = document.createElement('tbody');
-            response.forEach(obj => {
+            resp.forEach(obj => {
                 const tr = document.createElement('tr');
                 columns.forEach(column => {
                     const td = document.createElement('td');

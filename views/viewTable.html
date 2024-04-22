@@ -283,7 +283,8 @@
 
         function showTableModal(response, tName) {
             // Creazione della tabella come prima
-            const table = createTable(response, tName);
+            const col = response.length > 0 ? Object.keys(response[0]) : [];
+            const table = createTableMain(response.slice(1), col, tName);
 
             // Trova il contenitore della tabella nel modale e aggiungi la tabella
             const tableContainer = document.getElementById('tableContainer');
@@ -308,21 +309,19 @@
             };
         }
 
-        function createTable(response, tName) {
-            // Assumi che tutti gli oggetti abbiano lo stesso set di chiavi
-            // Usa le chiavi del primo oggetto per le intestazioni delle colonne
-            const columns = Object.keys(response[1]);;
-
+        function createTableMain(resp,columns,tName) {
             const table = document.createElement('table');
             table.className = 'custom-table';
             const caption = document.createElement('caption');
             caption.textContent = tName;
             caption.className = 'caption-table';
-
+            
             // Creazione delle intestazioni della tabella
             const thead = document.createElement('thead');
             const trHead = document.createElement('tr');
-            thead.prepend(caption);
+            if(caption.textContent){
+                thead.prepend(caption);
+            }
             columns.forEach(colName => {
                 const th = document.createElement('th');
                 th.textContent = colName;
@@ -333,7 +332,7 @@
 
             // Creazione del corpo della tabella
             const tbody = document.createElement('tbody');
-            response.slice(1).forEach(obj => {
+            resp.forEach(obj => {
                 const tr = document.createElement('tr');
                 columns.forEach(column => {
                     const td = document.createElement('td');
