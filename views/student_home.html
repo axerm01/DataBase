@@ -131,8 +131,8 @@
                 var status = $('<p>' + test.VisualizzaRisposte + '</p>');
 
                 var buttonContainer = $('<div class="button_student_home"></div>');
-                var enterButton = $('<button class="black-button" onclick="window.location.href=\'https://www.youtube.com/watch?v=dQw4w9WgXcQ\'">Avvia test</button>');
-                var messageButton = $('<button class="black-button" onclick="window.location.href=\'Student_message.html\'">Messaggi</button>');
+                var enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test.html?id=' + test.ID + '&titolo=' + encodeURIComponent(test.Titolo) + '&mail=' + encodeURIComponent(test.MailDocente)+'\'">Avvia test</button>');
+                var messageButton = $('<button class="black-button" onclick="window.location.href=\'student_message.html\'">Messaggi</button>');
 
                 buttonContainer.append(enterButton, messageButton);
                 testContainer.append(title, date, status, buttonContainer);
