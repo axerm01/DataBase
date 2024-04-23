@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizza Tabelle</title>
+    <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styleBACK.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <style>
+        .container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .box {
+            background-color: white;
+            margin-right: 5mm;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 30%;
+            /* Distribuzione uniforme su schermi di grandi dimensioni */
+            max-width: 350px;
+            /* Limita la larghezza per adattarsi a schermi più piccoli */
+        }
+
+        .table-container {
+            display: inline-block;
+            font-size: medium;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .buttons-container {
+            margin-top: 10px;
+        }
+
+        .buttons-container span {
+            display: block;
+            margin-top: 10px;
+            background-color: #15c11e;
+            padding: 6px 17px;
+            border-radius: 5px;
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+        .buttons-container span:hover {
+            filter: brightness(0.9);
+        }
+
+        #tableContainer {
+            margin-top: 20px;
+        }
+
+        .statistics-box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 5mm;
+            width: 100%; /* Larghezza al 100% della pagina */
+            box-sizing: border-box;
+            /* Spazio di mezzo centimetro tra il box delle statistiche e i box successivi */
+        }
+
+        .statistics-title {
+            font-weight: bold;
+            font-size: 24px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Studia con ESQL</h1>
+        <div class="indietro">
+            <span class="testo-indietro"><a href="javascript:history.back()">
+                    <img src="image/arrow.png" alt="Torna indietro" style="width: 25px; height: 25px;">
+                </a>Indietro</span>
+        </div>
+        <div class="logout-form">
+            <form action="../controllers/utils/logout.php" method="post">
+                <button type="submit" name="logout">Esci</button>
+            </form>
+        </div>
+    </header>
+    <div class="statistics-box">
+        <p class="statistics-title">Statistiche</p>
+    </div>
+    <div class="container">
+        <div class="box">
+            <div class="table-container">
+                <p class="title"><strong><em>Classifica Studenti</em></strong></p>
+            </div>
+            <div id="tableContainer1"></div>
+        </div>
+
+        <div class="box">
+            <div class="table-container">
+                <p class="title"><strong><em>Classifica Risposte</em></strong></p>
+            </div>
+            <div id="tableContainer2"></div>
+        </div>
+
+        <div class="box">
+            <div class="table-container">
+                <p class="title"><strong><em>Classifica Quesiti</em></strong></p>
+            </div>
+            <div id="tableContainer3"></div>
+        </div>
+    </div>
+
+    <script>
+        // Funzione per creare la tabella
+        function createTable(response, tName, containerId) {
+            const columns = Object.keys(response[1]);;
+
+            const table = document.createElement('table');
+            table.className = 'custom-table';
+            const caption = document.createElement('caption');
+            caption.textContent = tName;
+            caption.className = 'caption-table';
+
+            const thead = document.createElement('thead');
+            const trHead = document.createElement('tr');
+            thead.prepend(caption);
+            columns.forEach(colName => {
+                const th = document.createElement('th');
+                th.textContent = colName;
+                trHead.appendChild(th);
+            });
+            thead.appendChild(trHead);
+            table.appendChild(thead);
+
+            const tbody = document.createElement('tbody');
+            response.slice(1).forEach(obj => {
+                const tr = document.createElement('tr');
+                columns.forEach(column => {
+                    const td = document.createElement('td');
+                    td.textContent = obj[column];
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+
+            const tableContainer = document.getElementById(containerId);
+            tableContainer.innerHTML = '';
+            tableContainer.appendChild(table);
+        }
+    </script>
+
+    <footer>
+        <p>Alma Mater Studiorum</p>
+        <h3>Università di Bologna</h3>
+    </footer>
+</body>
+
+</html>
