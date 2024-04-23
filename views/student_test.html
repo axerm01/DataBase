@@ -541,8 +541,10 @@
 
     <script>
         function showTableModal(response) {
+            console.log(response);
             // Creazione della tabella come prima
-            const table = createTableModal(response);
+            const col = response.length > 0 ? Object.keys(response[0]) : [];
+            const table = createTableMain(response, col, null);
 
             // Trova il contenitore della tabella nel modale e aggiungi la tabella
             const tableContainer = document.getElementById('tableContainer');
@@ -567,17 +569,19 @@
             };
         }
 
-        function createTableModal(response) {
-            // Assumi che tutti gli oggetti abbiano lo stesso set di chiavi
-            // Usa le chiavi del primo oggetto per le intestazioni delle colonne
-            const columns = response.length > 0 ? Object.keys(response[0]) : [];
-
+        function createTableMain(resp,columns,tName) {
             const table = document.createElement('table');
             table.className = 'custom-table';
-
+            const caption = document.createElement('caption');
+            caption.textContent = tName;
+            caption.className = 'caption-table';
+            
             // Creazione delle intestazioni della tabella
             const thead = document.createElement('thead');
             const trHead = document.createElement('tr');
+            if(caption.textContent){
+                thead.prepend(caption);
+            }
             columns.forEach(colName => {
                 const th = document.createElement('th');
                 th.textContent = colName;
@@ -588,7 +592,7 @@
 
             // Creazione del corpo della tabella
             const tbody = document.createElement('tbody');
-            response.forEach(obj => {
+            resp.forEach(obj => {
                 const tr = document.createElement('tr');
                 columns.forEach(column => {
                     const td = document.createElement('td');
@@ -606,6 +610,7 @@
 
     
     <script>
+        /*
         function pickupData() {
             var sendDataTest = {
                 testId: testID, // VOLENDO POSSO PASSARE ANCHE L'ID----------------------------------------------------------------------------
@@ -671,7 +676,7 @@
             /*var imageFile = document.getElementById('testImage').files[0];
             if (imageFile) {
                 formData.append("testImage", imageFile);
-            }*/
+            }
 
             // Aggiunge l'action al FormData
             formData.append("action" , "update_test");
@@ -703,6 +708,7 @@
             e.preventDefault(); // Previene il comportamento di sottomissione standard del form
             submitFormTest();
         });
+        */
     </script>
 </body>
 <footer>
