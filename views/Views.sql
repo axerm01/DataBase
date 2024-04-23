@@ -12,7 +12,6 @@ WHERE Stato = 'completo'
 GROUP BY Matricola
 ORDER BY COUNT(*) DESC;
 
-
 /*giuste risposta scelta*/
 create view if not exists SceltePositive(
 Studente, RispostePositive
@@ -56,3 +55,27 @@ WHERE CP.Studente = SP.Studente and CN.Studente = SN.Studente and SN.Studente = 
 Group by Matricola
 Order BY count(*) desc
 
+/*visualizzare la classifica dei quesiti in base al numero di risposte inserite dagli studenti*/
+create view if not exists NumeroScMult (
+    idDomanda, nRisposte
+) AS
+select IDDomanda, count(*)
+from RISPOSTA_CODICE
+GROUP BY IDDomanda
+
+create view if not exists NumeroCodice (
+    idDomanda, nRisposte
+) AS
+select IDDomanda, count(*)
+from RISPOSTA_SCELTA
+GROUP BY IDDomanda
+
+
+/*query per richiamare l'ordine delle domande con più risposte*/
+SELECT *
+FROM (
+    SELECT * FROM NumeroScMult
+    UNION ALL
+    SELECT * FROM NumeroCodice
+) AS CombinedResults
+ORDER BY nRisposte ASC;
