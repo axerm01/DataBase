@@ -2,6 +2,7 @@
 include('../../controllers/utils/connect.php');
 include_once ('CodeQuestion.php');
 include_once ('MultipleChoiceQuestion.php');
+include_once ('Test.php');
 include_once ('../../models/relational/Table.php');
 include_once ('../../models/relational/Reference.php');
 
@@ -93,8 +94,10 @@ class StudentTest {
         }
 
         $references = Reference::getReferencesByTableIds($tableIDs);
+        $image = Test::getTestImage($testId);
 
         $test = [];
+        $test['image'] = $image;
         $test['questions'] = $questions;
         $test['tables'] = $tables;
         $test['references'] = $references;
@@ -154,8 +157,10 @@ class StudentTest {
         }
 
         $references = Reference::getReferencesByTableIds($tableIDs);
+        $image = Test::getTestImage($testId);
 
         $test = [];
+        $test['image'] = $image;
         $test['questions'] = $questions;
         $test['tables'] = $tables;
         $test['references'] = $references;

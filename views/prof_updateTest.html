@@ -374,12 +374,14 @@
 
     <script>
         var tables = []; //contine le tabelle usate
+        var elements = [];
+        var QID = 0;
 
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
 
         const testTitolo = urlParams.get('titolo');
-        const testID = urlParams.get('id');
+        const testID = parseInt(urlParams.get('id'), 10);
         document.addEventListener('DOMContentLoaded', function() {
             
 
@@ -407,6 +409,7 @@
                             //Cosi da non selezionarle ulteriormente.
                             var newT = {id: t[0].IDTabella, name: t[0].Nome};
                             tables.push(newT);
+                            elements.push(newT);
                             //console.log(tables);
                             // Crea la tabella e aggiunge un'intestazione con il nome
                             var container = $('<div></div>').addClass('tableContainer-test');
@@ -447,7 +450,7 @@
                     var questions = response.questions;
                     if (questions) {
                         questions.forEach(function(quest) {
-                            //console.log(quest);
+                            QID = quest.ID;
 
                             if(quest.type === 'code'){
                                 // Crea la tabella e aggiunge un'intestazione con il nome
@@ -1058,13 +1061,13 @@
         function pickupData() {
             var sendDataTest = {
                 testId: testID, // VOLENDO POSSO PASSARE ANCHE L'ID----------------------------------------------------------------------------
-                questions: [], // Questo sarà riempito con le domande
-                tables: tables, // Assumo che 'tables' sia già un array di oggetti come mostrato
+                questions_added: [], // Questo sarà riempito con le domande
+                tables: excludeElements(tables, elements), // Assumo che 'tables' sia già un array di oggetti come mostrato
                 constraints: [], // Questo dovrà essere riempito con i vincoli definiti
                 viewAnswersPermission: $('#viewAnswersPermission').is(':checked') // Raccoglie il valore del checkbox
             };
             // Raccoglie tutte le domande
-            let questionId = 1;
+            let questionId = QID+1;
             $('#questionsContainer .question').each(function() {
                 const questionType = $(this).data('question-type'); // Legge il tipo di domanda
                 const questionText = $(this).find('.question-input').val();
@@ -1079,10 +1082,10 @@
                         answers.push({ id: answerId, text: answerText, isCorrect: isCorrect });
                         answerId++;
                     });
-                    sendDataTest.questions.push({ type: "mc", id: questionId, questionText: questionText, answers: answers, difficulty: difficultyLevel });
+                    sendDataTest.questions_added.push({ type: "mc", id: questionId, questionText: questionText, answers: answers, difficulty: difficultyLevel });
                 } else if (questionType === 'code') {
                     var sqlCode = $(this).find('.code-textarea').val();
-                    sendDataTest.questions.push({ type: "code", id: questionId, questionText: questionText, sqlCode: sqlCode, difficulty: difficultyLevel });
+                    sendDataTest.questions_added.push({ type: "code", id: questionId, questionText: questionText, sqlCode: sqlCode, difficulty: difficultyLevel });
                 }
                 questionId++;
             });
@@ -1106,6 +1109,11 @@
             });
             console.log(sendDataTest);
             return sendDataTest;
+        }
+
+        // Funzione per filtrare 'tables' escludendo gli oggetti presenti in 'elements'.
+        function excludeElements(tables, elements) {
+            return tables.filter(table => !elements.some(element => element.id === table.id));
         }
 
         function submitFormTest() {
@@ -1132,14 +1140,11 @@
                 contentType: false, // Importante per il corretto invio di FormData
                 processData: false,
                 success: function(response) {
-                    let object = {};
-                    formData.forEach(function(value, key){
-                        object[key] = value;
-                    });
-                    console.log(JSON.stringify(sendDataTest));
+
+                    console.log(response);
                     //console.log(JSON.stringify(object, null, 2));
                     alert(response); //risposta del server
-                    //window.location.reload(); // ricarica pagina
+                    window.location.reload(); // ricarica pagina
                 },
                 error: function(xhr, status, error) {
                     console.error("Errore durante l'invio dei dati:", status, error);

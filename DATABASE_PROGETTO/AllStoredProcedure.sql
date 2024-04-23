@@ -666,14 +666,12 @@ SET IDAtt = LAST_INSERT_ID();
 END //
 
 CREATE PROCEDURE `UpdateVisualizzaRisposteTest`(
-in TitoloAtt varchar(45),
-in VisualizzaRisposteAtt boolean,
-in MailDocenteAtt varchar(45)
+in IDAtt int
 )
 BEGIN
 UPDATE test
-SET VisualizzaRisposte = VisualizzaRisposteAtt
-WHERE MailDocente = MailDocenteAtt and Titolo = TitoloAtt;
+SET VisualizzaRisposte = true;
+WHERE ID = IDAtt;
 END //
 
 CREATE PROCEDURE `ViewTest`(

@@ -344,7 +344,7 @@
         const urlParams = new URLSearchParams(queryString);
 
         const testTitolo = urlParams.get('titolo');
-        const testID = urlParams.get('id');
+        const testID = parseInt(urlParams.get('id'), 10);
         document.addEventListener('DOMContentLoaded', function() {
             
 
@@ -358,10 +358,10 @@
             }
             $.ajax({
                 type: "GET",
-                url: "../controllers/test/TestController.php?action=get_test_content",
+                url: "../controllers/test/StudentTestController.php?action=resume_test",
                 data: { testId: testID },
                 success: function(response) {
-                    //console.log(response);
+                    console.log(response);
 
                     // Estrai l'array 'tables' dalla risposta
                     var usedTables = response.tables;
@@ -486,6 +486,9 @@
                     }
                 },
                 dataType: "json"
+            }).fail(function(jqxhr, textStatus, error) {
+                var err = textStatus + ", " + error;
+                console.log("Request Failed: " + err);
             });
         });
     

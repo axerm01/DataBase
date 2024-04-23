@@ -58,9 +58,11 @@ switch ($method) {
                     break;
 
                 case 'update_test':
-                    $data = $_POST['data'];
+                    $jsondata = $_POST['data'];
+                    $data = json_decode($jsondata, true);
                     $testId = $data['testId'];
                     $response = updateTest($data, $testId);
+                    echo json_encode($response);
                     break;
             }
         } else {
@@ -165,16 +167,14 @@ function saveTest($data, $image) {
 
     return $response;
 }
-function updateTest($data, $testId) {
+function updateTest($decodedData, $testId) {
     try {
-        // Decodifica il JSON ricevuto
-        $decodedData = json_decode($data, true);
-
-        if (array_key_exists('title', $decodedData)) {
+        //per ora non possibile da frontend
+        if (array_key_exists('title', $decodedData) && !empty($decodedData['title'])) {
             Test::updateTestTitle($testId, $decodedData['title']);
         }
 
-        if (array_key_exists('tables', $decodedData)) {
+        if (array_key_exists('tables', $decodedData) && !empty($decodedData['tables'])) {
             $tableIDs = [];
             foreach ($decodedData['tables'] as $table) {
                 $tableIDs[] = $table['id'];
@@ -182,7 +182,7 @@ function updateTest($data, $testId) {
             Test::linkTablesToTest($tableIDs, $testId);
         }
 
-        if (array_key_exists('constraints', $decodedData)) {
+        if (array_key_exists('constraints', $decodedData) && !empty($decodedData['constraints'])) {
             foreach ($decodedData['constraints'] as $referenceData) {
                 if (isset($referenceData['tab1'], $referenceData['tab2'], $referenceData['att1'], $referenceData['att2'])) {
                     Reference::saveReferenceData($referenceData['tab1'], $referenceData['tab2'], $referenceData['att1'], $referenceData['att2']);
@@ -190,7 +190,8 @@ function updateTest($data, $testId) {
             }
         }
 
-        if (array_key_exists('questions_updated', $decodedData)) {
+        //per ora non possibile da frontend
+        if (array_key_exists('questions_updated', $decodedData) && !empty($decodedData['questions_updated'])) {
             $updated = $decodedData['questions_updated'];
             // Sezione dedicata all'aggiornamento delle domande relative al Test
                 foreach ($updated as $questionData) {
@@ -231,7 +232,7 @@ function updateTest($data, $testId) {
                 }
             }
 
-        if (array_key_exists('questions_added', $decodedData)) {
+        if (array_key_exists('questions_added', $decodedData) && !empty($decodedData['questions_added'])) {
             $added = $decodedData['questions_added'];
                 foreach ($added as $questionData) {
                     if ($questionData['type'] == 'code') {
@@ -242,7 +243,8 @@ function updateTest($data, $testId) {
                 }
         }
 
-        if (array_key_exists('deleted', $decodedData)) {
+        //per ora non possibile da frontend
+        if (array_key_exists('deleted', $decodedData) && !empty($decodedData['deleted'])) {
             $deleted = $decodedData['deleted'];
             if (array_key_exists('tables', $deleted)) {
                 $tableIDs = [];
@@ -267,6 +269,10 @@ function updateTest($data, $testId) {
                     }
                 }
             }
+        }
+
+        if ($decodedData['viewAnswersPermission'] == true){
+            Test::updateVisualizzaRisposte($testId);
         }
 
         $response = 'Updated correctly';

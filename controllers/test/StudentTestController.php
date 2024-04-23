@@ -51,20 +51,19 @@ switch ($method) {
     case 'POST':
         if (isset($_POST['action']) && isset($_POST['testId'])){
             $action = $_POST['action'];
-            //$email = $_SESSION['email'];
-            $email = $_POST['email'];
+            $email = $_SESSION['email'];
+            //$email = $_POST['email'];
             $testId = $_POST['testId'];
 
             switch ($action) {
                 case 'create_student_test':
-                    $dataPrima = $_POST['data_prima'];
-                    $dataUltima = $_POST['data_ultima'];
                     //$response = $dataPrima.', '.$dataUltima.', '.$testId.', '.$email;
-                    $response = StudentTest::saveStudentTestData($dataPrima, $dataUltima, $testId, $email);
+                    $response = StudentTest::saveStudentTestData($testId, $email);
                     echo json_encode($response);
                     break;
 
                 case 'save_response':
+
                     $stringAnswers = json_decode($_POST['student_answers'], true);
                     $answers = $stringAnswers['answers'];
                     $response = StudentAnswer::saveStudentAnswers($answers, $testId, $email);

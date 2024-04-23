@@ -119,6 +119,32 @@ class Test {
         return StudentTest::start($testId);
     }
 
+    public static function getTestImage($testId){
+        global $con;
+        $q = 'CALL ViewFoto(?);';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            return ("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('i', $testId );
+        if (!$stmt->execute()) {
+            return ("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+
+        $result = $stmt->get_result();
+        $data = [];
+
+        while ($row = $result->fetch_assoc()) {
+            // Per i dati BLOB, considera la necessità di elaborarli prima di aggiungerli all'array $data
+            $row['Foto'] = base64_encode($row['Foto']); // Codifica il BLOB in base64 se intendi inviarlo al client, ad esempio per visualizzarlo come immagine
+            $data[] = $row; // Aggiunge ogni riga all'array $data
+        }
+
+        $stmt->close();
+
+        return $data;
+    }
+
     public static function updateTestTitle($testId, $title) {
         global $con; // Assumi che $con sia la tua connessione al database (mysqli)
 
@@ -144,6 +170,31 @@ class Test {
         return "Aggiornamento del titolo completato con successo.";
     }
 
+    public static function updateVisualizzaRisposte($testId) {
+        global $con; // Assumi che $con sia la tua connessione al database (mysqli)
+
+        // Preparazione della query SQL
+        $stmt = $con->prepare("CALL UpdateVisualizzaRisposteTest(?)");
+
+        // Verifica se la preparazione della query ha avuto successo
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+
+        // Associa i parametri alla query preparata
+        $stmt->bind_param('i', $testId);
+
+        // Esegui la query
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+
+        // Chiusura dello statement
+        $stmt->close();
+
+        return "Aggiornato Visualizza Risoste a True";
+    }
+
     public static function deleteTableTestLink($list, $testId){
         global $con;
         try {
@@ -166,6 +217,8 @@ class Test {
         // Chiudi lo statement e la connessione
         $stmt->close();
     }
+
+
 
 
 }
