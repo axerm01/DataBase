@@ -115,7 +115,7 @@ END //
 
 CREATE PROCEDURE `ViewSqlCodice`(in IDTestAtt int)
 BEGIN
-SELECT codice.output
+SELECT codice.ID, codice.Output
 FROM codice
 WHERE IDTest = IDTestAtt;
 END //

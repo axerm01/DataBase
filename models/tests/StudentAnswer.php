@@ -34,6 +34,7 @@ class StudentAnswer
         $response = 'saved ok';
 
         $esiti = StudentAnswer::calcolaEsitoRisposte($answers, $testId);
+
         if($esiti == 'Query non consentita'){
             return $esiti;
         }
@@ -42,15 +43,16 @@ class StudentAnswer
 
         try {
             foreach ($answers as $id => $answer) {
+                $id++;
                 if ($answer['type'] === 'mc') {
                     // Utilizza la stored procedure per le risposte a scelta multipla
                     $stmt = $con->prepare("CALL CreateRispostaStudente(?, ?, ?, ?, ?)");
-                    $stmt->bind_param('siiii', $email, $testId, $answer['IDDomanda'], $answer['Response'], $esiti[$id]);
+                    $stmt->bind_param('siiii', $email, $testId, $answer['id'], $answer['answerId'], $esiti[$id]);
                     $response = 'updated mc, ';
                 } elseif ($answer['type'] === 'code') {
                     // Utilizza la stored procedure per le risposte di tipo codice
                     $stmt = $con->prepare("CALL CreateCodiceStudente(?, ?, ?, ?, ?)");
-                    $stmt->bind_param('siisi', $email, $testId, $answer['IDDomanda'], $answer['Response'], $esiti[$id]);
+                    $stmt->bind_param('siisi', $email, $testId, $answer['id'], $answer['sqlCode'], $esiti[$id]);
                     $response .= 'updated code, ';
                 }
 
@@ -65,7 +67,7 @@ class StudentAnswer
 
         } catch (Exception $e) {
             mysqli_rollback($con);
-            $response =  "Errore: " . $e->getMessage();
+            $response =  "Errore1: " . $e->getMessage();
             // Gestione ulteriore dell'errore
         }
         return $response;
@@ -82,12 +84,12 @@ class StudentAnswer
                 if ($answer['type'] === 'mc') {
                     // Utilizza la stored procedure per le risposte a scelta multipla
                     $stmt = $con->prepare("CALL UpdateRispostaStudente(?, ?, ?, ?, ?)");
-                    $stmt->bind_param('siiii', $email, $answer['IDDomanda'], $testId, $answer['Response'], $answer['Esito']);
+                    $stmt->bind_param('siiii', $email, $answer['id'], $testId, $answer['answerId'], $answer['Esito']);
                     $response .= 'updated mc, ';
                 } elseif ($answer['type'] === 'code') {
                     // Utilizza la stored procedure per le risposte di tipo codice
                     $stmt = $con->prepare("CALL UpdateCodiceStudente(?, ?, ?, ?, ?)");
-                    $stmt->bind_param('siisi', $email,  $answer['IDDomanda'], $testId, $answer['Response'], $answer['Esito']);
+                    $stmt->bind_param('siisi', $email,  $answer['id'], $testId, $answer['sqlCode'], $answer['Esito']);
                     $response .= 'updated code, ';
                 }
                 else {
@@ -104,27 +106,27 @@ class StudentAnswer
             mysqli_commit($con);
         } catch (Exception $e) {
             mysqli_rollback($con);
-            $response =  "Errore: " . $e->getMessage();
+            $response =  "Errore2: " . $e->getMessage();
             // Gestione ulteriore dell'errore
         }
         return $response;
     }
 
-    public static function calcolaEsitoRisposte($answers, $testId){
+    public static function calcolaEsitoRispostex($answers, $testId){
         global $con;
         $results = [];
 
         // Chiamata alla stored procedure per ottenere le risposte corrette
-        $stmt = $con->prepare("CALL getCorrectAnswers(?)");
+        $stmt = $con->prepare("CALL GetCorrectAnswers(?)");
         $stmt->bind_param("i", $testId);
         $stmt->execute();
         $result = $stmt->get_result();
-
-        // Associa le risposte corrette in un array per un facile accesso
         $correctMCAnswers = [];
         while ($row = $result->fetch_assoc()) {
             $correctMCAnswers[$row['IDScMult']] = $row['ID'];
         }
+        $stmt->close();
+
 
         $stmt = $con->prepare("CALL ViewSqlCodice(?)");
         $stmt->bind_param("i", $testId);
@@ -134,19 +136,18 @@ class StudentAnswer
         while ($row = $result->fetch_assoc()) {
             $correctCodeAnswers[$row['ID']] = $row['Output'];
         }
+        $stmt->close();
+
 
         // Confronta le risposte dell'utente con le risposte corrette
-        foreach ($answers as $questionId => $userAnswer) {
-            if ($userAnswer['type'] === 'mc') {
-                if (array_key_exists($questionId, $correctMCAnswers)) {
-                    $results[$questionId] = ($userAnswer['Response'] == $correctMCAnswers[$questionId]);
-                } else {
-                    // Se non esiste una risposta corretta, considera la risposta come errata
-                    $results[$questionId] = false;
+        $questionId = 0;
+        foreach ($answers as $userAnswer) {
+            $questionId++;
+            if (($userAnswer['type'] === 'mc') && (in_array($questionId, $correctMCAnswers))) {
+                    $results[$questionId] = ($userAnswer['answerId'] == $correctMCAnswers[$questionId]);
                 }
-            } elseif ($userAnswer['type'] === 'code') {
-                if (array_key_exists($questionId, $correctCodeAnswers)) {
-                    $q = $userAnswer['Response'];
+            elseif (($userAnswer['type'] === 'code') && (in_array($questionId, $correctCodeAnswers))) {
+                    $q = $userAnswer['sqlCode'];
                     if (stripos($q, 'INSERT') !== false || stripos($q, 'DROP') !== false || stripos($q, 'DELETE') !== false || stripos($q, 'UPDATE') !== false) {
                         return 'Query non consentita';
                     }
@@ -164,16 +165,94 @@ class StudentAnswer
                     }
 
                     $results[$questionId] = ($results1 === $results2);
+            }
+            else {
+                $results[$questionId] = 1;
+            }
+        }
 
+        return $results;
+    }
+
+    public static function calcolaEsitoRisposte($answers, $testId) {
+        global $con;
+        $results = [];
+
+        // Ottieni le risposte corrette usando una funzione dedicata
+        $correctMCAnswers = self::getCorrectMCAnswers($testId, $con);
+        $correctCodeAnswers = self::getCorrectCodeAnswers($testId, $con);
+
+        // Confronta le risposte dell'utente con le risposte corrette
+        foreach ($answers as $questionId => $userAnswer) {
+            $questionId++;
+            if ($userAnswer['type'] === 'mc') {
+                // Gestione delle risposte a scelta multipla
+                $results[$questionId] = isset($correctMCAnswers[$questionId]) &&
+                    $userAnswer['answerId'] == $correctMCAnswers[$questionId];
+            } elseif ($userAnswer['type'] === 'code') {
+                // Gestione delle risposte di codice
+                if (isset($correctCodeAnswers[$questionId]) && self::isSafeQuery($userAnswer['sqlCode'])) {
+                    $results[$questionId] = self::compareSqlResults($userAnswer['sqlCode'], $correctCodeAnswers[$questionId], $con);
                 } else {
-                    // Se non esiste una risposta corretta, considera la risposta come errata
                     $results[$questionId] = false;
                 }
             }
         }
 
-        $stmt->close();
         return $results;
+    }
+
+    private static function getCorrectMCAnswers($testId, $con) {
+        $stmt = $con->prepare("CALL getCorrectAnswers(?)");
+        $stmt->bind_param("i", $testId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $correctAnswers = [];
+        while ($row = $result->fetch_assoc()) {
+            $correctAnswers[$row['IDScMult']] = $row['ID'];
+        }
+        $stmt->close();
+        return $correctAnswers;
+    }
+
+    private static function getCorrectCodeAnswers($testId, $con) {
+        $stmt = $con->prepare("CALL ViewSqlCodice(?)");
+        $stmt->bind_param("i", $testId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $correctAnswers = [];
+        while ($row = $result->fetch_assoc()) {
+            $correctAnswers[$row['ID']] = $row['Output'];
+        }
+        $stmt->close();
+        return $correctAnswers;
+    }
+
+    private static function isSafeQuery($query) {
+        // Verifica la sicurezza della query (evita SQL Injection e comandi dannosi)
+        $disallowed = ['INSERT', 'DROP', 'DELETE', 'UPDATE', 'ALTER', 'CREATE', 'GRANT'];
+        foreach ($disallowed as $keyword) {
+            if (stripos($query, $keyword) !== false) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static function compareSqlResults($userQuery, $correctQuery, $con) {
+        // Esecuzione delle query in modo sicuro e confronto dei risultati
+        $userData = self::executeQuery($userQuery, $con);
+        $correctData = self::executeQuery($correctQuery, $con);
+        return $userData == $correctData; // Confronta gli array dei risultati
+    }
+
+    private static function executeQuery($query, $con) {
+        $result = $con->query($query);
+        $data = [];
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;
+        }
+        return $data;
     }
 
 }
