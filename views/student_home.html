@@ -8,57 +8,143 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="styleBACK.css">
     <style>
-        .attributes_student h4, .Test_List p {
-            width: 22%;
-             float: inline-start;
-             text-align:center;
-             margin: 20px 10px;
-             flex-wrap: nowrap;
-        }
-        .attributes_student {
-            width: 80%;
-            padding: 20px;
-            display: inline-block;
-            margin-right: 250px;
-            margin-left: 250px;
+        .home-student-container{
             background-color: #fff;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-        }
-        .button_student_home{
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 0px 20px 0px 20px;
+            text-align: center;
+            width: 80%;
             flex-grow: 0;
-            width: 35%;
             display: flex;
-            float: right;
-            flex-direction: row; /* Modifica da column a row */
-            justify-content: flex-end; /* Aggiunto per centrare i bottoni orizzontalmente */
-            flex-wrap:nowrap; /* Aggiunto per permettere ai bottoni di andare a capo se non c'è abbastanza spazio */
+            flex-direction: column;
         }
-        .Test_List{
+        .home-student-container span{
+            font-weight: bold;
+            font-size: medium;
+            margin-top: 10px;
+        }
+        .test-list {
             width: 80%;
             padding: 20px;
-            margin-right: 265px;
-            margin-left: 265px;
+            margin: auto;
             border: 2px solid #ccc;
             border-radius: 5px;
+            display: flex;
+            flex-direction: column; /* Organizza i contenitori dei test in colonna */
+        }
+        .test-inProgress, .test-open,
+        .test-new, .test-close{
+            width: 100%;
+            margin: 2px 0px 2px 0px;
+            border: 5px solid #ccc;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+        }
+        .test-inProgress span, .test-open span,
+        .test-new span, .test-close span{
+            color: #fff;
+        }
+        
+        .test-header {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            padding: 0 10px;
+        }
+
+        .test-header-60, .test-header-40 {
+            display: flex;
+            justify-content: space-between;
+            flex: 1;
+        }
+
+        .test-header-60 h4 {
+            flex: 1;
+            text-align: center;
+            margin: 0;
+        }
+
+        .test-header-40 {
+            flex: 0 1 30%; /* Assegna il 40% della larghezza all'header delle azioni */
+            justify-content: flex-end; /* Allinea il contenuto a destra */
+        }
+        .test-header-60 {
+            flex: 1 0 70%; /* Assegna il 40% della larghezza all'header delle azioni */
+            justify-content: flex-end; /* Allinea il contenuto a destra */
+            margin-left: 2%;
+        }
+
+        .test-header-40 h4 {
+            width: 100%;
+            text-align: center;
+            margin: 0;
         }
         .test-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center; /* Centra verticalmente il contenuto */
+            padding: 10px 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .test-details {
+            display: flex;
+            flex: 1 0 75%;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .test-details p {
+            flex: 1; /* Permette ai dettagli di espandersi equamente */
+            text-align: center;
+            margin: 0;
+        }
+        .button-container {
+            flex: 0 1 25%; /* Assegna esplicitamente il 40% della larghezza */
+            display: flex;
+            flex-wrap: wrap; /* Permette ai bottoni di andare a capo se non ci stanno */
+            justify-content: center;
+            gap: 10px; /* Distanza tra i bottoni */
+        }
+
+        .button-container button {
             padding: 10px;
-            background-color: #fff; /* Aggiungi lo sfondo bianco */
-            border-radius: 5px; /* Aggiungi il bordo arrotondato */
-            margin-bottom: 10px; /* Aggiungi il margine inferiore */
-            overflow: hidden; /* Aggiungi overflow per gestire altezze variabili */
+            white-space: nowrap; /* Evita che il testo del bottone vada a capo */
         }
-        .test-container p, .button_student_home {
-            float: left; /* Metti i valori su una riga */
-            width: 22%; /* Assegna larghezza fissa ai valori */
+        /*Munu a tendina*/
+        .selector-container {
+            margin: 0px;
+            padding: 5px;
+            text-align: center;
         }
-        .test-container .button_student_home {
-            float: right; /* Allinea i bottoni a destra */
+
+        #filter-tests {
+            padding: 8px 16px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            background-color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
-        .button_student_home button {
-            margin-left: 10px; /* Aggiungi margine tra i bottoni */
+
+        #filter-tests:hover {
+            border-color: #555555;
         }
+
+        #filter-tests:focus {
+            outline: none;
+            border-color: #2b2b2b;
+        }
+
+        #filter-tests option {
+            padding: 10px;
+            background: white;
+            color: black;
+        }
+
     </style>
 </head>
 
@@ -78,19 +164,83 @@
         </div>
     </header>
 
-    <div class="home-container">
-        <h2>Home Studente</h2> 
-        <h3> I TUOI TEST</h3>    
+    <div class="home-student-container">
+        <span>Home Studente</span>
+        <span> I TUOI TEST</span>  
+        <div class="selector-container">
+            <select id="filter-tests">
+                <option value="all">Mostra Tutti</option>
+                <option value="test-inProgress">In Progress</option>
+                <option value="test-open">Open</option>
+                <option value="test-new">New</option>
+                <option value="test-close">Close</option>
+            </select>
+        </div>  
+    </div>
+
+    <div class="test-list">
+        <div class="test-inProgress">
+            <span>in Progress..</span>
+            <div class="test-header">
+                <div class="test-header-60">
+                    <h4>Titolo</h4>        
+                    <h4>Data Inizio</h4>
+                    <h4>Stato Test</h4>
+                </div>
+                <div class="test-header-40">
+                    <h4>Azioni</h4> 
+                </div>
+            </div>
+        </div>
+        <div class="test-open">
+            <span>Open..</span>
+            <div class="test-header">
+                <div class="test-header-60">
+                    <h4>Titolo</h4>        
+                    <h4>Data Inizio</h4>
+                    <h4>Stato Test</h4>
+                </div>
+                <div class="test-header-40">
+                    <h4>Azioni</h4> 
+                </div>
+            </div>
+        </div>
+        <div class="test-new">
+            <span>New..</span>
+            <div class="test-header">
+                <div class="test-header-60">
+                    <h4>Titolo</h4>        
+                    <h4>Data Inizio</h4>
+                    <h4>Stato Test</h4>
+                </div>
+                <div class="test-header-40">
+                    <h4>Azioni</h4> 
+                </div>
+            </div>
+        </div>
+        <div class="test-close">
+            <span>Close.</span>
+            <div class="test-header">
+                <div class="test-header-60">
+                    <h4>Titolo</h4>        
+                    <h4>Data Inizio</h4>
+                    <h4>Stato Test</h4>
+                </div>
+                <div class="test-header-40">
+                    <h4>Azioni</h4> 
+                </div>
+            </div>
+        </div>
     </div>
     
-    <div class ="attributes_student">
+    <!--<div class ="attributes_student">
         <h4>Titolo</h4>        
         <h4>Data Inizio</h4>
         <h4>Stato Test</h4>
     </div>
 
     <div class="Test_List"> 
-    </div>
+    </div>-->
     <footer>
         <p>Alma Mater Studiorum</p>
         <h3>Università di Bologna</h3>
@@ -99,44 +249,106 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>  
         $(document).ready(function() {
-            // Effettua una richiesta AJAX per ottenere i dati dei test
-            $.ajax({
-                type: "GET",
-                url: "../controllers/test/StudentTestController.php",
-                data: { 
-                    action: 'get_all_tests',
-                    prof_email: 'Docente@unibo.it'
-                },
-                success: function(response) {
-                    // Una volta ottenuti i dati, popola la sezione dei test
-                    populateTestList(response);
-                },
-                dataType: "json"
+            
+            var started = [];
+
+            // Prima definisco le chiamate come funzioni che ritornano $.ajax
+            function fetchTests(filter, testClass) {
+                return $.ajax({
+                    type: "GET",
+                    url: "../controllers/test/StudentTestController.php",
+                    data: { action: 'get_filtered_tests', filter: filter },
+                    dataType: "json",
+                    success: function(response) {
+                        console.log(response);
+                        var test = $(testClass);
+                        populateTestList(response, test);
+                        started = started.concat(response);
+                    }
+                });
+            }
+
+            // Uso $.when per assicurarmi che tutte e tre le chiamate precedenti siano completate
+            $.when(
+                fetchTests('InProgress', '.test-inProgress'),
+                fetchTests('Open', '.test-open'),
+                fetchTests('Close', '.test-close')
+            ).then(function() {
+                // Ora faccio la chiamata get_all_tests
+                $.ajax({
+                    type: "GET",
+                    url: "../controllers/test/StudentTestController.php",
+                    data: { action: 'get_all_tests' },
+                    dataType: "json",
+                    success: function(response) {
+                        console.log(response);
+                        var test = $('.test-new');
+                        // Rimuovo da response i test già visualizzati
+                        var newT = response.filter(item => !started.includes(item));
+                        populateTestList(newT, test);
+                    }
+                }).fail(function(jqxhr, textStatus, error) {
+                    var err = textStatus + ", " + error;
+                    console.log("Request Failed: " + err);
+                });
             }).fail(function(jqxhr, textStatus, error) {
                 var err = textStatus + ", " + error;
                 console.log("Request Failed: " + err);
             });
+
+            // Aggiunta del nuovo gestore eventi per il menu a tendina
+            $('#filter-tests').change(function() {
+                var selectedFilter = $(this).val(); // Ottiene l'opzione selezionata
+
+                // Nasconde tutti i contenitori di test
+                $('.test-inProgress, .test-open, .test-new, .test-close').hide();
+
+                // Mostra solo il contenitore selezionato, a meno che l'opzione non sia 'all'
+                if (selectedFilter === 'all') {
+                    $('.test-inProgress, .test-open, .test-new, .test-close').show();
+                } else {
+                    $('.' + selectedFilter).show();
+                }
+            });
         });
 
-        // Funzione per popolare la sezione dei test con i dati ottenuti dalla richiesta AJAX
-        function populateTestList(tests) {
-            var testList = $('.Test_List');
 
+        // Funzione per popolare la sezione dei test con i dati ottenuti dalla richiesta AJAX
+        function populateTestList(tests, testZone) {
             // Per ogni test, crea un contenitore div e aggiungi i dati
             $.each(tests, function(index, test) {
                 var testContainer = $('<div class="test-container"></div>');
+                var testDetails = $('<div class="test-details"></div>');
+                var buttonContainer = $('<div class="button-container "></div>');
 
                 var title = $('<p>' + test.Titolo + '</p>');
-                var date = $('<p>' + test.DataCreazione + '</p>');
-                var status = $('<p>' + test.VisualizzaRisposte + '</p>');
+                var date, status, enterButton;
 
-                var buttonContainer = $('<div class="button_student_home"></div>');
-                var enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test.html?id=' + test.ID + '&titolo=' + encodeURIComponent(test.Titolo) + '&mail=' + encodeURIComponent(test.MailDocente)+'\'">Avvia test</button>');
-                var messageButton = $('<button class="black-button" onclick="window.location.href=\'student_message.html?id=' + test.ID +'&titolo=' + encodeURIComponent(test.Titolo) + '\'">Messaggi</button>');
+                var classe = testZone.attr('class');
+                if(classe == 'test-inProgress' || classe == 'test-Open'){
+                    date = $('<p>' + 'Ci va la varibile con la data di inizio' + '</p>');
+                    status = $('<p>' + 'ci va la variabile con lo stato' + '</p>');
+                    enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test.html?id=' +
+                    test.ID + '&titolo=' + encodeURIComponent(test.Titolo) +'\'">Riprendi test</button>');
+                }else if(classe == 'test-new'){
+                    date = $('<p>' + "--------" + '</p>');
+                    status = $('<p>' + '---------' + '</p>');
+                    enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test.html?id=' +
+                    test.ID + '&titolo=' + encodeURIComponent(test.Titolo) +'\'">Avvia test</button>');
+                } else if(classe == 'test-close'){
+                    date = $('<p>' + 'Ci va la varibile con la data di inizio' + '</p>');
+                    status = $('<p>' + 'ci va la variabile con lo stato' + '</p>');
+                    enterButton = $('<button class="black-button" onclick="window.location.href=">Visualizza Esito</button>');
+                }
+
+                testDetails.append(title, date, status);
+
+                var messageButton = $('<button class="black-button" onclick="window.location.href=\'student_message.html?id=' +
+                test.ID +'&titolo=' + encodeURIComponent(test.Titolo) + '\'">Messaggi</button>');
 
                 buttonContainer.append(enterButton, messageButton);
-                testContainer.append(title, date, status, buttonContainer);
-                testList.append(testContainer);
+                testContainer.append(testDetails, buttonContainer);
+                testZone.append(testContainer);
             });
         }
     </script>
