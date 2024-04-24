@@ -666,12 +666,12 @@ SET IDAtt = LAST_INSERT_ID();
 END //
 
 CREATE PROCEDURE `UpdateVisualizzaRisposteTest`(
-in IDAtt int
+    IN IDAtt INT
 )
 BEGIN
-UPDATE test
-SET VisualizzaRisposte = true;
-WHERE ID = IDAtt;
+    UPDATE test
+    SET VisualizzaRisposte = true
+    WHERE ID = IDAtt;
 END //
 
 CREATE PROCEDURE `ViewTest`(
