@@ -428,10 +428,28 @@
                         console.error('No tables found or JSON is invalid');
                     }
                 
-                    if(response.image){
-                        
-                    }else {
-                        console.error('No constraints found or JSON is invalid');
+                    if (response.image && response.image.Foto) {
+                        let imageData = response.image.Foto;
+
+                        // Assicurati che imageData sia una stringa base64 valida
+                        if (imageData.match(/^[A-Za-z0-9+/=]+$/)) { // Modificata per usare $ anziché \z
+                            // Aggiungi il controllo del tipo MIME se disponibile o necessario
+                            let imageType = 'image/jpeg'; // Default se non specificato
+                            // Ad esempio, se il tipo dell'immagine è inviato dal server, potresti avere qualcosa del tipo:
+                            // if (response.image.type) { imageType = response.image.type; }
+
+                            let imageElement = $('<img>', {
+                                src: `data:${imageType};base64,${imageData}`,
+                                alt: 'Descrizione dell\'immagine'
+                            });
+
+                            container.append(imageElement);
+                            $("#testContainer").append(container);
+                        } else {
+                            console.error('Invalid base64 string');
+                        }
+                    } else {
+                        console.error('No image found or JSON is invalid');
                     }
 
                     var constraints = response.references;

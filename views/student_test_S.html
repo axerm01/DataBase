@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Test - ESQL -</title>
+    <title>Test - ESQL -</title>
     <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="styleBACK.css">
@@ -58,40 +58,6 @@
             width: 500px;
         }
 
-        /* Styles for answers */
-        .answer {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        /* Styles for answer input */
-        .answer input[type="text"] {
-            flex: 1;
-            margin-right: 10px;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        /* Styles for answer checkbox */
-        .answer input[type="checkbox"] {
-            margin-right: 5px;
-            transform: scale(1.5); 
-            margin-left: 10px;
-        }
-
-        /* Styles for add answer button */
-        .add-answer-button {
-            background-color: #007bff;
-            cursor: pointer;
-            font-size: 12px;
-            color: #fff;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
         /*Styles for check botton*/
         .add-check-button {
             background-color: #15c11e;
@@ -453,7 +419,7 @@
                         questions.forEach(function(quest) {
                             //console.log(quest);
                             // Crea un ID univoco per il container basato sull'ID della domanda
-                            var containerId = 'question_' + quest.ID;
+                            var containerId = quest.ID;
 
                             if(quest.type === 'code'){
 
@@ -483,9 +449,9 @@
                                 var textQuestion = $("<strong></strong>").text("Quesito: " + quest.Descrizione);
                                 container.append(textQuestion);
                                 container.append($("<br>"));
-
+                                var containerAnswer = $('<div></div>').addClass('answer');
                                 // Prefisso univoco basato sull'ID della domanda
-                                var answerGroupName = 'answer_' + quest.ID;
+                                var answerGroupName = quest.ID;
 
                                 $.each(quest.answers, function(index, ans) {
                                     // Crea un input di tipo radio per ogni risposta
@@ -500,8 +466,9 @@
                                     var label = $('<label></label>').attr('for', ans.ID).text(ans.Testo); // Assicurati che il label sia associato correttamente usando 'for'
 
                                     // Aggiungi l'input radio e il label al container
-                                    container.append(radioOption, label, $('<br>')); // Aggiungi anche un line break per separare le opzioni
+                                    containerAnswer.append(radioOption, label, $('<br>')); // Aggiungi anche un line break per separare le opzioni
                                 });
+                                container.append(containerAnswer);
 
                                 var difficultyQuestion = $("<span></span>").text("Difficolta: " + quest.Difficolta);
                                 container.append(difficultyQuestion);
@@ -539,7 +506,7 @@
     <script>
         function codeCheck(buttonElement) {
             // Trova il contenitore della domanda relativo al bottone
-            const questionDiv = buttonElement.closest('.question-test-code');
+            const questionDiv = buttonElement.closest('.question');
             // Trova il textarea all'interno di questo contenitore specifico
             const textarea = questionDiv.querySelector('.code-textarea');
             // Ottenere il codice MySQL inserito dall'utente
@@ -703,8 +670,8 @@
                 contentType: false, // Importante per il corretto invio di FormData
                 processData: false,
                 success: function(response) {
-                    //console.log(response);
-                    alert(response); //risposta del server
+                    console.log(response);
+                    //alert(response); //risposta del server
                     //window.location.reload(); // ricarica pagina
                 },
                 error: function(xhr, status, error) {
