@@ -57,12 +57,19 @@ switch ($method) {
 
             switch ($action) {
                 case 'create_student_test':
-                    //$response = $dataPrima.', '.$dataUltima.', '.$testId.', '.$email;
                     $response = StudentTest::saveStudentTestData($testId, $email);
                     echo json_encode($response);
                     break;
 
                 case 'save_response':
+                    if(array_key_exists('first_response_date', $_POST)){
+                        $date = $_POST['first_response_date'];
+                        StudentTest::setFirstResponseDate($testId, $email, $date);
+                    }
+                    if(array_key_exists('last_response_date', $_POST)){
+                        $date = $_POST['last_response_date'];
+                        StudentTest::setLastResponseDate($testId, $email, $date);
+                    }
 
                     $stringAnswers = json_decode($_POST['student_answers'], true);
                     $answers = $stringAnswers['answers'];

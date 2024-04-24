@@ -539,17 +539,11 @@ DELIMITER //
 CREATE PROCEDURE `CreateSvolgimento`(
 in MailStudenteAtt varchar(45),
 in StatoAtt varchar(45),
-in DataPrimaRispostaAtt datetime,
-in DataUltimaRispostaAtt datetime,
 in IDTestAtt int
 )
 BEGIN
 INSERT INTO Svolgimento (MailStudente,Stato,DataPrimaRisposta,DataUltimaRisposta,IDTest)
-VALUES (MailStudenteAtt,StatoAtt,DataPrimaRispostaAtt,DataUltimaRispostaAtt,IDTestAtt)
-ON DUPLICATE KEY UPDATE
-Stato = VALUES(StatoAtt),
-DataPrimaRisposta = VALUES(DataPrimaRispostaAtt),
-DataUltimaRisposta = VALUES(DataUltimaRispostaAtt);
+VALUES (MailStudenteAtt,StatoAtt,null,null,IDTestAtt);
 END //
 
 CREATE PROCEDURE `DropSvolgimento`(
@@ -584,19 +578,23 @@ FROM Svolgimento
 WHERE Stato = StatoAtt and MailStudente = MailStudenteAtt;
 END //
 
-CREATE PROCEDURE `UpdateInizioSvolgimento`(in IDTestAtt int,
-in MailStudenteAtt varchar(45))
+CREATE PROCEDURE `UpdateInizioSvolgimento`(
+in IDTestAtt int,
+in MailStudenteAtt varchar(45),
+in DataPrimaRispostaAtt datetime)
 BEGIN
 UPDATE svolgimento
-SET DataPrimaRisposta = localtime()
+SET DataPrimaRisposta = DataPrimaRispostaAtt
 WHERE IDTest = IDTestAtt and MailStudente = MailStudenteAtt;
 END //
 
-CREATE PROCEDURE `UpdateFineSvolgimento`(in IDTestAtt int,
-in MailStudenteAtt varchar(45))
+CREATE PROCEDURE `UpdateFineSvolgimento`(
+in IDTestAtt int,
+in MailStudenteAtt varchar(45),
+in DataUltimaRispostaAtt datetime)
 BEGIN
 UPDATE svolgimento
-SET DataUltimaRisposta = localtime()
+SET DataUltimaRisposta = DataUltimaRispostaAtt
 WHERE IDTest = IDTestAtt and MailStudente = MailStudenteAtt;
 END //
 

@@ -332,8 +332,7 @@
         $(document).ready(function() {
             var formData = new FormData(); 
             formData.append("action" , "create_student_test");
-            formData.append("data_prima" , null);
-            formData.append("data_ultima" , null);
+            formData.append("testId" , testID);
             $.ajax({
                 type: 'POST',
                 url: '../controllers/test/StudentTestController.php', //action è gia stata appesa
@@ -373,7 +372,7 @@
         const urlParams = new URLSearchParams(queryString);
 
         const testTitolo = urlParams.get('titolo');
-        const testID = urlParams.get('id');
+        const testID = parseInt(urlParams.get('id'), 10);
         document.addEventListener('DOMContentLoaded', function() {
             
 
@@ -692,6 +691,7 @@
 
             // Aggiunge l'action al FormData
             formData.append("action" , "save_response");
+            formData.append("testId" , testID);
             // Aggiunge la data di inizio e fine
             formData.append("data_prima", firstAnswerTime ? firstAnswerTime.toISOString() : null);
             formData.append("data_ultima", lastAnswerTime ? lastAnswerTime.toISOString() : null);

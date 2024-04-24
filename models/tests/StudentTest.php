@@ -179,9 +179,9 @@ class StudentTest {
             $updateStmt->execute();
             return 'closed correctly';
     }
-    public static function saveStudentTestData($dataPrima, $dataUltima, $testId, $email) {
+    public static function saveStudentTestData($testId, $email) {
         global $con;
-        $q = 'CALL CreateSvolgimento(?,?,?,?,?);';
+        $q = 'CALL CreateSvolgimento(?,?,?);';
         $stmt = $con->prepare($q);
         $response = "save ok";
         if ($stmt === false) {
@@ -189,7 +189,7 @@ class StudentTest {
             //die("Errore nella preparazione della query: " . $con->error);
         }
         $stato = self::OPEN;
-        $stmt->bind_param('ssssi', $email, $stato, $dataPrima, $dataUltima, $testId);
+        $stmt->bind_param('ssi', $email, $stato, $testId);
         if (!$stmt->execute()) {
             $response = $stmt->error;
             //die("Errore nell'esecuzione della query: " . $stmt->error);
@@ -228,6 +228,36 @@ class StudentTest {
         $response = 'updated status: in progress';
         $stmt->close();
         return $response;
+    }
+
+    public static function setFirstResponseDate($testId, $email, $date) {
+        global $con;
+        $q = 'CALL UpdateInizioSvolgimento(?,?,?);';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('iss', $testId, $email, $date);
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+        $stmt->close();
+        return 'updated correctly, ';
+    }
+
+    public static function setLastResponseDate($testId, $email, $date) {
+        global $con;
+        $q = 'CALL UpdateFineSvolgimento(?,?,?);';
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            die("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('iss', $testId, $email, $date);
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+        $stmt->close();
+        return 'updated correctly, ';
     }
 
 }
