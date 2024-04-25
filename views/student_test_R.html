@@ -279,11 +279,11 @@
         <div id="testTitle">
             <!-- Posto in cui inserire il titolo da prendere tramite url -->
         </div>
-        <button id="submitTestButton" style="float: inline-end;">Salva ed Esci</button> <!-- Bottone salvataggio -->
     </div>
     <div id="testContainer">
         <!-- Qui -->
     </div>
+    <button id="submitTestButton" style="float: inline-end;">Salva ed Esci</button> <!-- Bottone salvataggio -->
     
 
     <!-- Modale per la visualizzazione della tabella -->
@@ -313,14 +313,14 @@
 
     <script>
         var tables = []; //contine le tabelle usate
-        
+        let firstAnswerTime = null;
         let lastAnswerTime = null;
 
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
 
         const testTitolo = urlParams.get('titolo');
-        const testID = urlParams.get('id');
+        const testID = parseInt(urlParams.get('id'), 10);
         document.addEventListener('DOMContentLoaded', function() {
             
 
@@ -334,7 +334,7 @@
             }
             $.ajax({
                 type: "GET",
-                url: "../controllers/test/StudentTestController.php?action=start_new_test",
+                url: "../controllers/test/StudentTestController.php?action=resume_test",
                 data: { testId: testID },
                 success: function(response) {
                     console.log(response);
@@ -401,7 +401,7 @@
                         questions.forEach(function(quest) {
                             //console.log(quest);
                             // Crea un ID univoco per il container basato sull'ID della domanda
-                            var containerId = 'question_' + quest.ID;
+                            var containerId = quest.ID;
 
                             if(quest.type === 'code'){
 
@@ -479,8 +479,23 @@
         }
         function recordAnswerTime() {
             const currentTime = new Date(); // Ottieni l'ora corrente
+            if (!firstAnswerTime) {
+                firstAnswerTime = currentTime;
+            }
             lastAnswerTime = currentTime; // Aggiorna sempre l'ultima ora di risposta
         }
+
+        function formatDateTime(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // getMonth() restituisce un valore da 0 a 11
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        }
+
     </script>
     <script>
         function codeCheck(buttonElement) {
@@ -636,9 +651,11 @@
             formData.append("student_answers", JSON.stringify(sendDataTest));
 
             // Aggiunge l'action al FormData
-            formData.append("action" , "resume_response");
-            // Aggiunge la data di fine
-            formData.append("data_ultima", lastAnswerTime ? lastAnswerTime.toISOString() : null);
+            formData.append("action" , "save_response");
+            formData.append("testId" , testID);
+            // Aggiunge la data di inizio e fine
+            formData.append("first_response_date", firstAnswerTime ? formatDateTime(firstAnswerTime) : null);
+            formData.append("last_response_date", lastAnswerTime ? formatDateTime(lastAnswerTime) : null);
             // Invio dei dati al file PHP tramite AJAX
             $.ajax({
                 type: 'POST',
@@ -647,8 +664,8 @@
                 contentType: false, // Importante per il corretto invio di FormData
                 processData: false,
                 success: function(response) {
-                    //console.log(response);
-                    alert(response); //risposta del server
+                    console.log(response);
+                    //alert(response); //risposta del server
                     //window.location.reload(); // ricarica pagina
                 },
                 error: function(xhr, status, error) {

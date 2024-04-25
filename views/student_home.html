@@ -232,15 +232,7 @@
             </div>
         </div>
     </div>
-    
-    <!--<div class ="attributes_student">
-        <h4>Titolo</h4>        
-        <h4>Data Inizio</h4>
-        <h4>Stato Test</h4>
-    </div>
 
-    <div class="Test_List"> 
-    </div>-->
     <footer>
         <p>Alma Mater Studiorum</p>
         <h3>Università di Bologna</h3>
@@ -248,11 +240,24 @@
     <!-- Includi jQuery per semplificare la gestione delle richieste AJAX -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>  
+        var allTests = []; // Variabile esterna per memorizzare i test totali
         $(document).ready(function() {
             
             var started = [];
 
-            // Prima definisco le chiamate come funzioni che ritornano $.ajax
+            // Funzione per ottenere tutti i test
+            function AllTests() {
+                return $.ajax({
+                    type: "GET",
+                    url: "../controllers/test/StudentTestController.php",
+                    data: { action: 'get_all_tests' },
+                    dataType: "json",
+                    success: function(response) {
+                        allTests = response; // Memorizziamo la risposta in allTests
+                    }
+                });
+            }
+            // Funzioni per ottenere i test filtrati
             function fetchTests(filter, testClass) {
                 return $.ajax({
                     type: "GET",
@@ -266,29 +271,25 @@
                         response.forEach(element => {
                             started = started.concat(element.IDTest);
                         });
+                        //console.log(started);
                     }
                 });
             }
-
-            // Uso $.when per assicurarmi che tutte e tre le chiamate precedenti siano completate
-            $.when(
-                fetchTests('InProgress', '.test-inProgress'),
-                fetchTests('Open', '.test-open'),
-                fetchTests('Close', '.test-close')
-            ).then(function() {
-                // Ora faccio la chiamata get_all_tests
-                $.ajax({
-                    type: "GET",
-                    url: "../controllers/test/StudentTestController.php",
-                    data: { action: 'get_all_tests' },
-                    dataType: "json",
-                    success: function(response) {
-                        console.log(response);
-                        var test = $('.test-new');
-                        // Rimuovo da response i test già visualizzati
-                        var newT = response.filter(item => !started.includes(item.ID));
-                        populateTestList(newT, test);
-                    }
+            // Prima assicuriamo che la chiamata get_all_tests sia completata
+            $.when(AllTests()).then(function() {
+                // Quando abbiamo la risposta, procediamo con le altre chiamate
+                $.when(
+                    fetchTests('InProgress', '.test-inProgress'),
+                    fetchTests('Open', '.test-open'),
+                    fetchTests('Close', '.test-close')
+                ).then(function() {
+                    // Ora, eseguo le istruzioni che dipendono dalla chiamata get_all_tests
+                    //console.log(allTests);
+                    var test = $('.test-new');
+                    // Filtra allTests rimuovendo quelli già visualizzati
+                    var newT = allTests.filter(item => !started.includes(item.ID));
+                    console.log(newT);
+                    populateTestList(newT, test);
                 }).fail(function(jqxhr, textStatus, error) {
                     var err = textStatus + ", " + error;
                     console.log("Request Failed: " + err);
@@ -323,23 +324,31 @@
                 var testDetails = $('<div class="test-details"></div>');
                 var buttonContainer = $('<div class="button-container "></div>');
 
-                var title = $('<p>' + test.Titolo + '</p>');
-                var date, status, enterButton;
+                var textTitle, title, date, status, enterButton;
 
                 var classe = testZone.attr('class');
                 if(classe == 'test-inProgress' || classe == 'test-open'){
+                    allTests.forEach(element => {
+                        //console.log(element.ID, test.IDTest);
+                        if(element.ID == test.IDTest){
+                            title = $('<p>' + element.Titolo + '</p>');
+                            textTitle = element.Titolo;
+                        }
+                    });
+                    
                     date = $('<p>' + test.DataPrimaRisposta + '</p>');
                     status = $('<p>' + test.Stato + '</p>');
                     enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test_R.html?id=' +
-                    test.ID + '&titolo=' + encodeURIComponent(test.Titolo) +'\'">Riprendi test</button>');
+                    test.IDTest + '&titolo=' + encodeURIComponent(textTitle) +'\'">Riprendi test</button>');
                 }else if(classe == 'test-new'){
+                    title = $('<p>' + test.Titolo + '</p>');
                     date = $('<p>' + "--------" + '</p>');
-                    status = $('<p>' + '---------' + '</p>');
+                    status = $('<p>' + 'New' + '</p>');
                     enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test_S.html?id=' +
                     test.ID + '&titolo=' + encodeURIComponent(test.Titolo) +'\'">Avvia test</button>');
                 } else if(classe == 'test-close'){
-                    date = $('<p>' + 'Ci va la varibile con la data di inizio' + '</p>');
-                    status = $('<p>' + 'ci va la variabile con lo stato' + '</p>');
+                    date = $('<p>' + test.DataPrimaRisposta  + '</p>');
+                    status = $('<p>' + test.Stato + '</p>');
                     enterButton = $('<button class="black-button" onclick="window.location.href=">Visualizza Esito</button>');
                 }
 
