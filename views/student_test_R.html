@@ -397,6 +397,7 @@
                     }
 
                     var questions = response.questions;
+                    var responses = response.responses;
                     if (questions) {
                         questions.forEach(function(quest) {
                             //console.log(quest);
@@ -414,6 +415,11 @@
                                     codeTextarea.placeholder = 'Inserisci codice MySQL';
                                     codeTextarea.classList.add('code-textarea');
                                     //codeTextarea.addEventListener('input', recordAnswerTime);
+                                responses.forEach(resp => {
+                                    if(resp.IDDomanda == containerId){
+                                        codeTextarea.value = resp.CodiceRisposta;
+                                    }
+                                });
                                 container.append(codeTextarea);
                                 const addCodeAnswerButton = document.createElement('button');
                                     addCodeAnswerButton.textContent = 'Verifica Codice';
@@ -442,6 +448,13 @@
                                         name: answerGroupName, // Utilizza il prefisso univoco per il nome dell'input radio
                                         value: ans.Testo, // Imposta il valore dell'opzione radio al testo della risposta
                                         id: ans.ID // Assicurati che ogni risposta nel tuo data model abbia un 'ID'
+                                    });
+                                    responses.forEach(resp => {
+                                        if(resp.IDDomanda == containerId){
+                                            if (index === resp.IDRisposta) { 
+                                                radioOption.prop('checked', true);
+                                            }
+                                        }
                                     });
 
                                     // Crea un label per l'opzione radio
@@ -479,9 +492,6 @@
         }
         function recordAnswerTime() {
             const currentTime = new Date(); // Ottieni l'ora corrente
-            if (!firstAnswerTime) {
-                firstAnswerTime = currentTime;
-            }
             lastAnswerTime = currentTime; // Aggiorna sempre l'ultima ora di risposta
         }
 
@@ -654,7 +664,6 @@
             formData.append("action" , "save_response");
             formData.append("testId" , testID);
             // Aggiunge la data di inizio e fine
-            formData.append("first_response_date", firstAnswerTime ? formatDateTime(firstAnswerTime) : null);
             formData.append("last_response_date", lastAnswerTime ? formatDateTime(lastAnswerTime) : null);
             // Invio dei dati al file PHP tramite AJAX
             $.ajax({
