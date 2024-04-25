@@ -122,10 +122,47 @@
         </div>
     </div>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Endpoint URLs
+            const urls = {
+                test_completati: "../controllers/utils/StatisticsController.php?action=test_completati",
+                risposte_corrette: "../controllers/utils/StatisticsController.php?action=risposte_corrette",
+                quesiti: "../controllers/utils/StatisticsController.php?action=quesiti"
+            };
+
+            // Function to fetch and display data
+            function fetchDataAndDisplay(url, containerId, title) {
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response && Array.isArray(response) && response.length > 0) {
+                            createTable(response, title, containerId);
+                        } else {
+                            console.error('No data received from ' + url);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching data from ' + url, status, error);
+                    }
+                });
+            }
+
+            // Fetch and display data for each category
+            fetchDataAndDisplay(urls.test_completati, 'tableContainer1', 'Classifica Studenti');
+            fetchDataAndDisplay(urls.risposte_corrette, 'tableContainer2', 'Classifica Risposte');
+            fetchDataAndDisplay(urls.quesiti, 'tableContainer3', 'Classifica Quesiti');
+        });
+    </script>
+
+
     <script>
         // Funzione per creare la tabella
         function createTable(response, tName, containerId) {
-            const columns = Object.keys(response[1]);;
+            const columns = Object.keys(response[1]);
 
             const table = document.createElement('table');
             table.className = 'custom-table';

@@ -21,3 +21,4 @@ switch ($endpoint) {
         $data = Statistics::classificaQuesiti();
         break;
 }
+echo json_encode($data);

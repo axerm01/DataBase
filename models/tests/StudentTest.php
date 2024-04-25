@@ -112,7 +112,8 @@ class StudentTest {
         $codeResponse = StudentAnswer::getTestCodeAnswers($testId, $stdEmail);
         $mcResponse = StudentAnswer::getTestMCAnswers($testId, $stdEmail);
 
-        foreach ($codeQuestions as $qIndex => $question) {
+        /*foreach ($codeQuestions as $qIndex => $question) {
+            $qIndex++;
             foreach ($codeResponse as $response) {
                 if ($question['ID'] == $response['IDDomanda']) {
                     $codeQuestions[$qIndex]['Risposta'] = [
@@ -126,6 +127,7 @@ class StudentTest {
 
 
         foreach ($mcQuestions as $qIndex => $question) {
+            $qIndex++;
             foreach ($mcResponse as $response) {
                 if ($question['ID'] == $response['IDDomanda']) {
                     $codeQuestions[$qIndex]['Risposta'] = [
@@ -135,12 +137,18 @@ class StudentTest {
                     break; // Interrompe il ciclo interno una volta trovata la corrispondenza
                 }
             }
-        }
+        }*/
 
         $questions = array_merge($codeQuestions, $mcQuestions);
         // Ordina l'array combinato in base all'ID
         usort($questions, function($a, $b) {
             return $a['ID'] - $b['ID'];
+        });
+
+        $responses = array_merge($codeResponse, $mcResponse);
+        // Ordina l'array combinato in base all'ID
+        usort($responses, function($a, $b) {
+            return $a['IDDomanda'] - $b['IDDomanda'];
         });
 
 
@@ -162,6 +170,7 @@ class StudentTest {
         $test = [];
         $test['image'] = $image;
         $test['questions'] = $questions;
+        $test['responses'] = $responses;
         $test['tables'] = $tables;
         $test['references'] = $references;
 
