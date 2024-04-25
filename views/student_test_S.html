@@ -502,6 +502,18 @@
             }
             lastAnswerTime = currentTime; // Aggiorna sempre l'ultima ora di risposta
         }
+
+        function formatDateTime(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // getMonth() restituisce un valore da 0 a 11
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        }
+
     </script>
     <script>
         function codeCheck(buttonElement) {
@@ -660,8 +672,8 @@
             formData.append("action" , "save_response");
             formData.append("testId" , testID);
             // Aggiunge la data di inizio e fine
-            formData.append("data_prima", firstAnswerTime ? firstAnswerTime.toISOString() : null);
-            formData.append("data_ultima", lastAnswerTime ? lastAnswerTime.toISOString() : null);
+            formData.append("first_response_date", firstAnswerTime ? formatDateTime(firstAnswerTime) : null);
+            formData.append("last_response_date", lastAnswerTime ? formatDateTime(lastAnswerTime) : null);
             // Invio dei dati al file PHP tramite AJAX
             $.ajax({
                 type: 'POST',

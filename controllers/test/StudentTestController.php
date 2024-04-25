@@ -62,11 +62,12 @@ switch ($method) {
                     break;
 
                 case 'save_response':
-                    if(array_key_exists('first_response_date', $_POST)){
+                    if (isset($_POST['first_response_date']) && !empty($_POST['first_response_date'])){
                         $date = $_POST['first_response_date'];
                         StudentTest::setFirstResponseDate($testId, $email, $date);
+                        StudentTest::updateStudentTestStatus($testId, $email);
                     }
-                    if(array_key_exists('last_response_date', $_POST)){
+                    if (isset($_POST['last_response_date']) && !empty($_POST['last_response_date'])){
                         $date = $_POST['last_response_date'];
                         StudentTest::setLastResponseDate($testId, $email, $date);
                     }

@@ -31,7 +31,7 @@ class StudentTest {
             if ($stmt === false) {
                 die("Errore nella preparazione della query: " . $con->error);
             }
-            $stmt->bind_param('ss', $stdEmail, $filter);
+            $stmt->bind_param('ss', $filter,$stdEmail);
             if (!$stmt->execute()) {
                 die("Errore nell'esecuzione della query: " . $stmt->error);
             }
