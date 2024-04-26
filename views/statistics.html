@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizza Tabelle</title>
+    <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styleBACK.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <style>
+        .container {
+            width: 100%;
+            margin: 2px 0px 2px 0px;
+            border: 5px solid #ccc;
+            border-radius: 5px;
+            display: inline-flex;
+            flex-direction: row;
+        }
+
+        .box {
+            background-color: white;
+            margin: 10px 10px 10px 10px;
+            padding: 5px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            min-width: 30%;
+            max-width: fit-content;
+            text-align: center;
+            justify-content: center;
+        }
+
+        
+        .table-container {
+            display: inline-block;
+            flex-wrap: nowrap;
+            margin: 0px;
+            padding: 0px;
+            font-size: small;
+            justify-content: center;
+            font-weight: bold;
+
+        }
+        table {
+            display: inline-table; /* Mantiene le tabelle in linea */
+            border-collapse: collapse; /* Per una migliore visualizzazione delle tabelle */
+            text-align: center;
+        }
+
+        th, td {
+            border: 1px solid #ddd; /* Stile dei bordi */
+            padding: 5px; /* Padding delle celle */
+        }
+        td{
+            font-weight: normal;
+            background-color: #fff; /* Colore di sfondo delle celle dell'intestazione */
+        }
+        th{
+            background-color: #bb0a0a; /* Colore di sfondo delle celle dell'intestazione */
+            color:#fff;
+            font-size: 10px;
+        }
+
+
+        .buttons-container {
+            margin-top: 10px;
+        }
+
+        .buttons-container span {
+            display: block;
+            margin-top: 10px;
+            background-color: #15c11e;
+            padding: 6px 17px;
+            border-radius: 5px;
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+        .buttons-container span:hover {
+            filter: brightness(0.9);
+        }
+
+        #tableContainer {
+            margin-top: 20px;
+        }
+
+        .statistics-box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 5mm;
+            width: 100%; /* Larghezza al 100% della pagina */
+            box-sizing: border-box;
+            /* Spazio di mezzo centimetro tra il box delle statistiche e i box successivi */
+        }
+
+        .statistics-title {
+            font-weight: bold;
+            font-size: 24px;
+            text-align: center;
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
+        .title{
+            margin-top: 0px;
+            padding: 10px 10px 5px 10px;
+            font-size: small;
+        }
+        .custom-table{
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Studia con ESQL</h1>
+        <div class="indietro">
+            <span class="testo-indietro"><a href="javascript:history.back()">
+                    <img src="image/arrow.png" alt="Torna indietro" style="width: 25px; height: 25px;">
+                </a>Indietro</span>
+        </div>
+        <div class="logout-form">
+            <form action="../controllers/utils/logout.php" method="post">
+                <button type="submit" name="logout">Esci</button>
+            </form>
+        </div>
+    </header>
+    <div class="statistics-box">
+        <p class="statistics-title">Statistiche</p>
+    </div>
+    <div class="container">
+        <div class="box">
+            
+            <p class="title"><strong><em>Classifica Studenti</em></strong></p>
+            <div id="tableContainer1">
+
+            </div>
+        </div>
+
+        <div class="box">
+            
+            <p class="title"><strong><em>Classifica Risposte</em></strong></p>    
+            <div id="tableContainer2">
+
+            </div>
+        </div>
+
+        <div class="box">
+            
+            <p class="title"><strong><em>Classifica Quesiti</em></strong></p>
+            <div id="tableContainer3">
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Endpoint URLs
+            const urls = {
+                test_completati: "../controllers/utils/StatisticsController.php?action=test_completati",
+                risposte_corrette: "../controllers/utils/StatisticsController.php?action=risposte_corrette",
+                quesiti: "../controllers/utils/StatisticsController.php?action=quesiti"
+            };
+
+            // Function to fetch and display data
+            function requestStatistics(url, containerId) {
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response && Array.isArray(response) && response.length > 0) {
+                            console.log(response, containerId);
+                            createTable(response, containerId);
+                        } else {
+                            console.error('No data received from ' + url);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching data from ' + url, status, error);
+                    }
+                });
+            }
+
+            // Fetch and display data for each category
+            requestStatistics(urls.test_completati, 'tableContainer1', 'Classifica Studenti');
+            requestStatistics(urls.risposte_corrette, 'tableContainer2');
+            requestStatistics(urls.quesiti, 'tableContainer3');
+        });
+    </script>
+
+
+    <script>
+        // Funzione per creare la tabella
+        function createTable(response, containerId) {
+            const columns = Object.keys(response[0]);
+
+            const table = document.createElement('table');
+            table.className = 'custom-table';
+
+            const thead = document.createElement('thead');
+            const trHead = document.createElement('tr');
+            columns.forEach(colName => {
+                const th = document.createElement('th');
+                th.textContent = colName;
+                trHead.appendChild(th);
+            });
+            thead.appendChild(trHead);
+            table.appendChild(thead);
+
+            const tbody = document.createElement('tbody');
+            response.forEach(obj => {
+                const tr = document.createElement('tr');
+                columns.forEach(column => {
+                    const td = document.createElement('td');
+                    td.textContent = obj[column];
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+
+            const tableContainer = document.getElementById(containerId);
+            tableContainer.innerHTML = '';
+            tableContainer.appendChild(table);
+        }
+    </script>
+
+    <footer>
+        <p>Alma Mater Studiorum</p>
+        <h3>Università di Bologna</h3>
+    </footer>
+</body>
+
+</html>
