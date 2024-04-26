@@ -664,8 +664,10 @@
                             answerId: answerId
                         };
                         // Decide in quale array inserire in base a se era già stata risposta
-                        if (isPreviouslyAnswered && changed) {
-                            sendDataTest.old_answers.push(answerObject);
+                        if (isPreviouslyAnswered) {
+                            if(changed){
+                                sendDataTest.old_answers.push(answerObject);
+                            }
                         } else {
                             sendDataTest.new_answers.push(answerObject);
                         }
@@ -679,8 +681,10 @@
                             sqlCode: sqlCode
                         };
                         // Decide in quale array inserire in base a se era già stata risposta
-                        if (isPreviouslyAnswered && changed) {
-                            sendDataTest.old_answers.push(answerObject);
+                        if (isPreviouslyAnswered) {
+                            if(changed){
+                                sendDataTest.old_answers.push(answerObject);
+                            }
                         } else {
                             sendDataTest.new_answers.push(answerObject);
                         }
