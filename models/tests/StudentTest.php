@@ -112,33 +112,6 @@ class StudentTest {
         $codeResponse = StudentAnswer::getTestCodeAnswers($testId, $stdEmail);
         $mcResponse = StudentAnswer::getTestMCAnswers($testId, $stdEmail);
 
-        /*foreach ($codeQuestions as $qIndex => $question) {
-            $qIndex++;
-            foreach ($codeResponse as $response) {
-                if ($question['ID'] == $response['IDDomanda']) {
-                    $codeQuestions[$qIndex]['Risposta'] = [
-                        'Risposta' => $response['CodiceRisposta'],
-                        'Esito' => $response['Esito']
-                    ];
-                    break; // Interrompe il ciclo interno una volta trovata la corrispondenza
-                }
-            }
-        }
-
-
-        foreach ($mcQuestions as $qIndex => $question) {
-            $qIndex++;
-            foreach ($mcResponse as $response) {
-                if ($question['ID'] == $response['IDDomanda']) {
-                    $codeQuestions[$qIndex]['Risposta'] = [
-                        'Risposta' => $response['IDRisposta'],
-                        'Esito' => $response['Esito']
-                    ];
-                    break; // Interrompe il ciclo interno una volta trovata la corrispondenza
-                }
-            }
-        }*/
-
         $questions = array_merge($codeQuestions, $mcQuestions);
         // Ordina l'array combinato in base all'ID
         usort($questions, function($a, $b) {
@@ -206,20 +179,6 @@ class StudentTest {
 
         $stmt->close();
         return $response;
-    }
-    public static function updateStudentTestData($testId, $email) {
-        global $con;
-        $q = 'CALL UpdateFineSvolgimento(?,?);';
-        $stmt = $con->prepare($q);
-        if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
-        }
-        $stmt->bind_param('is', $testId, $email );
-        if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
-        }
-        $stmt->close();
-        return 'updated correctly, ';
     }
     public static function updateStudentTestStatus($testId, $email) {
         global $con;

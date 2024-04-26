@@ -39,7 +39,6 @@ switch ($method) {
             case 'resume_test':
                 $testId = filter_input(INPUT_GET, 'testId');
                 $stdEmail = $_SESSION['email'];
-                //$stdEmail = 'gioele@studio.unibo.it';
                 $data = StudentTest::resume($testId, $stdEmail);
                 break;
 
@@ -86,27 +85,32 @@ switch ($method) {
     case 'PUT':
         if (isset($_GET['action'])){
             $action = $_GET['action'];
-            //$email = $_SESSION['email'];
-
+            $email = $_SESSION['email'];
 
             switch ($action) {
-                case 'status_in_progress': // inutile, fa il trigger dal DB
-                    $json = file_get_contents('php://input');
-                    $data = json_decode($json, true);
-                    $testId = $_GET['testId'];
-                    $email = $data['email'];
-                    $response = StudentTest::updateStudentTestStatus($testId, $email);
-                    echo json_encode($response);
-                    break;
-
                 case 'update_response':
-                    $json = file_get_contents('php://input');
-                    $data = json_decode($json, true);
-                    $testId = $_GET['testId'];
-                    $email = $data['email'];
-                    $response = StudentTest::updateStudentTestData($testId, $email);
-                    $response .= StudentAnswer::updateStudentAnswers($data['answers'], $testId, $email);
-                    echo json_encode($response);
+                    if (isset($_GET['testId'])) {
+                        $testId = $_GET['testId'];
+                        $rawData = file_get_contents('php://input');
+                        $data = json_decode($rawData, true);
+                        if (isset($data['last_response_date']) && isset($data['student_answers'])) {
+                            $responseDate = StudentTest::setLastResponseDate($testId, $email, $data['last_response_date']);
+                            $answers = $data['student_answers'];
+                            if(isset($answers['old_answers']) && !empty($answers['old_answers'])){
+                                $oldResponseAnswers = StudentAnswer::updateStudentAnswers($answers['old_answers'], $testId, $email);
+                            }
+                            if(isset($answers['new_answers']) && !empty($answers['new_answers'])){
+                                $newResponseAnswers = StudentAnswer::saveStudentAnswers($answers['new_answers'], $testId, $email);
+                            }
+
+                            $response = ['dateResponse' => $responseDate, 'answersResponseOld' => $oldResponseAnswers, 'answersResponseNew' => $newResponseAnswers];
+                            echo json_encode($response);
+                        } else {
+                            echo json_encode(['error' => 'Missing data for update']);
+                        }
+                    } else {
+                        echo json_encode(['error' => 'Test ID not provided']);
+                    }
                     break;
             }
         }

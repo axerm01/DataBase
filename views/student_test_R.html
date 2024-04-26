@@ -649,28 +649,21 @@
                     }
                 }
             });
-            console.log(sendDataTest);
             return sendDataTest;
         }
 
         function submitFormTest() {
             var sendDataTest = pickupData();
-            var formData = new FormData();
+            var dataToSend = {
+                last_response_date: lastAnswerTime ? formatDateTime(lastAnswerTime) : null,
+                student_answers: sendDataTest
+            };
 
-            // Aggiunge i dati testuali al FormData
-            formData.append("student_answers", JSON.stringify(sendDataTest));
-
-            // Aggiunge l'action al FormData
-            formData.append("action" , "save_response");
-            formData.append("testId" , testID);
-            // Aggiunge la data di inizio e fine
-            formData.append("last_response_date", lastAnswerTime ? formatDateTime(lastAnswerTime) : null);
-            // Invio dei dati al file PHP tramite AJAX
             $.ajax({
-                type: 'POST',
-                url: '../controllers/test/StudentTestController.php', //action è gia stata appesa
-                data: formData,
-                contentType: false, // Importante per il corretto invio di FormData
+                type: 'PUT',
+                url: '../controllers/test/StudentTestController.php?action=update_response&testId='+testID,
+                data: JSON.stringify(dataToSend),
+                contentType: 'application/json',
                 processData: false,
                 success: function(response) {
                     console.log(response);

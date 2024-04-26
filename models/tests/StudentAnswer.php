@@ -76,20 +76,26 @@ class StudentAnswer
     public static function updateStudentAnswers($answers, $testId, $email) {
         global $con; // Assumi che $con sia la tua connessione al database
 
+        $esiti = StudentAnswer::calcolaEsitoRisposte($answers, $testId);
+        if($esiti == 'Query non consentita'){
+            return $esiti;
+        }
+
         mysqli_begin_transaction($con);
         $response = '';
 
         try {
-            foreach ($answers as $answer) {
+            foreach ($answers as $id => $answer) {
+                $id++;
                 if ($answer['type'] === 'mc') {
                     // Utilizza la stored procedure per le risposte a scelta multipla
                     $stmt = $con->prepare("CALL UpdateRispostaStudente(?, ?, ?, ?, ?)");
-                    $stmt->bind_param('siiii', $email, $answer['id'], $testId, $answer['answerId'], $answer['Esito']);
+                    $stmt->bind_param('siiii', $email, $answer['id'], $testId, $answer['answerId'], $esiti[$id]);
                     $response .= 'updated mc, ';
                 } elseif ($answer['type'] === 'code') {
                     // Utilizza la stored procedure per le risposte di tipo codice
                     $stmt = $con->prepare("CALL UpdateCodiceStudente(?, ?, ?, ?, ?)");
-                    $stmt->bind_param('siisi', $email,  $answer['id'], $testId, $answer['sqlCode'], $answer['Esito']);
+                    $stmt->bind_param('siisi', $email,  $answer['id'], $testId, $answer['sqlCode'], $esiti[$id]);
                     $response .= 'updated code, ';
                 }
                 else {
@@ -110,68 +116,6 @@ class StudentAnswer
             // Gestione ulteriore dell'errore
         }
         return $response;
-    }
-
-    public static function calcolaEsitoRispostex($answers, $testId){
-        global $con;
-        $results = [];
-
-        // Chiamata alla stored procedure per ottenere le risposte corrette
-        $stmt = $con->prepare("CALL GetCorrectAnswers(?)");
-        $stmt->bind_param("i", $testId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $correctMCAnswers = [];
-        while ($row = $result->fetch_assoc()) {
-            $correctMCAnswers[$row['IDScMult']] = $row['ID'];
-        }
-        $stmt->close();
-
-
-        $stmt = $con->prepare("CALL ViewSqlCodice(?)");
-        $stmt->bind_param("i", $testId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $correctCodeAnswers = [];
-        while ($row = $result->fetch_assoc()) {
-            $correctCodeAnswers[$row['ID']] = $row['Output'];
-        }
-        $stmt->close();
-
-
-        // Confronta le risposte dell'utente con le risposte corrette
-        $questionId = 0;
-        foreach ($answers as $userAnswer) {
-            $questionId++;
-            if (($userAnswer['type'] === 'mc') && (in_array($questionId, $correctMCAnswers))) {
-                    $results[$questionId] = ($userAnswer['answerId'] == $correctMCAnswers[$questionId]);
-                }
-            elseif (($userAnswer['type'] === 'code') && (in_array($questionId, $correctCodeAnswers))) {
-                    $q = $userAnswer['sqlCode'];
-                    if (stripos($q, 'INSERT') !== false || stripos($q, 'DROP') !== false || stripos($q, 'DELETE') !== false || stripos($q, 'UPDATE') !== false) {
-                        return 'Query non consentita';
-                    }
-
-                    $result1 = $con->query($q);
-                    $results1 = [];
-                    while ($row = $result1->fetch_assoc()) {
-                        $results1[] = $row;
-                    }
-
-                    $result2 = $con->query($correctCodeAnswers[$questionId]);
-                    $results2 = [];
-                    while ($row = $result2->fetch_assoc()) {
-                        $results2[] = $row;
-                    }
-
-                    $results[$questionId] = ($results1 === $results2);
-            }
-            else {
-                $results[$questionId] = 1;
-            }
-        }
-
-        return $results;
     }
 
     public static function calcolaEsitoRisposte($answers, $testId) {
