@@ -308,6 +308,11 @@
             // Aggiungi listener a tutti i radio e textarea presenti ora e futuri nel DOM
             $(document).on('change', '.answer input[type="radio"]', recordAnswerTime);
             $(document).on('input', '.code-textarea', recordAnswerTime);
+             // Ascolta i cambiamenti nei radio buttons e textarea per impostare il flag di cambiamento
+            $(document).on('change', '.question input[type="radio"], .question .code-textarea', function() {
+                var $questionContainer = $(this).closest('.question');
+                $questionContainer.data('changed', true);
+            });
         }
     </script>
 
@@ -407,7 +412,14 @@
                             if(quest.type === 'code'){
 
                                 // Crea la tabella e aggiunge un'intestazione con il nome
-                                var container = $('<div></div>').addClass('question').attr('id', containerId).attr('type', quest.type);
+                                //var container = $('<div></div>').addClass('question').attr('id', containerId).attr('type', quest.type);
+                                var container = $('<div></div>')
+                                    .addClass('question')
+                                    .attr('id', containerId)
+                                    .attr('type', quest.type)
+                                    .data('already_answered', false)
+                                    .data('changed', false);
+
                                 var textQuestion = $("<strong></strong>").text("Quesito: " + quest.Descrizione + " ");
                                 container.append(textQuestion);
                                 const codeTextarea = document.createElement('textarea');
@@ -418,6 +430,7 @@
                                 responses.forEach(resp => {
                                     if(resp.IDDomanda == containerId){
                                         codeTextarea.value = resp.CodiceRisposta;
+                                        container.data('already_answered', true);
                                     }
                                 });
                                 container.append(codeTextarea);
@@ -433,7 +446,14 @@
                                 container.append(difficultyQuestion);
                             }else if(quest.type === 'mc'){
                                 // Crea la tabella e aggiunge un'intestazione con il nome
-                                var container = $('<div></div>').addClass('question').attr('id', containerId).attr('type', quest.type);
+                                //var container = $('<div></div>').addClass('question').attr('id', containerId).attr('type', quest.type);
+                                var container = $('<div></div>')
+                                    .addClass('question')
+                                    .attr('id', containerId)
+                                    .attr('type', quest.type)
+                                    .data('already_answered', false)
+                                    .data('changed', false);
+
                                 var textQuestion = $("<strong></strong>").text("Quesito: " + quest.Descrizione);
                                 container.append(textQuestion);
                                 container.append($("<br>"));
@@ -442,6 +462,7 @@
                                 var answerGroupName = quest.ID;
 
                                 $.each(quest.answers, function(index, ans) {
+                                    //console.log('answers:', quest.answers)
                                     // Crea un input di tipo radio per ogni risposta
                                     var radioOption = $('<input>').attr({
                                         type: 'radio',
@@ -450,9 +471,11 @@
                                         id: ans.ID // Assicurati che ogni risposta nel tuo data model abbia un 'ID'
                                     });
                                     responses.forEach(resp => {
-                                        if(resp.IDDomanda == containerId){
-                                            if (index === resp.IDRisposta) { 
+                                        if(resp.IDDomanda == quest.ID){
+                                            //console.log(index, ans.ID, resp.IDRisposta);
+                                            if (ans.ID === resp.IDRisposta) { 
                                                 radioOption.prop('checked', true);
+                                                container.data('already_answered', true);
                                             }
                                         }
                                     });
@@ -473,7 +496,7 @@
                             
                         });
                     } else {
-                        console.error('No constraints found or JSON is invalid');
+                        console.error('No questions found or JSON is invalid');
                     }
                 },
                 dataType: "json"
@@ -620,57 +643,67 @@
         
         function pickupData() {
             var sendDataTest = {
-                answers: []
+                old_answers: [],
+                new_answers: []
             };
+
             // Assumendo che ogni questionario abbia un attributo data-id e un attributo data-type
             $('.question').each(function() {
                 const questionId = $(this).attr('id');
                 const questionType = $(this).attr('type'); // Legge il tipo di domanda
                 const difficultyLevel = $(this).find('.difficulty-select').val(); // Livello di difficoltà
-
+                const isPreviouslyAnswered = $(this).data('already_answered'); // Presumo che tu abbia un modo per settare questo dato
+                const changed = $(this).data('changed');
                 if (questionType === 'mc') {
                     // Prendi il valore della risposta selezionata
                     const answerId = $(this).find('.answer input[type="radio"]:checked').attr('id');
                     if (answerId) { // Controlla che una risposta sia stata selezionata
-                        sendDataTest.answers.push({
+                        const answerObject = {
                             type: "mc",
                             id: questionId,
                             answerId: answerId
-                        });
+                        };
+                        // Decide in quale array inserire in base a se era già stata risposta
+                        if (isPreviouslyAnswered && changed) {
+                            sendDataTest.old_answers.push(answerObject);
+                        } else {
+                            sendDataTest.new_answers.push(answerObject);
+                        }
                     }
                 } else if (questionType === 'code') {
                     var sqlCode = $(this).find('.code-textarea').val();
                     if (sqlCode) {
-                        sendDataTest.answers.push({
+                        const answerObject = {
                             type: "code", 
                             id: questionId, 
                             sqlCode: sqlCode
-                        });
+                        };
+                        // Decide in quale array inserire in base a se era già stata risposta
+                        if (isPreviouslyAnswered && changed) {
+                            sendDataTest.old_answers.push(answerObject);
+                        } else {
+                            sendDataTest.new_answers.push(answerObject);
+                        }
                     }
                 }
             });
-            console.log(sendDataTest);
+            console.log('OLD',sendDataTest.old_answers);
+            console.log('NEW',sendDataTest.new_answers);
             return sendDataTest;
         }
 
         function submitFormTest() {
             var sendDataTest = pickupData();
-            var formData = new FormData();
+            var dataToSend = {
+                last_response_date: lastAnswerTime ? formatDateTime(lastAnswerTime) : null,
+                student_answers: sendDataTest
+            };
 
-            // Aggiunge i dati testuali al FormData
-            formData.append("student_answers", JSON.stringify(sendDataTest));
-
-            // Aggiunge l'action al FormData
-            formData.append("action" , "save_response");
-            formData.append("testId" , testID);
-            // Aggiunge la data di inizio e fine
-            formData.append("last_response_date", lastAnswerTime ? formatDateTime(lastAnswerTime) : null);
-            // Invio dei dati al file PHP tramite AJAX
             $.ajax({
-                type: 'POST',
-                url: '../controllers/test/StudentTestController.php', //action è gia stata appesa
-                data: formData,
-                contentType: false, // Importante per il corretto invio di FormData
+                type: 'PUT',
+                url: '../controllers/test/StudentTestController.php?action=update_response&testId='+testID,
+                data: JSON.stringify(dataToSend),
+                contentType: 'application/json',
                 processData: false,
                 success: function(response) {
                     console.log(response);
