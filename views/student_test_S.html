@@ -305,9 +305,9 @@
         const testTitolo = urlParams.get('titolo');
         const testID = parseInt(urlParams.get('id'), 10);
         const resume = urlParams.get('resume');
-        console.log(resume);
         $(document).ready(function() {
-            if(!resume){
+            if(resume == 0){
+                console.log('entro');
                 var formData = new FormData(); 
                 formData.append("action" , "create_student_test");
                 formData.append("testId" , testID);

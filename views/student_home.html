@@ -351,7 +351,7 @@
                     
                     date = $('<p>' + test.DataPrimaRisposta + '</p>');
                     status = $('<p>' + test.Stato + '</p>');
-                    resume = true;
+                    resume = 1;
                     enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test_S.html?id=' +
                     test.IDTest +'&resume=' + resume + 
                     '&titolo=' + encodeURIComponent(textTitle) +'\'">Rinizia test</button>');
@@ -359,7 +359,7 @@
                     title = $('<p>' + test.Titolo + '</p>');
                     date = $('<p>' + "--------" + '</p>');
                     status = $('<p>' + 'New' + '</p>');
-                    resume = false;
+                    resume = 0;
                     enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test_S.html?id=' +
                     test.ID +'&resume=' + resume + 
                     '&titolo=' + encodeURIComponent(test.Titolo) +'\'">Avvia test</button>');
