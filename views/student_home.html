@@ -324,7 +324,7 @@
                 var testDetails = $('<div class="test-details"></div>');
                 var buttonContainer = $('<div class="button-container "></div>');
 
-                var textTitle, title, date, status, enterButton;
+                var textTitle, title, date, status, resume, enterButton;
 
                 var classe = testZone.attr('class');
                 if(classe == 'test-inProgress'){
@@ -351,16 +351,18 @@
                     
                     date = $('<p>' + test.DataPrimaRisposta + '</p>');
                     status = $('<p>' + test.Stato + '</p>');
+                    resume = true;
                     enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test_S.html?id=' +
-                    test.IDTest + '&titolo=' + encodeURIComponent(textTitle) +
-                    + '&resume=' + true +'\'">Rinizia test</button>');
+                    test.IDTest +'&resume=' + resume + 
+                    '&titolo=' + encodeURIComponent(textTitle) +'\'">Rinizia test</button>');
                 } else if(classe == 'test-new'){
                     title = $('<p>' + test.Titolo + '</p>');
                     date = $('<p>' + "--------" + '</p>');
                     status = $('<p>' + 'New' + '</p>');
+                    resume = false;
                     enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test_S.html?id=' +
-                    test.ID + '&titolo=' + encodeURIComponent(test.Titolo) +
-                    + '&resume=' + false +'\'">Avvia test</button>');
+                    test.ID +'&resume=' + resume + 
+                    '&titolo=' + encodeURIComponent(test.Titolo) +'\'">Avvia test</button>');
                 } else if(classe == 'test-close'){
                     date = $('<p>' + test.DataPrimaRisposta  + '</p>');
                     status = $('<p>' + test.Stato + '</p>');
