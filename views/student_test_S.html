@@ -295,25 +295,37 @@
     </div>
 
     <script>
+        var tables = []; //contine le tabelle usate
+        let firstAnswerTime = null;
+        let lastAnswerTime = null;
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+
+        const testTitolo = urlParams.get('titolo');
+        const testID = parseInt(urlParams.get('id'), 10);
+        const resume = urlParams.get('resume');
         $(document).ready(function() {
-            var formData = new FormData(); 
-            formData.append("action" , "create_student_test");
-            formData.append("testId" , testID);
-            $.ajax({
-                type: 'POST',
-                url: '../controllers/test/StudentTestController.php', //action è gia stata appesa
-                data: formData,
-                contentType: false, // Importante per il corretto invio di FormData
-                processData: false,
-                success: function(response) {
-                    console.log(response);
-                    //alert(response); //risposta del server
-                },
-                error: function(xhr, status, error) {
-                    console.error("Errore durante l'invio dei dati:", status, error);
-                    // Gestire eventuali errori qui
-                }
-            });
+            if(resume){
+                var formData = new FormData(); 
+                formData.append("action" , "create_student_test");
+                formData.append("testId" , testID);
+                $.ajax({
+                    type: 'POST',
+                    url: '../controllers/test/StudentTestController.php', //action è gia stata appesa
+                    data: formData,
+                    contentType: false, // Importante per il corretto invio di FormData
+                    processData: false,
+                    success: function(response) {
+                        console.log(response);
+                        //alert(response); //risposta del server
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Errore durante l'invio dei dati:", status, error);
+                        // Gestire eventuali errori qui
+                    }
+                });
+            }
             // Setup listeners dopo che il DOM è completamente caricato
             setupListeners();
             // Prevengo il comportamento di sottomissione standard del form per il bottone del submit
@@ -330,15 +342,6 @@
     </script>
 
     <script>
-        var tables = []; //contine le tabelle usate
-        let firstAnswerTime = null;
-        let lastAnswerTime = null;
-
-        const queryString = window.location.search;
-        const urlParams = new URLSearchParams(queryString);
-
-        const testTitolo = urlParams.get('titolo');
-        const testID = parseInt(urlParams.get('id'), 10);
         document.addEventListener('DOMContentLoaded', function() {
             
 

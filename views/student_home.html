@@ -327,7 +327,7 @@
                 var textTitle, title, date, status, enterButton;
 
                 var classe = testZone.attr('class');
-                if(classe == 'test-inProgress' || classe == 'test-open'){
+                if(classe == 'test-inProgress'){
                     allTests.forEach(element => {
                         //console.log(element.ID, test.IDTest);
                         if(element.ID == test.IDTest){
@@ -340,12 +340,27 @@
                     status = $('<p>' + test.Stato + '</p>');
                     enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test_R.html?id=' +
                     test.IDTest + '&titolo=' + encodeURIComponent(textTitle) +'\'">Riprendi test</button>');
-                }else if(classe == 'test-new'){
+                }else if(classe == 'test-open'){
+                    allTests.forEach(element => {
+                        //console.log(element.ID, test.IDTest);
+                        if(element.ID == test.IDTest){
+                            title = $('<p>' + element.Titolo + '</p>');
+                            textTitle = element.Titolo;
+                        }
+                    });
+                    
+                    date = $('<p>' + test.DataPrimaRisposta + '</p>');
+                    status = $('<p>' + test.Stato + '</p>');
+                    enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test_S.html?id=' +
+                    test.IDTest + '&titolo=' + encodeURIComponent(textTitle) +
+                    + '&resume=' + true +'\'">Rinizia test</button>');
+                } else if(classe == 'test-new'){
                     title = $('<p>' + test.Titolo + '</p>');
                     date = $('<p>' + "--------" + '</p>');
                     status = $('<p>' + 'New' + '</p>');
                     enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test_S.html?id=' +
-                    test.ID + '&titolo=' + encodeURIComponent(test.Titolo) +'\'">Avvia test</button>');
+                    test.ID + '&titolo=' + encodeURIComponent(test.Titolo) +
+                    + '&resume=' + false +'\'">Avvia test</button>');
                 } else if(classe == 'test-close'){
                     date = $('<p>' + test.DataPrimaRisposta  + '</p>');
                     status = $('<p>' + test.Stato + '</p>');
