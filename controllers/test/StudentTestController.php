@@ -96,6 +96,8 @@ switch ($method) {
                         if (isset($data['last_response_date']) && isset($data['student_answers'])) {
                             $responseDate = StudentTest::setLastResponseDate($testId, $email, $data['last_response_date']);
                             $answers = $data['student_answers'];
+                            $oldResponseAnswers = "";
+                            $newResponseAnswers = "";
                             if(isset($answers['old_answers']) && !empty($answers['old_answers'])){
                                 $oldResponseAnswers = StudentAnswer::updateStudentAnswers($answers['old_answers'], $testId, $email);
                             }

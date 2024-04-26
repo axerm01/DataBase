@@ -140,6 +140,7 @@
                     dataType: 'json',
                     success: function(response) {
                         if (response && Array.isArray(response) && response.length > 0) {
+                            console.log(response);
                             createTable(response, title, containerId);
                         } else {
                             console.error('No data received from ' + url);
