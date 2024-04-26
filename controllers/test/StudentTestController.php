@@ -64,7 +64,6 @@ switch ($method) {
                     if (isset($_POST['first_response_date']) && !empty($_POST['first_response_date'])){
                         $date = $_POST['first_response_date'];
                         StudentTest::setFirstResponseDate($testId, $email, $date);
-                        StudentTest::updateStudentTestStatus($testId, $email);
                     }
                     if (isset($_POST['last_response_date']) && !empty($_POST['last_response_date'])){
                         $date = $_POST['last_response_date'];

@@ -180,23 +180,6 @@ class StudentTest {
         $stmt->close();
         return $response;
     }
-    public static function updateStudentTestStatus($testId, $email) {
-        global $con;
-        $response = "not updated";
-        $q = 'CALL UpdateStatoSvolgimento(?,?,?);';
-        $stmt = $con->prepare($q);
-        if ($stmt === false) {
-            return "Errore nella preparazione della query: " . $con->error;
-        }
-        $status = self::IN_PROGRESS;
-        $stmt->bind_param('iss', $testId, $email, $status );
-        if (!$stmt->execute()) {
-            return "Errore nell'esecuzione della query: " . $stmt->error;
-        }
-        $response = 'updated status: in progress';
-        $stmt->close();
-        return $response;
-    }
 
     public static function setFirstResponseDate($testId, $email, $date) {
         global $con;
