@@ -302,6 +302,25 @@
             font-weight: bold;
             margin-bottom: 5px;
         }
+        .main-content{
+            display: flex;
+            align-items: center; /* Allinea verticalmente al centro */
+            margin-left: 3%;
+        }
+        .image-container {
+            border: 2px dashed #d3d3d3; /* Una bordatura tratteggiata che sembra leggera e meno invadente */
+            padding: 0px;
+            margin: 0px;
+            width: fit-content;
+            text-align: center;
+            justify-content: center; /* Allinea orizzontalmente al centro */
+            align-items: center; /* Allinea verticalmente al centro */
+            margin-left: 10%;
+        }
+        .image-container img {
+            max-width: 150px;
+            height: auto;
+        }
     </style>
         
 </head>
@@ -323,11 +342,16 @@
     </header>
 
     <div class="main-container">
-        <div id="testTitle">
-            <span style="margin-right: 10px; text-shadow: none;">Modifica Test: </span>
-            <!-- Posto in cui inserire il titolo da prendere tramite url -->
+        <div class="main-content">
+            <div id="testTitle">
+                <span style="margin-right: 10px; text-shadow: none;">Modifica Test: </span>
+                <!-- Posto in cui inserire il titolo da prendere tramite url -->
+            </div>
+            <div id="image-container" class="image-container">
+                <!-- Posto in cui inserire immagine -->
+            </div>
         </div>
-            <!--il permesso di visualizzazione deve essere fuori da qui. (anche) quando vedo l'elenco dei test gia creati-->
+        <!--il permesso di visualizzazione deve essere fuori da qui. (anche) quando vedo l'elenco dei test gia creati-->
         <p style="font-size: 18px; font-weight: bold; color: #484141b8;"> 
             <input type="checkbox" id="viewAnswersPermission" class="styled-checkbox">
             <span class="checkmark">Permesso visualizzione risposte</span>
@@ -430,11 +454,12 @@
                 
                     if (response.image) {
                         // Crea un elemento img e imposta il suo src all'immagine base64
+                        //console.log(response.image[0].Foto);
                         var img = $('<img>', {
-                            src: 'data:image/jpeg;base64,' + response.image.Foto,
+                            src: 'data:image/jpeg;base64,' + response.image[0].Foto,
                             alt: 'Descrizione dell\'immagine'
                         });
-                        $('#testTitle').append(img);
+                        $('#image-container').append(img);
                     } else {
                         console.error('No image found or JSON is invalid');
                     }
