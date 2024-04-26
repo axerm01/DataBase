@@ -711,8 +711,8 @@
                 processData: false,
                 success: function(response) {
                     console.log(response);
-                    //alert(response); //risposta del server
-                    //window.location.reload(); // ricarica pagina
+                    alert('Dati Salvati con successo'); // mostra una notifica dell'avvenuto invio
+                    window.location.href = 'student_home.html'; // sostituisci con il percorso della pagina desiderata
                 },
                 error: function(xhr, status, error) {
                     console.error("Errore durante l'invio dei dati:", status, error);
