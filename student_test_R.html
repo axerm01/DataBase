@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - ESQL -</title>
+    <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styleBACK.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="check_session.js"></script>
+
+    <style>
+        
+        .question {
+            width: 90%;
+            margin-top: 10px;
+            border: 1px solid #ccc; /* Add border around the question */
+            border-radius: 5px; /* Add rounded corners for the question box */
+            padding: 10px 20px 10px 20px; /* Add padding inside the question box */
+            background-color: #f9f9f9; /* Set background color for the question box */
+        }
+        .question {
+            text-align: left;
+            padding-left: 20px;
+        }
+        /*stile per difficolta*/
+        .question span,.question p{
+            float:inline-end;
+            color: #868686;
+            font-weight: bold;
+        }
+        /*Stile per le risposte*/
+        .question p{
+            padding-left: 70px;
+        }
+
+        .correct-answer {
+            color: green;
+            font-weight: bold;
+        }
+
+
+        /* Styles for question input */
+        .question-input {
+            /*width: 500px; /* Make the input field occupy the full width of its container */
+            padding: 10px; /* Add padding for better visual appeal */
+            margin-top: 15px; /* Add some spacing below the input */
+            border: 1px solid #ccc; /* Add a border for clarity */
+            border-radius: 5px; /* Add rounded corners for a softer look */
+            box-sizing: border-box; /* Include padding and border in the width calculation */
+            font-size: 16px; /* Increase font size for better readability */
+            background-color: #f9f9f9; /* Add a light background color */
+            color: #333; /* Set text color */
+        }
+        .question input[type="text"] {
+            width: 500px;
+        }
+
+        /*Styles for check botton*/
+        .add-check-button {
+            background-color: #15c11e;
+            cursor: pointer; 
+            font-size: 12px;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        /* Styles for "Elimina Quesito" button */
+        .delete-question-button {
+            background-color: #de1515;
+            cursor: pointer;
+            font-size: 12px;
+            width: 80px;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .delete-button {
+            background-color: #de1515;
+            cursor: pointer; /*modifica il cursore del mouse quando va sopra*/
+            font-size: 10px;
+            width: fit-content;
+            padding: 5px;
+            color: #fff;
+            border: white;
+            padding: 8px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            margin-left: 10px;
+        }
+
+        /* Styles for delete answer button */
+        .delete-answer-button {
+            background-color: #de1515;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        /* Styles for MySQL code textarea */
+        .code-textarea {
+            width: 100%; /* Make the textarea occupy the full width of its container */
+            height: 100px; /* Set the height as needed */
+            padding: 10px; /* Add padding for better visual appeal */
+            margin-top: 15px; /* Add some spacing above the textarea */
+            border: 1px solid #ccc; /* Add a border for clarity */
+            border-radius: 5px; /* Add rounded corners for a softer look */
+            box-sizing: border-box; /* Include padding and border in the width calculation */
+            font-size: 16px; /* Set font size */
+            background-color: #f9f9f9; /* Add a light background color */
+            color: #333; /* Set text color */
+        }
+        /* Styles for inizial checkbox */
+        input[type="checkbox"] {
+            border-radius: 25%;
+            transform: scale(1.5); 
+        }
+
+        .table-container {
+            display: inline-block;
+            flex-wrap: nowrap;
+            margin: 10px 5px 0px 5px;
+            font-size: small;
+            justify-content: center;
+            font-weight: bold;
+
+        }
+        table {
+            display: inline-table; /* Mantiene le tabelle in linea */
+            border-collapse: collapse; /* Per una migliore visualizzazione delle tabelle */
+        }
+
+        th, td {
+            border: 1px solid #ddd; /* Stile dei bordi */
+            padding: 5px; /* Padding delle celle */
+        }
+        td{
+            font-weight: normal;
+            background-color: #fff; /* Colore di sfondo delle celle dell'intestazione */
+        }
+        th{
+            background-color: #868686; /* Colore di sfondo delle celle dell'intestazione */
+        }
+        .title-row th {
+            border: none; /* Rimuove i bordi dalle celle nella riga del titolo */
+            background-color: #c2c2c2; /* Colore di sfondo per la riga del titolo */
+            font-weight: bold;
+            text-align: center; /* Centra il testo nella cella del titolo */
+        }
+
+        .difficulty-select {
+            margin-top: 6px;
+            width: 100px; /* Aggiungi larghezza */
+            padding: 8px; /* Aggiungi padding */
+            border: 2px solid #ccc; /* Aggiungi bordo */
+            border-radius: 5px; /* Aggiungi bordi arrotondati */
+            margin-right: 5px;
+            margin-left: 5px;
+        }
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin-top: 20px;
+            border: 2px solid #ccc; /* Bordo simile a quello usato per i dropdown */
+            border-radius: 5px; /* Bordi arrotondati come i menu a tendina */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Ombra per dare profondità, simile al container */
+        }
+        /* Stile del modale */
+        .modal {
+            display: none; /* Nascosto di default */
+            position: fixed; /* Rimane fermo in posizione */
+            z-index: 1; /* Sopra tutto */
+            left: 0;
+            top: 0;
+            width: 100%; /* Larghezza */
+            height: 100%; /* Altezza piena */
+            overflow: auto; /* Abilita lo scroll se necessario */
+            background-color: rgb(0,0,0); /* Colore di sfondo */
+            background-color: rgba(0,0,0,0.4); /* Colore di sfondo con opacità */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% dal top e centrato orizzontalmente */
+            padding: 20px;
+            border: 1px solid #888;
+            width: fit-content; /* Puoi regolare questa larghezza come preferisci */
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .update-container { 
+            height: 100%;
+            width: 90%;
+            padding: 20px;
+            background-color: #fff;
+            display: block;
+            flex-wrap: wrap;
+            justify-content: center; /* Centra i contenitori delle tabelle orizzontalmente */
+            align-items: flex-start; /* Opzionale, allinea i contenitori delle tabelle in alto */
+        }
+        .title{
+            font-size: 28px; 
+            font-weight: bold;
+            color: rgb(0, 0, 0);
+            text-shadow: 2px 2px 4px rgba(76, 76, 76, 0.5);
+        }
+        #testContainer {
+            display: flex;
+            flex-direction: row; /* Imposta le tabelle in orizzontale */
+            flex-wrap: wrap; /* Permette agli elementi di andare a capo quando necessario */
+            width: 90%;
+            padding: 20px;
+            margin: auto;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            align-items: flex-start; /* Allinea le tabelle all'inizio del contenitore in verticale */
+            justify-content: flex-start; /* Allinea le tabelle all'inizio del contenitore in orizzontale */
+        }
+
+
+        .tableContainer-test {
+            background-color: #cdcdcdad;
+            margin: 10px; /* Aggiunge un margine tra le tabelle */
+            width: auto; /* Imposta la larghezza automaticamente in base al contenuto interno */
+        }
+
+        .refContainer-test {
+            background-color: #00000069;
+            color: #ffffff;
+            font-weight: bold;
+            border-radius: 30%;
+            margin: 5px; /* Aggiunge un margine tra le tabelle */
+            padding: 0px 10px 0px 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Opzionale: aggiunge un'ombra per un effetto sollevato */
+            width: auto; /* Imposta la larghezza automaticamente in base al contenuto interno */
+        }
+        .main-content{
+            display: flex;
+            align-items: center; /* Allinea verticalmente al centro */
+            margin-left: 3%;
+        }
+        .image-container {
+            border: 2px dashed #d3d3d3; /* Una bordatura tratteggiata che sembra leggera e meno invadente */
+            padding: 0px;
+            margin: 0px;
+            width: fit-content;
+            text-align: center;
+            justify-content: center; /* Allinea orizzontalmente al centro */
+            align-items: center; /* Allinea verticalmente al centro */
+            margin-left: 10%;
+        }
+        .image-container img {
+            max-width: 150px;
+            height: auto;
+        }
+    </style>
+        
+</head>
+
+<body>
+    <header>
+        <h1>Studia con ESQL</h1>
+        <div class="indietro">
+            <!-- Usa "javascript:history.back()" come href per tornare indietro -->
+            <span class="testo-indietro"><a href="javascript:history.back()">
+                <img src="image/arrow.png" alt="Torna indietro" style="width: 25px; height: 25px;">
+            </a>Indietro</span>
+        </div> 
+        <div class="logout-form">
+            <form action="../controllers/utils/logout.php" method="post">
+                <button type="submit" name="logout">Esci</button>
+            </form>
+        </div>  
+    </header>
+
+    <div class="main-container">
+        <div class="main-content">
+            <div id="testTitle">
+                <span style="margin-right: 10px; text-shadow: none;">Test: </span>
+                <!-- Posto in cui inserire il titolo da prendere tramite url -->
+            </div>
+            <div id="image-container" class="image-container">
+                <!-- Posto in cui inserire immagine -->
+            </div>
+        </div>
+    </div>
+
+    <div id="testContainer">
+        <!-- Qui -->
+    </div>
+    <button id="submitTestButton" style="float: inline-end;">Salva ed Esci</button> <!-- Bottone salvataggio -->
+    
+
+    <!-- Modale per la visualizzazione della tabella -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">×</span>
+            <div id="tableContainer"></div> <!-- Contenitore per la tabella -->
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Setup listeners dopo che il DOM è completamente caricato
+            setupListeners();
+            // Prevengo il comportamento di sottomissione standard del form per il bottone del submit
+            $('#submitTestButton').click(function(e) {
+                e.preventDefault(); 
+                submitFormTest();
+            });
+        });
+        function setupListeners() {
+            // Aggiungi listener a tutti i radio e textarea presenti ora e futuri nel DOM
+            $(document).on('change', '.answer input[type="radio"]', recordAnswerTime);
+            $(document).on('input', '.code-textarea', recordAnswerTime);
+             // Ascolta i cambiamenti nei radio buttons e textarea per impostare il flag di cambiamento
+            $(document).on('change', '.question input[type="radio"], .question .code-textarea', function() {
+                var $questionContainer = $(this).closest('.question');
+                $questionContainer.data('changed', true);
+            });
+        }
+    </script>
+
+    <script>
+        var tables = []; //contine le tabelle usate
+        let firstAnswerTime = null;
+        let lastAnswerTime = null;
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+
+        const testTitolo = urlParams.get('titolo');
+        const testID = parseInt(urlParams.get('id'), 10);
+        document.addEventListener('DOMContentLoaded', function() {
+            
+
+            // Seleziona l'elemento e aggiunge il titolo come nuovo nodo di testo
+            const titleElement = document.getElementById('testTitle');
+            if (titleElement && testTitolo) {
+                const titleText = document.createTextNode(decodeURIComponent(testTitolo));
+                // Aggiunge il nodo di testo all'elemento esistente
+                titleElement.appendChild(titleText);
+                titleElement.classList.add('title');
+            }
+            $.ajax({
+                type: "GET",
+                url: "../controllers/test/StudentTestController.php?action=resume_test",
+                data: { testId: testID },
+                success: function(response) {
+                    console.log(response);
+
+                    // Estrai l'array 'tables' dalla risposta
+                    var usedTables = response.tables;
+                    
+                    if (usedTables) {
+                        usedTables.forEach(function(t) {
+                            //Metto dentro a tables le tabelle gia usate per questo test. 
+                            //Cosi da non selezionarle ulteriormente.
+                            var newT = {id: t[0].IDTabella, name: t[0].Nome};
+                            tables.push(newT);//console.log(tables);
+                            // Crea la tabella e aggiunge un'intestazione con il nome
+                            var container = $('<div></div>').addClass('tableContainer-test');
+                            var viewTable = $("<table></table>").attr("id", "table-" + t[0].IDTabella);
+                            var titleTable = t[0].Nome;
+                            var headerRow = $("<tr></tr>").addClass("title-row").append(`<th colspan="100%">${titleTable}</th>`);
+                            viewTable.append(headerRow);
+
+                            // Aggiungi una riga per le colonne
+                            var columnRow = $("<tr></tr>");
+                            t.columns.forEach(function(column) {
+                                columnRow.append('<th>' + column.Nome + '</th>');
+                            });
+                            viewTable.append(columnRow);
+
+                            // Aggiungi righe di contenuto
+                            t.content.forEach(function(row) {
+                                var contentRow = $("<tr>");
+                                Object.keys(row).forEach(function(key) {
+                                    contentRow.append('<td>' + row[key] + '</td>');
+                                });
+                                viewTable.append(contentRow);
+                            });
+
+                            // Aggiungi la tabella costruita al contenitore
+                            container.append(viewTable);
+                            $("#testContainer").append(container);
+                        });
+                    } else {
+                        console.error('No tables found or JSON is invalid');
+                    }
+
+                    var constraints = response.references;
+                    if (constraints) {
+                        constraints.forEach(function(ref) {
+                            // Crea la tabella e aggiunge un'intestazione con il nome
+                            var container = $('<div></div>').addClass('refContainer-test');
+                            const nomeT1 = getTableNameById(ref.IDT1, response.tables);
+                            const nomeT2 = getTableNameById(ref.IDT2, response.tables);
+                            var referenceText = `${nomeT1 || 'ID sconosciuto'}: [ ${ref.NomeAttributo1} ] ---> ${nomeT2 || 'ID sconosciuto'}: [ ${ref.NomeAttributo2} ]`;
+                            var textElement = $("<p></p>").text(referenceText);
+                            container.append(textElement);
+                            $("#testContainer").append(container);
+                            
+                        });
+                    } else {
+                        console.error('No constraints found or JSON is invalid');
+                    }
+
+                    if (response.image) {
+                        // Crea un elemento img e imposta il suo src all'immagine base64
+                        //console.log(response.image[0].Foto);
+                        var img = $('<img>', {
+                            src: 'data:image/jpeg;base64,' + response.image[0].Foto,
+                            alt: 'Descrizione dell\'immagine'
+                        });
+                        $('#image-container').append(img);
+                    } else {
+                        console.error('No image found or JSON is invalid');
+                    }
+
+                    var questions = response.questions;
+                    var responses = response.responses;
+                    if (questions) {
+                        questions.forEach(function(quest) {
+                            //console.log(quest);
+                            // Crea un ID univoco per il container basato sull'ID della domanda
+                            var containerId = quest.ID;
+
+                            if(quest.type === 'code'){
+
+                                // Crea la tabella e aggiunge un'intestazione con il nome
+                                //var container = $('<div></div>').addClass('question').attr('id', containerId).attr('type', quest.type);
+                                var container = $('<div></div>')
+                                    .addClass('question')
+                                    .attr('id', containerId)
+                                    .attr('type', quest.type)
+                                    .data('already_answered', false)
+                                    .data('changed', false);
+
+                                var textQuestion = $("<strong></strong>").text("Quesito: " + quest.Descrizione + " ");
+                                container.append(textQuestion);
+                                const codeTextarea = document.createElement('textarea');
+                                    //codeTextarea.name = 'code' + questionCodeCount;
+                                    codeTextarea.placeholder = 'Inserisci codice MySQL';
+                                    codeTextarea.classList.add('code-textarea');
+                                    //codeTextarea.addEventListener('input', recordAnswerTime);
+                                responses.forEach(resp => {
+                                    if(resp.IDDomanda == containerId){
+                                        codeTextarea.value = resp.CodiceRisposta;
+                                        container.data('already_answered', true);
+                                    }
+                                });
+                                container.append(codeTextarea);
+                                const addCodeAnswerButton = document.createElement('button');
+                                    addCodeAnswerButton.textContent = 'Verifica Codice';
+                                    addCodeAnswerButton.classList.add('add-check-button');
+                                    addCodeAnswerButton.onclick = function() {
+                                        codeCheck(this);
+                                    };
+                                container.append(addCodeAnswerButton);
+
+                                var difficultyQuestion = $("<p></p>").text("Difficolta: " + quest.Difficolta);
+                                container.append(difficultyQuestion);
+                            }else if(quest.type === 'mc'){
+                                // Crea la tabella e aggiunge un'intestazione con il nome
+                                //var container = $('<div></div>').addClass('question').attr('id', containerId).attr('type', quest.type);
+                                var container = $('<div></div>')
+                                    .addClass('question')
+                                    .attr('id', containerId)
+                                    .attr('type', quest.type)
+                                    .data('already_answered', false)
+                                    .data('changed', false);
+
+                                var textQuestion = $("<strong></strong>").text("Quesito: " + quest.Descrizione);
+                                container.append(textQuestion);
+                                container.append($("<br>"));
+                                var containerAnswer = $('<div></div>').addClass('answer');
+                                // Prefisso univoco basato sull'ID della domanda
+                                var answerGroupName = quest.ID;
+
+                                $.each(quest.answers, function(index, ans) {
+                                    //console.log('answers:', quest.answers)
+                                    // Crea un input di tipo radio per ogni risposta
+                                    var radioOption = $('<input>').attr({
+                                        type: 'radio',
+                                        name: answerGroupName, // Utilizza il prefisso univoco per il nome dell'input radio
+                                        value: ans.Testo, // Imposta il valore dell'opzione radio al testo della risposta
+                                        id: ans.ID // Assicurati che ogni risposta nel tuo data model abbia un 'ID'
+                                    });
+                                    responses.forEach(resp => {
+                                        if(resp.IDDomanda == quest.ID){
+                                            //console.log(index, ans.ID, resp.IDRisposta);
+                                            if (ans.ID === resp.IDRisposta) { 
+                                                radioOption.prop('checked', true);
+                                                container.data('already_answered', true);
+                                            }
+                                        }
+                                    });
+
+                                    // Crea un label per l'opzione radio
+                                    var label = $('<label></label>').attr('for', ans.ID).text(ans.Testo); // Assicurati che il label sia associato correttamente usando 'for'
+
+                                    // Aggiungi l'input radio e il label al container
+                                    containerAnswer.append(radioOption, label, $('<br>')); // Aggiungi anche un line break per separare le opzioni
+                                });
+                                container.append(containerAnswer);
+
+                                var difficultyQuestion = $("<span></span>").text("Difficolta: " + quest.Difficolta);
+                                container.append(difficultyQuestion);
+                            }
+                            //container.append(textQuestion);
+                            $("#testContainer").append(container);
+                            
+                        });
+                    } else {
+                        console.error('No questions found or JSON is invalid');
+                    }
+                },
+                dataType: "json"
+            });
+        });
+    
+        function getTableNameById(id, usedTables) {
+            // Itera attraverso l'array delle tabelle
+            for (let t of usedTables) {
+                // Accede all'oggetto alla chiave '0' di ciascun elemento dell'array
+                if (parseInt(t[0].IDTabella) === parseInt(id)) {
+                    return t[0].Nome;
+                }
+            }
+            return null; // Restituisce null se non viene trovato nessun ID corrispondente
+        }
+        function recordAnswerTime() {
+            const currentTime = new Date(); // Ottieni l'ora corrente
+            lastAnswerTime = currentTime; // Aggiorna sempre l'ultima ora di risposta
+        }
+
+        function formatDateTime(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // getMonth() restituisce un valore da 0 a 11
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        }
+
+    </script>
+    <script>
+        function codeCheck(buttonElement) {
+            // Trova il contenitore della domanda relativo al bottone
+            const questionDiv = buttonElement.closest('.question');
+            // Trova il textarea all'interno di questo contenitore specifico
+            const textarea = questionDiv.querySelector('.code-textarea');
+            // Ottenere il codice MySQL inserito dall'utente
+            const query = textarea.value;
+
+            // Effettuare una chiamata AJAX per inviare il codice al server
+            $.ajax({
+                type: 'POST', // Tipo di richiesta HTTP
+                url: '../controllers/test/TestController.php',
+                data: { query: query, action: 'test_query'}, // Dati inviati al server
+                success: function(response) {
+                    // Analizzare la risposta (con jQuery, la risposta è già un oggetto JS se il server risponde con JSON)
+                    if (response.length > 0) {
+                        showTableModal(response);
+                        // Il codice è valido
+                        //alert('Il codice è valido!');
+                    } else {
+                        // Il codice non è valido
+                        alert('Il codice non è valido!');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Gestione degli errori
+                    if (xhr.status === 0) {
+                        alert('Errore di rete durante la verifica del codice.');
+                    } else {
+                        alert('Errore durante la verifica del codice.');
+                    }
+                },
+                dataType: 'json' // Tipo di dati attesi dalla risposta
+            });
+        }
+    </script>
+
+
+    <script>
+        function showTableModal(response) {
+            console.log(response);
+            // Creazione della tabella come prima
+            const col = response.length > 0 ? Object.keys(response[0]) : [];
+            const table = createTableMain(response, col, null);
+
+            // Trova il contenitore della tabella nel modale e aggiungi la tabella
+            const tableContainer = document.getElementById('tableContainer');
+            tableContainer.innerHTML = ''; // Pulisce vecchie tabelle se presenti
+            tableContainer.appendChild(table);
+
+            // Mostra il modale
+            const modal = document.getElementById('modal');
+            modal.style.display = 'block';
+
+            // Imposta l'evento per chiudere il modale
+            const closeButton = document.querySelector('.close-button');
+            closeButton.onclick = function() {
+                modal.style.display = 'none';
+            };
+
+            // Chiude il modale anche quando si clicca fuori dal suo contenuto
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            };
+        }
+
+        function createTableMain(resp,columns,tName) {
+            const table = document.createElement('table');
+            table.className = 'custom-table';
+            const caption = document.createElement('caption');
+            caption.textContent = tName;
+            caption.className = 'caption-table';
+            
+            // Creazione delle intestazioni della tabella
+            const thead = document.createElement('thead');
+            const trHead = document.createElement('tr');
+            if(caption.textContent){
+                thead.prepend(caption);
+            }
+            columns.forEach(colName => {
+                const th = document.createElement('th');
+                th.textContent = colName;
+                trHead.appendChild(th);
+            });
+            thead.appendChild(trHead);
+            table.appendChild(thead);
+
+            // Creazione del corpo della tabella
+            const tbody = document.createElement('tbody');
+            resp.forEach(obj => {
+                const tr = document.createElement('tr');
+                columns.forEach(column => {
+                    const td = document.createElement('td');
+                    td.textContent = obj[column];
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+
+            // Restituisce l'elemento <table> creato
+            return table;
+        }
+    </script>
+
+    
+    <script>
+        
+        function pickupData() {
+            var sendDataTest = {
+                old_answers: [],
+                new_answers: []
+            };
+
+            // Assumendo che ogni questionario abbia un attributo data-id e un attributo data-type
+            $('.question').each(function() {
+                const questionId = $(this).attr('id');
+                const questionType = $(this).attr('type'); // Legge il tipo di domanda
+                const difficultyLevel = $(this).find('.difficulty-select').val(); // Livello di difficoltà
+                const isPreviouslyAnswered = $(this).data('already_answered'); // Presumo che tu abbia un modo per settare questo dato
+                const changed = $(this).data('changed');
+                if (questionType === 'mc') {
+                    // Prendi il valore della risposta selezionata
+                    const answerId = $(this).find('.answer input[type="radio"]:checked').attr('id');
+                    if (answerId) { // Controlla che una risposta sia stata selezionata
+                        const answerObject = {
+                            type: "mc",
+                            id: questionId,
+                            answerId: answerId
+                        };
+                        // Decide in quale array inserire in base a se era già stata risposta
+                        if (isPreviouslyAnswered) {
+                            if(changed){
+                                sendDataTest.old_answers.push(answerObject);
+                            }
+                        } else {
+                            sendDataTest.new_answers.push(answerObject);
+                        }
+                    }
+                } else if (questionType === 'code') {
+                    var sqlCode = $(this).find('.code-textarea').val();
+                    if (sqlCode) {
+                        const answerObject = {
+                            type: "code", 
+                            id: questionId, 
+                            sqlCode: sqlCode
+                        };
+                        // Decide in quale array inserire in base a se era già stata risposta
+                        if (isPreviouslyAnswered) {
+                            if(changed){
+                                sendDataTest.old_answers.push(answerObject);
+                            }
+                        } else {
+                            sendDataTest.new_answers.push(answerObject);
+                        }
+                    }
+                }
+            });
+            console.log('OLD',sendDataTest.old_answers);
+            console.log('NEW',sendDataTest.new_answers);
+            return sendDataTest;
+        }
+
+        function submitFormTest() {
+            var sendDataTest = pickupData();
+            var dataToSend = {
+                last_response_date: lastAnswerTime ? formatDateTime(lastAnswerTime) : null,
+                student_answers: sendDataTest
+            };
+
+            $.ajax({
+                type: 'PUT',
+                url: '../controllers/test/StudentTestController.php?action=update_response&testId='+testID,
+                data: JSON.stringify(dataToSend),
+                contentType: 'application/json',
+                processData: false,
+                success: function(response) {
+                    console.log(response);
+                    alert('Dati Salvati con successo'); // mostra una notifica dell'avvenuto invio
+                    window.location.href = 'student_home.html'; // sostituisci con il percorso della pagina desiderata
+                },
+                error: function(xhr, status, error) {
+                    console.error("Errore durante l'invio dei dati:", status, error);
+                    // Gestire eventuali errori qui
+                }
+            });
+        }
+    </script>
+</body>
+<footer>
+    <p>Alma Mater Studiorum</p>
+    <h3>Università di Bologna</h3>
+</footer>
+</html>
