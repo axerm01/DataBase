@@ -12,6 +12,7 @@
     <script src="check_session.js"></script>
 
     <style>
+        /*Contenitori che organizzano i test */
         .test-list {
             width: 80%;
             padding: 20px;
@@ -42,8 +43,8 @@
         }
 
         .test-header-40 {
-            flex: 0 1 40%; /* Assegna il 40% della larghezza all'header delle azioni */
-            justify-content: flex-end; /* Allinea il contenuto a destra */
+            flex: 0 1 40%; 
+            justify-content: flex-end; 
         }
 
         .test-header-40 h4 {
@@ -55,36 +56,38 @@
         .test-container {
             display: flex;
             justify-content: space-between;
-            align-items: center; /* Centra verticalmente il contenuto */
+            align-items: center;
             padding: 10px 20px;
             background-color: #f9f9f9;
             border-radius: 5px;
             margin-top: 10px;
             margin-bottom: 10px;
         }
+        /*titoletti */
         .test-details {
             display: flex;
             flex: 1;
             justify-content: space-between;
             align-items: center;
-            width: 60%; /* Mantiene i dettagli del test al 60% della larghezza */
+            width: 60%;
         }
         .test-details p {
-            flex: 1; /* Permette ai dettagli di espandersi equamente */
+            flex: 1; /* Permette titoli di espandersi equamente */
             text-align: center;
             margin: 0;
         }
+        /*Bottoni*/
         .button-container {
-            flex: 0 1 40%; /* Assegna esplicitamente il 40% della larghezza */
+            flex: 0 1 40%; 
             display: flex;
-            flex-wrap: wrap; /* Permette ai bottoni di andare a capo se non ci stanno */
+            flex-wrap: wrap; /* Permette ai bottoni di andare a capo*/
             justify-content: flex-end;
-            gap: 10px; /* Distanza tra i bottoni */
+            gap: 10px;
         }
 
         .button-container button {
             padding: 10px;
-            white-space: nowrap; /* Evita che il testo del bottone vada a capo */
+            white-space: nowrap; 
         }
     </style>
 </head>

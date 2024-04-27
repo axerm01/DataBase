@@ -13,148 +13,149 @@
     <script src="check_session.js"></script>
 
     <style>
-    .table-container {
-        display: inline-block;
-        font-size:medium;
-        padding: 10px;
-        text-align: center;
-    }
-    table {
-        display: inline-table; /* Mantiene le tabelle in linea */
-        border-collapse: collapse; /* Per una migliore visualizzazione delle tabelle */
-    }
+        /*Stile tabella*/
+        .table-container {
+            display: inline-block;
+            font-size:medium;
+            padding: 10px;
+            text-align: center;
+        }
+        table {
+            display: inline-table; /* Mantiene le tabelle in linea */
+            border-collapse: collapse; /* Per una migliore visualizzazione delle tabelle */
+        }
 
-    th, td {
-        border: 1px solid #ddd; /* Stile dei bordi */
-        padding: 5px; /* Padding delle celle */
-    }
+        th, td {
+            border: 1px solid #ddd; /* Stile dei bordi */
+            padding: 5px; /* Padding delle celle */
+        }
 
-    th {
-        background-color: #f2f2f2; /* Colore di sfondo delle celle dell'intestazione */
-    }
-    .delete-button {
-        background-color: #a51b1bc3;
-        cursor: pointer; /*modifica il cursore del mouse quando va sopra*/
-        font-size: 10px;
-        width: 70px;
-        padding: 5px;
-        margin-left: 25px;
-    }
-    .title{
-        font-size: 20px; /* Dimensione del carattere */
-        padding: 5px 0px 0px 20px;
-    }
-    #tablesDisplay{
-        font-size: 16px; /* Dimensione del carattere */
-        color: #000000;
-        background-color: white;
-        width: fit-content;
-        padding: 0px 20px 0px 20px;
-        font-weight: bold;
-    }
+        th {
+            background-color: #f2f2f2; /* Colore di sfondo delle celle dell'intestazione */
+        }
+        .delete-button {
+            background-color: #a51b1bc3;
+            cursor: pointer; 
+            font-size: 10px;
+            width: 70px;
+            padding: 5px;
+            margin-left: 25px;
+        }
+        .title{
+            font-size: 20px; 
+            padding: 5px 0px 0px 20px;
+        }
+        /* l'area dove le tabelle sono visualizzate.*/
+        #tablesDisplay{
+            font-size: 16px; 
+            color: #000000;
+            background-color: white;
+            width: fit-content;
+            padding: 0px 20px 0px 20px;
+            font-weight: bold;
+        }
 
-    /* Stili per la lista */
-    ul {
-        list-style-type: none; /* Rimuove i marcatori di lista */
-        padding: 0; /* Rimuove il padding di default */
-        margin: 20px; /* Aggiunge un margine intorno alla lista per distanziarla dagli altri elementi */
-    }
+        /* Stili per la lista */
+        ul {
+            list-style-type: none; /* Rimuove i marcatori di lista */
+            padding: 0;
+            margin: 20px;
+        }
 
-    /* Stili per ogni elemento della lista */
-    li {
-        margin-bottom: 5px; /* Spazio tra gli elementi della lista */
-        background-color: #f9f9f9; /* Colore di sfondo leggero per ogni elemento della lista */
-        padding: 5px; /* Padding interno per ogni elemento */
-        border-radius: 5px; /* Bordi arrotondati */
-        display: flex; /* Usa flexbox per allineare il contenuto della lista */
-        align-items: center; /* Centra verticalmente il contenuto di ciascun elemento della lista */
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Sfumatura leggera per un effetto sollevato */
-        width: fit-content;
-    }
+        /*Elementi della lista */
+        li {
+            margin-bottom: 5px; 
+            background-color: #f9f9f9;
+            padding: 5px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+            width: fit-content;
+        }
 
-    /* Stili per i bottoni */
-    button {
-        margin-left: 10px; /* Spazio tra il nome e i bottoni e tra i bottoni stessi */
-        padding: 5px 10px; /* Padding interno per i bottoni */
-        border: none; /* Rimuove il bordo di default */
-        color: white; /* Colore del testo bianco */
-        font-weight: bold; /* Testo in grassetto */
-        cursor: pointer; /* Mostra il puntatore come un cursore quando si passa sopra il bottone */
-        transition: background-color 0.3s; /* Transizione per il cambio di colore su hover */
-    }
+        /* Stile base per i bottoni */
+        button {
+            margin-left: 10px;
+            padding: 5px 10px; 
+            border: none; 
+            color: white; 
+            font-weight: bold; 
+            cursor: pointer;
+        }
 
-    /* Stili specifici per il bottone Visualizza */
-    button.view {
-        background-color: #15c11e;
-        cursor: pointer; 
-        font-size: 10px;
-        color: #fff;
-        border: none;
-        padding: 6px 17px;
-        border-radius: 5px;
-        transition: background-color 0.3s; /* Verde per il bottone Visualizza */
-    }
+        /* Stili specifici per il bottone Visualizza */
+        button.view {
+            background-color: #15c11e;
+            cursor: pointer; 
+            font-size: 10px;
+            color: #fff;
+            border: none;
+            padding: 6px 17px;
+            border-radius: 5px;
+            transition: background-color 0.3s; 
+        }
 
-    button.view:hover {
-        background-color: #108516; /* Verde più scuro al passaggio del mouse */
-    }
+        button.view:hover {
+            background-color: #108516; 
+        }
 
-    /* Stili specifici per il bottone Elimina */
-    button.delete {
-        background-color: #de1515;
-        cursor: pointer;
-        font-size: 10px;
-        width: 80px;
-        color: #fff;
-        border: none;
-        padding: 6px 17px;
-        border-radius: 5px;
-        transition: background-color 0.3s; /* Rosso per il bottone Elimina */
-    }
+        /* Stili specifici per il bottone Elimina */
+        button.delete {
+            background-color: #de1515;
+            cursor: pointer;
+            font-size: 10px;
+            width: 80px;
+            color: #fff;
+            border: none;
+            padding: 6px 17px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
 
-    button.delete:hover {
-        background-color: #941b1b; /* Rosso più scuro al passaggio del mouse */
-    }
+        button.delete:hover {
+            background-color: #941b1b;
+        }
 
-    /* Stile del modale */
-    .modal {
-        display: none; /* Nascosto di default */
-        position: fixed; /* Rimane fermo in posizione */
-        z-index: 1; /* Sopra tutto */
-        left: 0;
-        top: 0;
-        width: 100%; /* Larghezza */
-        height: 100%; /* Altezza piena */
-        overflow: auto; /* Abilita lo scroll se necessario */
-        background-color: rgb(0,0,0); /* Colore di sfondo */
-        background-color: rgba(0,0,0,0.4); /* Colore di sfondo con opacità */
-    }
+        /* Stile del modale */
+        .modal {
+            display: none; /* Nascosto di default */
+            position: fixed; /* Rimane fermo in posizione */
+            z-index: 1; /* Sopra tutto */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Abilita lo scroll se necessario */
+            background-color: rgba(0,0,0,0.4); 
+        }
 
-    .modal-content {
-        background-color: #fefefe;
-        margin: 15% auto; /* 15% dal top e centrato orizzontalmente */
-        padding: 20px;
-        border: 1px solid #888;
-        max-width: fit-content; /* Puoi regolare questa larghezza come preferisci */
-    }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; 
+            padding: 20px;
+            border: 1px solid #888;
+            max-width: fit-content; 
+        }
+        /*Bottoni per chiudere il modale.*/
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
 
-    .close-button {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-    }
-
-    .close-button:hover,
-    .close-button:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    }
-    .caption-table{
-        font-weight: bold;
-        margin-bottom: 15px;
-    }
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        /*Applicato alla didascalia della tabella.*/
+        .caption-table{
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 
@@ -283,7 +284,7 @@
 
         function showTableModal(response, tName) {
             // Creazione della tabella come prima
-            const col = response.length > 0 ? Object.keys(response[0]) : [];
+            const col = response.length > 1 ? Object.keys(response[1]) : [];
             const table = createTableMain(response.slice(1), col, tName);
 
             // Trova il contenitore della tabella nel modale e aggiungi la tabella

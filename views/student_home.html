@@ -30,7 +30,7 @@
             border: 2px solid #ccc;
             border-radius: 5px;
             display: flex;
-            flex-direction: column; /* Organizza i contenitori dei test in colonna */
+            flex-direction: column; 
         }
         .test-inProgress, .test-open,
         .test-new, .test-close{
@@ -173,7 +173,7 @@
                 <option value="test-inProgress">In Progress</option>
                 <option value="test-open">Open</option>
                 <option value="test-new">New</option>
-                <option value="test-close">Closed</option>
+                <option value="test-close">Close</option>
             </select>
             <button class="black-button" onclick="window.location.href='statistics.html'">Statistiche</button>
         </div>  
@@ -220,7 +220,7 @@
             </div>
         </div>
         <div class="test-close">
-            <span>Closed.</span>
+            <span>Close.</span>
             <div class="test-header">
                 <div class="test-header-60">
                     <h4>Titolo</h4>        
@@ -282,7 +282,7 @@
                 $.when(
                     fetchTests('InProgress', '.test-inProgress'),
                     fetchTests('Open', '.test-open'),
-                    fetchTests('Closed', '.test-close')
+                    fetchTests('Close', '.test-close')
                 ).then(function() {
                     // Ora, eseguo le istruzioni che dipendono dalla chiamata get_all_tests
                     //console.log(allTests);
