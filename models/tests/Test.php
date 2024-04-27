@@ -3,8 +3,41 @@ include_once('../../controllers/utils/connect.php');
 include_once '../../models/tests/StudentTest.php';
 
 class Test {
+    public static function testQuery($q){
+        global $con;
 
-    public static function saveTestData($title, $creationDate, $showAnswers, $professorEmail, $image){
+        $restrictedKeywords = [
+            'INSERT', 'DROP', 'DELETE', 'UPDATE', 'CALL',
+            'Attributo', 'Codice', 'Docente', 'Galleria', 'Messaggio_docente',
+            'Messaggio_studente', 'Referenze', 'Risposta_codice', 'Risposta_scelta',
+            'Scelta', 'Scelta_multipla', 'Studente', 'Svolgimento', 'Tabella', 'Test',
+            'Test_tabella', 'Classificaquesiti', 'Classificarispostecorrette', 'Classificatestcompletati'
+        ];
+
+        foreach ($restrictedKeywords as $keyword) {
+            if (stripos($q, $keyword) !== false) {
+                return "Forbidden, Query contenente termini non consentiti: $keyword";
+            }
+        }
+
+        $stmt = $con->prepare($q);
+        if ($stmt === false) {
+            return "Errore nella preparazione della query: " . $con->error;
+        }
+        if (!$stmt->execute()) {
+            return  "Errore nell'esecuzione della query: " . $stmt->error;
+        }
+
+        $result = $stmt->get_result();
+        $data = [];
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;  // Aggiunge ogni riga all'array $data
+        }
+        $stmt->close();
+        return $data;
+    }
+
+    public static function saveTestData($title, $showAnswers, $professorEmail, $image){
 
         global $con;
         $q = 'CALL CreateTest(?,?,?,@lastID);';

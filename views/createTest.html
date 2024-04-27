@@ -791,14 +791,17 @@
                 url: '../controllers/test/TestController.php',
                 data: { query: query, action: 'test_query'}, // Dati inviati al server
                 success: function(response) {
-                    // Analizzare la risposta (con jQuery, la risposta è già un oggetto JS se il server risponde con JSON)
-                    if (response.length > 0) {
-                        showTableModal(response);
-                        // Il codice è valido
-                        //alert('Il codice è valido!');
+                    // Converti la risposta in stringa se è un oggetto JSON
+                    response = typeof response === 'object' ? JSON.stringify(response) : response;
+
+                    if (response.startsWith('Forbidden')) {
+                        alert(response);
                     } else {
-                        // Il codice non è valido
-                        alert('Il codice non è valido!');
+                        if (response.length > 0) {
+                            showTableModal(JSON.parse(response));
+                        } else {
+                            alert('Il codice non è valido!');
+                        }
                     }
                 },
                 error: function(xhr, status, error) {
@@ -806,7 +809,7 @@
                     if (xhr.status === 0) {
                         alert('Errore di rete durante la verifica del codice.');
                     } else {
-                        alert('Errore durante la verifica del codice.');
+                        alert('Errore durante la verifica del codice:'+ xhr.responseText);
                     }
                 },
                 dataType: 'json' // Tipo di dati attesi dalla risposta
@@ -843,6 +846,7 @@
         }
 
         function createTableMain(resp,columns,tName) {
+            console.log(resp);
             const table = document.createElement('table');
             table.className = 'custom-table';
             const caption = document.createElement('caption');

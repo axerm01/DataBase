@@ -1,5 +1,9 @@
 <?php
-include 'connect.php';
+include_once 'connect.php';
+include_once '../../models/users/Student.php';
+include_once '../../models/users/Professor.php';
+
+
 
 // Controlla se il modulo è stato inviato
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -25,39 +29,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Cripta la password - valutare se usare questa funzione.
-    //$password_hash = password_hash($password, PASSWORD_DEFAULT);
-
-    // Crea una connessione al database
-    global $con;
-
-    // Controlla la connessione
-    if ($con->connect_error) {
-        die("Connessione fallita: " . $con->connect_error);
-    }
+    $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
     if($_POST['role'] == 'student'){
-        $stmt = $con->prepare("CALL CreateStudente (?,?,?,?,?,?,?)");
-        //$stmt->bind_param("sssssss", $_POST['name'], $_POST['surname'], $email, $_POST['matricola'], $_POST['registration_year'], $_POST['phone'], $password_hash);
-        $stmt->bind_param("sssssss", $_POST['name'], $_POST['surname'], $email, $_POST['matricola'], $_POST['registration_year'], $_POST['phone'], $password);
+        Student::signin($_POST['name'], $_POST['surname'], $email, $_POST['matricola'], $_POST['registration_year'], $_POST['phone'], $password_hash);
     }
     else if ($_POST['role'] == 'professor') {
-        $stmt = $con->prepare("CALL CreateDocente (?,?,?,?,?,?,?)");
-        //$stmt->bind_param("sssssis", $_POST['name'], $_POST['surname'], $email, $_POST['course'], $_POST['department'], $_POST['phone'], $password_hash);
-        $stmt->bind_param("sssssss", $_POST['name'], $_POST['surname'], $email, $_POST['course'], $_POST['department'], $_POST['phone'], $password);
+        Professor::signin($_POST['name'], $_POST['surname'], $email, $_POST['course'], $_POST['department'], $_POST['phone'], $password_hash);
     }
 
-    // Pezzo di codice che dovrebe restituire un riscontro
-    if ($stmt->execute()) {
-            // Invece di restituire JSON, reindirizza a una pagina di successo
-            header('Location: ../../views/login.html');
-            exit;
-    } else {
-        $messaggio = "Si è verificato un errore durante la registrazione.";
-    }
-    // Restituisci il messaggio come risposta JSON
-    echo json_encode(["message" => $messaggio]);
 
-    // Chiudi la connessione
-    $con->close();
 }
-?>

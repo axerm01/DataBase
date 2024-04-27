@@ -131,13 +131,13 @@ DELIMITER ;
 DELIMITER //
 
 CREATE PROCEDURE `CreateDocente`(
-in NomeAtt text,
+in NomeAtt varchar(45),
 in CognomeAtt varchar(45),
-in MailAtt text,
-in CorsoAtt varchar(16),
-in DipartimentoAtt text,
-in TelefonoAtt int,
-in PasswordAtt varchar(16)  
+in MailAtt varchar(45),
+in CorsoAtt varchar(45),
+in DipartimentoAtt varchar(45),
+in TelefonoAtt varchar(45),
+in PasswordAtt varchar(45)
 )
 BEGIN
 INSERT INTO docente (Nome, Cognome ,Mail ,Corso, Dipartimento, Telefono,Password)

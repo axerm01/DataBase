@@ -42,7 +42,7 @@ switch ($method) {
             switch ($action) {
                 case 'test_query': //restituisce il risultato della query inserita dal docente per trovare la risposta di una code question
                     $query = filter_input(INPUT_POST, 'query');
-                    $data = testQuery($query);
+                    $data = Test::testQuery($query);
                     echo json_encode($data);
                     break;
 
@@ -124,14 +124,11 @@ switch ($method) {
         break;*/
 }
 
-//Inserisce a DB un nuovo test creato dal docente
 function saveTest($data, $image) {
     try {
         // Decodifica il JSON ricevuto
         $decodedData = json_decode($data, true);
-
-        $creationDate = date('Y-m-d H:i:s');
-        $testId = Test::saveTestData($decodedData['title'], $creationDate, $decodedData['viewAnswersPermission'], $_SESSION['email'], $image);
+        $testId = Test::saveTestData($decodedData['title'], $decodedData['viewAnswersPermission'], $_SESSION['email'], $image);
 
         // Sezione dedicata al salvataggio delle tabelle relative al Test
         $tableIDs = [];
@@ -281,27 +278,4 @@ function updateTest($decodedData, $testId) {
     }
 
     return $response;
-}
-function testQuery($q){
-    global $con;
-
-    if (stripos($q, 'INSERT') !== false || stripos($q, 'DROP') !== false || stripos($q, 'DELETE') !== false || stripos($q, 'UPDATE') !== false) {
-        return 'Query non consentita';
-    }
-
-    $stmt = $con->prepare($q);
-    if ($stmt === false) {
-        return "Errore nella preparazione della query: " . $con->error;
-    }
-    if (!$stmt->execute()) {
-        return "Errore nell'esecuzione della query: " . $stmt->error;
-    }
-
-    $result = $stmt->get_result();
-    $data = [];
-    while ($row = $result->fetch_assoc()) {
-        $data[] = $row;  // Aggiunge ogni riga all'array $data
-    }
-    $stmt->close();
-    return $data;
 }
