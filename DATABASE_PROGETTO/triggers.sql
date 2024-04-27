@@ -3,7 +3,7 @@ CREATE TRIGGER ViewAnswersConclusion AFTER UPDATE ON test
     FOR EACH ROW BEGIN
     IF NEW.VisualizzaRisposte = TRUE THEN
     UPDATE Svolgimento
-    SET svolgimento.Stato = 'Closed'
+    SET svolgimento.Stato = 'Concluso'
     WHERE svolgimento.IDTest = NEW.ID;
 END IF;
 END//
@@ -14,7 +14,7 @@ CREATE TRIGGER UpdateStatoOnPrimaRisposta
     FOR EACH ROW
 BEGIN
     IF OLD.DataPrimaRisposta IS NULL AND NEW.DataPrimaRisposta IS NOT NULL THEN
-        SET NEW.Stato = 'InProgress';
+        SET NEW.Stato = 'InCompletamento';
 END IF;
 END//
 
@@ -43,7 +43,7 @@ BEGIN
 
     IF totalQuestions = correctAnswers THEN
     UPDATE Svolgimento
-    SET Stato = 'Closed'
+    SET Stato = 'Concluso'
     WHERE MailStudente = NEW.Studente AND IDTest = NEW.IDTest;
 END IF;
 END//
@@ -73,7 +73,7 @@ BEGIN
 
     IF totalQuestions = correctAnswers THEN
     UPDATE Svolgimento
-    SET Stato = 'Closed'
+    SET Stato = 'Concluso'
     WHERE MailStudente = NEW.Studente AND IDTest = NEW.IDTest;
 END IF;
 END//

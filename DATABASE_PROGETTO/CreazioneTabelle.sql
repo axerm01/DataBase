@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `STUDENTE` (
   `Matricola` VARCHAR(16) NOT NULL,
   `AnnoImm` YEAR NOT NULL,
   `password` varchar(45) NOT NULL,
-  `Telefono` INT DEFAULT NULL,
+  `Telefono` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`Mail`))
 ENGINE = InnoDB;
 
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS `DOCENTE` (
   `Corso` VARCHAR(45) NOT NULL,
   `Dipartimento` VARCHAR(45) NOT NULL,
   `password` varchar(45) NOT NULL,
-  `Telefono` varchar(45) not NULL,
+  `Telefono` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`Mail`))
 ENGINE = InnoDB;
 
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `TEST` (
   `DataCreazione` DATETIME,
   `VisualizzaRisposte` VARCHAR(45) DEFAULT 'FALSE',
   `MailDocente` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`ID`),
+  PRIMARY KEY (`ID`,`Titolo`),
   CONSTRAINT `FK_Test_MailDocente`
     FOREIGN KEY (`MailDocente`)
     REFERENCES `DOCENTE` (`Mail`)
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS `ATTRIBUTO` (
   `IDTabella` INT NOT NULL,
   `Nome` VARCHAR(45) NOT NULL,
   `Tipo` VARCHAR(45) NOT NULL,
-  `IsPK` BOOLEAN DEFAULT 1,
+  `IsPK` BOOLEAN DEFAULT 0,
   PRIMARY KEY (`IDTabella`, `Nome`),
   CONSTRAINT `FK_Attributo_IDTabella`
     FOREIGN KEY (`IDTabella`)
@@ -83,10 +83,10 @@ ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `CODICE` (
   `ID` INT NOT NULL,
-  `Output` VARCHAR(45) DEFAULT NULL,
-    `Descrizione` VARCHAR(45) DEFAULT NULL,
+  `Output` VARCHAR(255) DEFAULT NULL,
+    `Descrizione` VARCHAR(255) DEFAULT NULL,
   `IDTest` INT NOT NULL,
-  `Difficolta` VARCHAR(45) NOT NULL,
+  `Difficolta` ENUM('Basso','Medio','Alto') NOT NULL,
   PRIMARY KEY (`ID`, `IDTest`),
   CONSTRAINT `FK_Codice_IDTest`
     FOREIGN KEY (`IDTest`)
@@ -108,7 +108,7 @@ ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `MESSAGGIO_DOCENTE` (
   `Titolo` VARCHAR(45) NOT NULL,
-  `Testo` VARCHAR(45) NOT NULL,
+  `Testo` VARCHAR(255) NOT NULL,
   `Data` DATETIME NOT NULL,
   `IDTest` INT NOT NULL,
   `MailDocente` VARCHAR(45) NOT NULL,
@@ -127,7 +127,7 @@ ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `MESSAGGIO_STUDENTE` (
   `Titolo` VARCHAR(45) NOT NULL,
-  `Testo` VARCHAR(45) NOT NULL,
+  `Testo` VARCHAR(255) NOT NULL,
   `Data` DATETIME NOT NULL,
   `IDTest` INT NOT NULL,
   `MailStudente` VARCHAR(45) NOT NULL,
@@ -164,8 +164,8 @@ ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `SCELTA_MULTIPLA` (
   `ID` INT NOT NULL,
-  `Descrizione` VARCHAR(45) NOT NULL,
-  `Difficolta` VARCHAR(45) NOT NULL,
+  `Descrizione` VARCHAR(255) NOT NULL,
+  `Difficolta` ENUM('Basso','Medio','Alto') NOT NULL,
   `NumRisposte` INT NOT NULL DEFAULT 0,
   `IDTest` INT NOT NULL,
   PRIMARY KEY (`ID`, `IDTest`),
@@ -252,7 +252,7 @@ ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `SVOLGIMENTO` (
   `MailStudente` VARCHAR(45) NOT NULL,
-  `Stato` VARCHAR(45) NOT NULL DEFAULT 'Da iniziare',
+  `Stato` ENUM('Aperto','InCompletamento','Concluso') DEFAULT NULL,
   `DataPrimaRisposta` DATETIME DEFAULT NULL,
   `DataUltimaRisposta` DATETIME DEFAULT Null,
   `IDTest` INT NOT NULL,

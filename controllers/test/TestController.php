@@ -291,19 +291,17 @@ function testQuery($q){
 
     $stmt = $con->prepare($q);
     if ($stmt === false) {
-        die("Errore nella preparazione della query: " . $con->error);
+        return "Errore nella preparazione della query: " . $con->error;
     }
     if (!$stmt->execute()) {
-        die("Errore nell'esecuzione della query: " . $stmt->error);
+        return "Errore nell'esecuzione della query: " . $stmt->error;
     }
 
     $result = $stmt->get_result();
     $data = [];
-
     while ($row = $result->fetch_assoc()) {
         $data[] = $row;  // Aggiunge ogni riga all'array $data
     }
     $stmt->close();
-
     return $data;
 }

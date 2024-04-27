@@ -7,7 +7,7 @@ FROM
         JOIN
     Studente ON Svolgimento.MailStudente = Studente.Mail
 WHERE
-    Svolgimento.Stato = 'Closed'
+    Svolgimento.Stato = 'Concluso'
 GROUP BY
     Studente.Matricola
 ORDER BY

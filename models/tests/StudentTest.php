@@ -7,9 +7,9 @@ include_once ('../../models/relational/Table.php');
 include_once ('../../models/relational/Reference.php');
 
 class StudentTest {
-    const OPEN = 'Open';
-    const IN_PROGRESS = 'InProgress';
-    const CLOSE = 'Close';
+    const OPEN = 'Aperto';
+    const IN_PROGRESS = 'InCompletamento';
+    const CLOSE = 'Concluso';
 
     public static function getTests($stdEmail, $filter) //Filter può essere Open, InProgress, Close, All
     {

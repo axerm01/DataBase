@@ -89,7 +89,7 @@ CREATE PROCEDURE `CreateCodice`(
     in IDTestAtt int,
     in IDAtt int,
     in TextAtt varchar(45),
-    in OutputAtt varchar(45),
+    in OutputAtt varchar(255),
     in DiffAtt varchar(45)
 )
 BEGIN
@@ -419,7 +419,7 @@ DELIMITER //
 CREATE PROCEDURE `CreateSceltaMultipla`(
     in IDTestAtt int,
     in IDAtt int,
-    in DescrizioneAtt varchar(45),
+    in DescrizioneAtt varchar(255),
     in NumRisposteAtt int,
     in DifficoltaAtt varchar(45)
 )
@@ -438,7 +438,7 @@ WHERE IDTest = IDTestAtt and ID = IDAtt;
 END //
 
 CREATE PROCEDURE `ViewSceltaMultipla`(in IDTestAtt int,
-in DescrizioneAtt varchar(45))
+in DescrizioneAtt varchar(255))
 BEGIN
 SELECT*
 FROM Scelta_Multipla
@@ -791,14 +791,14 @@ ELSE
 END IF;
 END //
 
-CREATE PROCEDURE UpdateOutputCodice(IN IdCodice int, in testId int, IN OutputAtt varchar(45))
+CREATE PROCEDURE UpdateOutputCodice(IN IdCodice int, in testId int, IN OutputAtt varchar(255))
 BEGIN
 UPDATE CODICE
 SET CODICE.Output = OutputAtt
 WHERE ID = IdCodice and  IDTest = testId;
 END //
 
-CREATE PROCEDURE UpdateDescrizioneCodice(IN IdCodice int, in testId int, IN DesrizioneAtt varchar(45))
+CREATE PROCEDURE UpdateDescrizioneCodice(IN IdCodice int, in testId int, IN DescrizioneAtt varchar(255))
 BEGIN
 UPDATE CODICE
 SET Descrizione = DescrizioneAtt
@@ -833,7 +833,7 @@ SET Difficolta = DifficoltaAtt
 WHERE ID = IdAtt and  IDTest = testId;
 END //
 
-CREATE PROCEDURE UpdateSceltaMultiplaDescrizione(IN IdAtt int, in testId int,in DescrizioneAtt varchar(45))
+CREATE PROCEDURE UpdateSceltaMultiplaDescrizione(IN IdAtt int, in testId int,in DescrizioneAtt varchar(255))
 BEGIN
 UPDATE SCELTA_MULTIPLA
 SET Descrizione = DesrizioneAtt
