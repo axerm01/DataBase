@@ -85,11 +85,11 @@ switch ($method){
 
 function saveTable($data) {
     $decodedData = json_decode($data, true);
-    $response = "";
+    $response = "ID Tabella: ";
 
     $creationDate = date('Y-m-d H:i:s');
-    $tableId = Table::saveTableData($_SESSION['email'], $decodedData['title'], $creationDate, count($decodedData['rows']), $decodedData['attributes']);
-    $response .= $tableId;
+    $tableId = Table::saveTableData($_SESSION['email'], $decodedData['title'], $creationDate, $decodedData['attributes']);
+    $response .= $tableId.' - ';
     $response .= Table::createNewTable($decodedData['title'], $decodedData['attributes']);
     $response .= Table::fillTableRows($decodedData['rows'], $decodedData['attributes'], $decodedData['title']);
 
@@ -97,11 +97,7 @@ function saveTable($data) {
 }
 function updateTable($data) {
     $decodedData = json_decode($data, true);
-    $response = "";
-
-    //Da capire se ha senso tenerlo
-    Table::updateTableData($decodedData['tableId'], count($decodedData['rows']), $decodedData['attributes']);
-    $response .= Table::updateTableRows($decodedData['rows'], $decodedData['attributes'], $decodedData['title']);
+    $response = Table::fillTableRows($decodedData['rows'], $decodedData['attributes'], $decodedData['title']);
 
     return $response;
 }

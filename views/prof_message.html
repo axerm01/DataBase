@@ -178,10 +178,9 @@
     var titolo = $('#Titolo').val();
     var testo = $('#messaggio').val();
 
-    // Recupera i parametri dall'URL
     var urlParams = new URLSearchParams(window.location.search);
-    var testId = urlParams.get('id');
-    var professorEmail = urlParams.get('mail');
+    var testId = parseInt(urlParams.get('id'));
+
     var formData = new FormData();
     formData.append('message', JSON.stringify({titolo: titolo, testo: testo, testId: testId}));
     formData.append('action', "send_prof_message");
@@ -204,7 +203,7 @@
         $(document).ready(function () {
             // Recupera i parametri dall'URL
             var urlParams = new URLSearchParams(window.location.search);
-            var testId = urlParams.get('id');
+            var testId = parseInt(urlParams.get('id'));
 
             // Ottieni i messaggi relativi   al test quando la pagina viene caricata
             getMessagesForTest(testId);

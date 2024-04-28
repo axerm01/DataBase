@@ -166,7 +166,7 @@
                             "Testo: " + message.Testo + "<br>" +
                             "Data: " + message.Data + "<br>" +
                             "ID Test: " + message.IDTest + "<br>" +
-                            "Mail Studente: " + message.MailDocente + "<br><br>";
+                            "Mail Docente: " + message.MailDocente + "<br><br>";
                     });
                     $('#testMessages').html(formattedText);
                 },
@@ -179,8 +179,7 @@
         $(document).ready(function () {
             // Recupera i parametri dall'URL
             var urlParams = new URLSearchParams(window.location.search);
-            //var testId = urlParams.get('id');
-            var testId = 2;
+            var testId = parseInt(urlParams.get('id'));
 
             // Ottieni i messaggi relativi   al test quando la pagina viene caricata
             getMessagesForTest(testId);
@@ -190,8 +189,7 @@
             var urlParams = new URLSearchParams(window.location.search);
             var titolo = $('#Titolo').val();
             var testo = $('#messaggio').val();
-            //var testId = urlParams.get('id');
-            var testId = 2
+            var testId = parseInt(urlParams.get('id'));
 
             var formData = new FormData();
             formData.append('message', JSON.stringify({titolo: titolo, testo: testo, testId: testId}));

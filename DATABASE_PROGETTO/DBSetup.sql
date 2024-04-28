@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS `CODICE` (
 
 CREATE TABLE IF NOT EXISTS `GALLERIA` (
                                           `IDTest` INT NOT NULL,
-                                          `Foto` BLOB NULL,
+                                          `Foto` LONGBLOB DEFAULT NULL,
                                           PRIMARY KEY (`IDTest`),
     CONSTRAINT `FK_Galleria_IDTest`
     FOREIGN KEY (`IDTest`)
@@ -575,7 +575,7 @@ END//
 
 CREATE PROCEDURE `AddToGalleria`(
     in IDTestAtt int,
-    in FotoAtt BLOB
+    in FotoAtt LONGBLOB
 )
 BEGIN
 INSERT INTO Galleria(IDTest,Foto)
@@ -958,11 +958,10 @@ CREATE PROCEDURE `CreateTable`(
     in MailAtt varchar(45),
     in NomeAtt varchar(45),
     in DataAtt date,
-    in NumRigheAtt smallint,
     out IDAtt int )
 BEGIN
-INSERT INTO tabella (MailProfessore, Nome, DataCreazione, NumRighe)
-VALUES (MailAtt, NomeAtt, DataAtt, NumRigheAtt);
+INSERT INTO tabella (MailProfessore, Nome, DataCreazione)
+VALUES (MailAtt, NomeAtt, DataAtt);
 SET IDAtt = LAST_INSERT_ID();
 END//
 

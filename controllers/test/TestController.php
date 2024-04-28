@@ -157,7 +157,7 @@ function saveTest($data, $image) {
             }
         }
 
-        $response = 'Saved correctly';
+        $response = 'Test salvato correttamente';
     } catch (Exception $exc){
         $response = 'Some error occoured. Error log: ' .$exc;
     }
@@ -272,7 +272,7 @@ function updateTest($decodedData, $testId) {
             Test::updateVisualizzaRisposte($testId);
         }
 
-        $response = 'Updated correctly';
+        $response = 'Tutte le modifiche sono state salvate';
     } catch (Exception $exc){
         $response = 'Some error occoured. Error log: ' .$exc;
     }
