@@ -78,6 +78,7 @@ class StudentAnswer
         global $con; // Assumi che $con sia la tua connessione al database
 
         $esiti = StudentAnswer::calcolaEsitoRisposte($answers, $testId);
+
         if($esiti == 'Query non consentita'){
             return $esiti;
         }
@@ -133,12 +134,12 @@ class StudentAnswer
             $questionId++;
             if ($userAnswer['type'] === 'mc') {
                 // Gestione delle risposte a scelta multipla
-                $results[$questionId] = isset($correctMCAnswers[$questionId]) &&
-                    $userAnswer['answerId'] == $correctMCAnswers[$questionId];
+                $results[$questionId] = isset($correctMCAnswers[$userAnswer['id']]) &&
+                    $userAnswer['answerId'] == $correctMCAnswers[$userAnswer['id']];
             } elseif ($userAnswer['type'] === 'code') {
                 // Gestione delle risposte di codice
-                if (isset($correctCodeAnswers[$questionId]) && self::isSafeQuery($userAnswer['sqlCode'])) {
-                    $results[$questionId] = self::compareSqlResults($userAnswer['sqlCode'], $correctCodeAnswers[$questionId], $con);
+                if (isset($correctCodeAnswers[$userAnswer['id']]) && self::isSafeQuery($userAnswer['sqlCode'])) {
+                    $results[$questionId] = self::compareSqlResults($userAnswer['sqlCode'], $correctCodeAnswers[$userAnswer['id']], $con);
                 } else {
                     $results[$questionId] = false;
                 }

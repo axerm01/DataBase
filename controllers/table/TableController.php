@@ -31,7 +31,7 @@ switch ($method){
                     $data = array_merge(array($columns), $content);
                     break;
 
-                case 'check_name': // GET delle colonne di una tabella indicata
+                case 'check_name':
                     $name = filter_input(INPUT_GET, 'name');
                     $data = Table::checkIfNameExists($name);
                     break;

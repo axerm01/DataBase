@@ -165,6 +165,7 @@ class Table {
             return "Errore nella preparazione della query: " . $con->error;
         }
         $con->close();
+        logMongo("Righe aggiunte alla tabella ".$title);
         return 'Righe inserite con successo!';
     }
 

@@ -246,6 +246,34 @@ class Test {
         $stmt->close();
     }
 
+    public static function checkIfTestNameExists($nome, $email) {
+        global $con;
+
+        // Prepara la chiamata alla stored procedure
+        $stmt = $con->prepare("CALL CheckIfTestNameExists(?,?, @result)");
+        if ($stmt === false) {
+            // Gestisci l'errore di preparazione della query
+            throw new Exception("Errore nella preparazione della query: " . $con->error);
+        }
+
+        // Lega i parametri
+        $stmt->bind_param('ss', $nome, $email);
+
+        // Esegui la stored procedure
+        if (!$stmt->execute()) {
+            // Gestisci l'errore di esecuzione della query
+            throw new Exception("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+
+        // Recupera il risultato
+        $result = $con->query("SELECT @result AS result")->fetch_assoc();
+
+        $stmt->close();
+
+        // Restituisce il risultato booleano
+        return (bool) $result['result'];
+    }
+
 
 
 

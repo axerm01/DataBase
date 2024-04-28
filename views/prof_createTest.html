@@ -943,69 +943,87 @@
 
         function submitFormTest() {
             var sendDataTest = pickupData();
-            var formData = new FormData();
-
-            // Aggiunge i dati testuali al FormData
-            formData.append("data", JSON.stringify(sendDataTest));
-
-
-            // Aggiunge il file immagine al FormData
-            var imageFile = document.getElementById('testImage').files[0];
-            if (imageFile) {
-                formData.append("testImage", imageFile);
-                console.log(imageFile);
+            var name = sendDataTest.title;
+            if (name == null || name === "") {
+                alert("Per creare un test devi assegnare un titolo diverso da quello degli altri test");
             }
-            // Aggiunge l'action al FormData
-            formData.append("action" , "save_test");
-            
+            else {
 
-            // Invio dei dati al file PHP tramite AJAX
-            $.ajax({
-                type: 'POST',
-                url: '../controllers/test/TestController.php', //action è gia stata appesa
-                data: formData,
-                contentType: false, // Importante per il corretto invio di FormData
-                processData: false,
-                success: function(response) {
-                    let object = {};
-                    formData.forEach(function(value, key){
-                        object[key] = value;
-                    });
-                    console.log(JSON.stringify(sendDataTest));
-                    alert(response); //risposta del server
-                    window.location.reload(); // ricarica pagina
-                },
-                error: function(xhr, status, error) {
-                    // Registro l'errore nel console
-                    console.error("Errore AJAX:", {
-                        httpRequestStatus: status,
-                        errorThrown: error,
-                        xhrObject: xhr
-                    });
+                $.ajax({
+                    type: 'GET', // Cambiato in GET
+                    url: '../controllers/test/TestController.php?action=check_name&name=' + name, // URL dello script PHP per la verifica del titolo
+                    data: {}, // Parametri inviati nella stringa di query URL
+                    success: function (data) {
+                        if (data) {
+                            alert("Il titolo inserito esiste già. Scegline un altro.");
+                        } else {
+                            var formData = new FormData();
 
-                    // Messaggio di errore dettagliato dalla risposta del server se disponibile
-                    var message = "Si è verificato un errore. ";
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        message += xhr.responseJSON.message;
-                    } else if (xhr.responseText) {
-                        try {
-                            var response = JSON.parse(xhr.responseText);
-                            if (response.message) {
-                                message += response.message;
-                            } else {
-                                message += "Dettagli non disponibili.";
+                            // Aggiunge i dati testuali al FormData
+                            formData.append("data", JSON.stringify(sendDataTest));
+
+
+                            // Aggiunge il file immagine al FormData
+                            var imageFile = document.getElementById('testImage').files[0];
+                            if (imageFile) {
+                                formData.append("testImage", imageFile);
+                                console.log(imageFile);
                             }
-                        } catch (e) {
-                            message += "Dettagli non disponibili.";
-                        }
-                    } else {
-                        message += "Dettagli non disponibili.";
-                    }
+                            // Aggiunge l'action al FormData
+                            formData.append("action", "save_test");
 
-                    // Visualizzare un messaggio di errore all'utente
-                    alert(message);
-                }
-            });
+
+                            // Invio dei dati al file PHP tramite AJAX
+                            $.ajax({
+                                type: 'POST',
+                                url: '../controllers/test/TestController.php', //action è gia stata appesa
+                                data: formData,
+                                contentType: false, // Importante per il corretto invio di FormData
+                                processData: false,
+                                success: function (response) {
+                                    let object = {};
+                                    formData.forEach(function (value, key) {
+                                        object[key] = value;
+                                    });
+                                    console.log(JSON.stringify(sendDataTest));
+                                    alert(response); //risposta del server
+                                    window.location.reload(); // ricarica pagina
+                                },
+                                error: function (xhr, status, error) {
+                                    // Registro l'errore nel console
+                                    console.error("Errore AJAX:", {
+                                        httpRequestStatus: status,
+                                        errorThrown: error,
+                                        xhrObject: xhr
+                                    });
+
+                                    // Messaggio di errore dettagliato dalla risposta del server se disponibile
+                                    var message = "Si è verificato un errore. ";
+                                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                                        message += xhr.responseJSON.message;
+                                    } else if (xhr.responseText) {
+                                        try {
+                                            var response = JSON.parse(xhr.responseText);
+                                            if (response.message) {
+                                                message += response.message;
+                                            } else {
+                                                message += "Dettagli non disponibili.";
+                                            }
+                                        } catch (e) {
+                                            message += "Dettagli non disponibili.";
+                                        }
+                                    } else {
+                                        message += "Dettagli non disponibili.";
+                                    }
+
+                                    // Visualizzare un messaggio di errore all'utente
+                                    alert(message);
+                                }
+                            });
+                        }
+                    }
+                });
+            }
         }
         // Chiama la funzione definita sopra quando il bottone viene cliccato
         document.getElementById('submitTestButton').addEventListener('click', function(e) {

@@ -299,7 +299,7 @@
     <div id="testContainer">
         <!-- Qui -->
     </div>
-    <button id="submitTestButton" style="float: inline-end;">Salva ed Esci</button> <!-- Bottone salvataggio -->
+    <button id="submitTestButton" style="">Salva ed Esci</button> <!-- Bottone salvataggio -->
     
 
     <!-- Modale per la visualizzazione della tabella -->
@@ -688,8 +688,8 @@
                     if (answerId) { // Controlla che una risposta sia stata selezionata
                         const answerObject = {
                             type: "mc",
-                            id: questionId,
-                            answerId: answerId
+                            id: parseInt(questionId),
+                            answerId: parseInt(answerId)
                         };
                         // Decide in quale array inserire in base a se era già stata risposta
                         if (isPreviouslyAnswered) {
@@ -705,7 +705,7 @@
                     if (sqlCode) {
                         const answerObject = {
                             type: "code", 
-                            id: questionId, 
+                            id: parseInt(questionId),
                             sqlCode: sqlCode
                         };
                         // Decide in quale array inserire in base a se era già stata risposta

@@ -1144,6 +1144,21 @@ ELSE
 END IF;
 END //
 
+CREATE PROCEDURE CheckIfTestNameExists(IN nomeInput VARCHAR(45), IN mail VARCHAR(45), OUT result BOOLEAN)
+BEGIN
+    DECLARE countName INT;
+
+SELECT COUNT(*) INTO countName
+FROM Test
+WHERE Titolo = nomeInput AND MailDocente = mail;
+
+IF countName > 0 THEN
+        SET result = TRUE;
+ELSE
+        SET result = FALSE;
+END IF;
+END//
+
 CREATE PROCEDURE UpdateOutputCodice(IN IdCodice int, in testId int, IN OutputAtt varchar(255))
 BEGIN
 UPDATE CODICE

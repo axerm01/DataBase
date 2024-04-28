@@ -28,6 +28,12 @@ switch ($method) {
                     $testId = $_GET['testId'];
                     $data = Test::getTestContent($testId);
                     break;
+
+                case 'check_name':
+                    $name = filter_input(INPUT_GET, 'name');
+                    $prof_email = $_SESSION['email'];
+                    $data = Test::checkIfTestNameExists($name, $prof_email);
+                    break;
             }
             echo json_encode($data);  // Converte l'array $data in JSON e lo invia
 
