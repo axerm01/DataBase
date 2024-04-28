@@ -7,12 +7,12 @@
     }
 
 //Connessione a MongoDB
-require 'vendor/autoload.php';
+require_once '../../vendor/autoload.php';
 
 $client = new MongoDB\Client("mongodb://localhost:27017");
 $mongo = $client->ESQLDB->EventLog;
 
-function log($message) {
+function logMongo($message) {
     global $mongo;
     $mongo->insertOne(['message' => $message]);
 }

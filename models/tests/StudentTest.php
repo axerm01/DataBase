@@ -1,5 +1,5 @@
 <?php
-include('../../controllers/utils/connect.php');
+include_once('../../controllers/utils/connect.php');
 include_once ('CodeQuestion.php');
 include_once ('MultipleChoiceQuestion.php');
 include_once ('Test.php');
@@ -178,7 +178,7 @@ class StudentTest {
         }
 
         $stmt->close();
-        log('Svolgimento inserito per test '.$testId.' da '.$email);
+        logMongo('Svolgimento inserito per test '.$testId.' da '.$email);
         return $response;
     }
 
@@ -194,7 +194,7 @@ class StudentTest {
             die("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
-        log('Inserimento data prima risposta per Test '.$testId.' da '.$email);
+        logMongo('Inserimento data prima risposta per Test '.$testId.' da '.$email);
         return 'updated correctly, ';
     }
 
@@ -210,7 +210,7 @@ class StudentTest {
             die("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
-        log('Inserimento data ultima risposta per Test '.$testId.' da '.$email);
+        logMongo('Inserimento data ultima risposta per Test '.$testId.' da '.$email);
         return 'updated correctly, ';
     }
 

@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-include '../utils/connect.php';
+include_once '../utils/connect.php';
 include_once '../../models/relational/Table.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
@@ -34,7 +34,6 @@ switch ($method){
                 case 'check_name': // GET delle colonne di una tabella indicata
                     $name = filter_input(INPUT_GET, 'name');
                     $data = Table::checkIfNameExists($name);
-                    //$data = $name;
                     break;
             }
             echo json_encode($data);  // Converte l'array $data in JSON e lo invia
@@ -59,13 +58,14 @@ switch ($method){
         break;
 
     case 'PUT': //Update di una tabella dato il suo ID
-        if (isset($_GET['action']) && isset($_GET['tableId'])){
+        if (isset($_GET['action']) && isset($_GET['title'])){
             $action = $_GET['action'];
-            $tableId = $_GET['tableId'];
+            $title = $_GET['title'];
             switch ($action) {
                 case 'update_table':
-                    $data = $_POST['data'];
-                    $response = updateTable($data);
+                    $rawData = file_get_contents('php://input');
+                    $data = json_decode($rawData, true);
+                    $response = updateTable($data['data'], $title);
                     echo json_encode($response);
                     break;
             }
@@ -95,10 +95,12 @@ function saveTable($data) {
 
     return $response;
 }
-function updateTable($data) {
-    $decodedData = json_decode($data, true);
-    $response = Table::fillTableRows($decodedData['rows'], $decodedData['attributes'], $decodedData['title']);
-
-    return $response;
+function updateTable($data, $title) {
+    $attributes = array_keys($data[0]);
+    // Preparazione delle righe
+    $rows = array_map(function($item) {
+        return array_values($item);
+    }, $data);
+    return Table::updateTableRows($rows, $attributes, $title);
 }
 

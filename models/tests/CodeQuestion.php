@@ -1,5 +1,5 @@
 <?php
-include('../../controllers/utils/connect.php');
+include_once('../../controllers/utils/connect.php');
 
 class CodeQuestion  {
     public static function getTestQuestions($testId) {
@@ -32,7 +32,7 @@ class CodeQuestion  {
         if (!$stmt->execute()) {
             return("Errore nell'esecuzione della query: " . $stmt->error);
         }
-        log('Salvataggio della domanda di codice: '.$text);
+        logMongo('Salvataggio della domanda di codice: '.$text);
 
         $stmt->close();
         return "Saved correctly";
@@ -52,7 +52,7 @@ class CodeQuestion  {
         }
 
         $stmt->close();
-        log('Aggiornamento del testo della domanda di codice: '.$text);
+        logMongo('Aggiornamento del testo della domanda di codice: '.$text);
         return "Saved correctly";
     }
 
@@ -70,7 +70,7 @@ class CodeQuestion  {
         }
 
         $stmt->close();
-        log('Aggiornamento della query corretta della domanda di codice: '.$sql);
+        logMongo('Aggiornamento della query corretta della domanda di codice: '.$sql);
         return "Saved correctly";
     }
 
@@ -88,7 +88,7 @@ class CodeQuestion  {
         }
 
         $stmt->close();
-        log('Aggiornamento della difficoltà della domanda di codice '.$ID.' a: '.$diff);
+        logMongo('Aggiornamento della difficoltà della domanda di codice '.$ID.' a: '.$diff);
         return "Saved correctly";
     }
     public static function deleteCodeQuestion($IDTest, $ID)

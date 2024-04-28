@@ -64,7 +64,7 @@ class MultipleChoiceQuestion {
         foreach ($answers as $answer) {
             Answer::saveMCAnswersData($answer['id'],$IDTest,$ID,$answer['text'],$answer['isCorrect'] );
         }
-        log('Salvataggio domanda a scelta multipla: '.$description);
+        logMongo('Salvataggio domanda a scelta multipla: '.$description);
         return "Saved correctly";
     }
 
@@ -81,7 +81,7 @@ class MultipleChoiceQuestion {
             return("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
-        log('Aggiornamento testo della domanda a scelta multipla: '.$description);
+        logMongo('Aggiornamento testo della domanda a scelta multipla: '.$description);
         return "Saved correctly";
     }
 
@@ -98,7 +98,7 @@ class MultipleChoiceQuestion {
             return("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
-        log('Aggiornamento difficoltà della domanda a scelta multipla '.$ID.' a '.$diff);
+        logMongo('Aggiornamento difficoltà della domanda a scelta multipla '.$ID.' a '.$diff);
         return "Saved correctly";
     }
     public static function updateMCNumAnswers($IDTest,$ID, $numAnswDifferential)
@@ -114,7 +114,7 @@ class MultipleChoiceQuestion {
             return("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
-        log('Aggiornamento numero risposte della domanda a scelta multipla '.$ID);
+        logMongo('Aggiornamento numero risposte della domanda a scelta multipla '.$ID);
         return "Saved correctly";
     }
     public static function updateMCAnswers($IDTest,$IDMC, $answers)

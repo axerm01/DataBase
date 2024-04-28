@@ -1,5 +1,5 @@
 <?php
-include('../../controllers/utils/connect.php');
+include_once('../../controllers/utils/connect.php');
 
 class StudentAnswer
 {
@@ -70,7 +70,7 @@ class StudentAnswer
             $response =  "Errore1: " . $e->getMessage();
             // Gestione ulteriore dell'errore
         }
-        log('Salvataggio risposte dello svolgimento del Test '.$testId.' da '.$email);
+        logMongo('Salvataggio risposte dello svolgimento del Test '.$testId.' da '.$email);
         return $response;
     }
 
@@ -116,7 +116,7 @@ class StudentAnswer
             $response =  "Errore2: " . $e->getMessage();
             // Gestione ulteriore dell'errore
         }
-        log('Aggiornamento risposte dello svolgimento del Test '.$testId.' da '.$email);
+        logMongo('Aggiornamento risposte dello svolgimento del Test '.$testId.' da '.$email);
         return $response;
     }
 

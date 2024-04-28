@@ -20,7 +20,7 @@ class Professor {
             $messaggio = "Si è verificato un errore durante la registrazione.";
         }
         $con->close();
-        log('Registrazione di un nuovo docente: '.$email);
+        logMongo('Registrazione di un nuovo docente: '.$email);
         return json_encode(["message" => $messaggio]);
     }
 

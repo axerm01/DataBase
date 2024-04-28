@@ -20,7 +20,7 @@ class Student
             $messaggio = "Si è verificato un errore durante la registrazione.";
         }
         $con->close();
-        log('Registrazione di un nuovo studente: '.$email);
+        logMongo('Registrazione di un nuovo studente: '.$email);
         return json_encode(["message" => $messaggio]);
     }
 

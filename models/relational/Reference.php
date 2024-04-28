@@ -15,7 +15,7 @@ class Reference
         if (!$stmt->execute()) {
             die("Errore nell'esecuzione della query: " . $stmt->error);
         }
-        log('Vincolo salvato: '.$tab1.$tab2.$att1.$att2);
+        logMongo('Vincolo salvato: '.$tab1.$tab2.$att1.$att2);
         $stmt->close();
     }
 

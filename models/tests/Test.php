@@ -73,7 +73,7 @@ class Test {
                 $stmt->close();
             }
         }
-        log('Test salvato: '.$title);
+        logMongo('Test salvato: '.$title);
         return $id;
     }
 
@@ -101,7 +101,7 @@ class Test {
         }
         // Chiudi lo statement e la connessione
         $stmt->close();
-        log('Tabelle '.json_encode($list).' collegate a test '.$testId);
+        logMongo('Tabelle '.json_encode($list).' collegate a test '.$testId);
     }
 
     public static function getAllTests(){
@@ -194,7 +194,7 @@ class Test {
         }
 
         $stmt->close();
-        log('Titolo Test '.$testId.' aggiornato a '.$title);
+        logMongo('Titolo Test '.$testId.' aggiornato a '.$title);
         return "Aggiornamento del titolo completato con successo.";
     }
 

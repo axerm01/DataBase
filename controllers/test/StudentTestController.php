@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('../utils/connect.php');
+include_once('../utils/connect.php');
 include_once '../../models/tests/Test.php';
 include_once '../../models/tests/StudentTest.php';
 include_once '../../models/tests/StudentAnswer.php';

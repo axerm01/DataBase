@@ -1,5 +1,5 @@
 <?php
-include('../../controllers/utils/connect.php');
+include_once('../../controllers/utils/connect.php');
 include_once ('../../models/relational/Column.php');
 
 class Table {
@@ -26,7 +26,7 @@ class Table {
             Column::saveTableColumns($id, $column['name'], $column['type'], $column['PK']);
         }
 
-        log('Tabella salvata: '.$name);
+        logMongo('Tabella salvata: '.$name);
         return $id;
     }
 
@@ -83,7 +83,7 @@ class Table {
         } else {
             $response .= "Errore nella crezione del trigger: " . $con->error;
         }
-        log('Tabella e Trigger creati: '.$name);
+        logMongo('Tabella e Trigger creati: '.$name);
         return $response;
     }
 
@@ -117,8 +117,55 @@ class Table {
             // Gestisci l'errore
             $response = "Errore: " . $e->getMessage();
         }
-        log('Righe aggiunte a tabella '.$name.' :'.json_encode($rows));
+        logMongo('Righe aggiunte a tabella '.$name.' :'.json_encode($rows));
         return $response;
+    }
+
+    public static function updateTableRows($rows, $columns, $title) {
+        global $con;
+        // Prepara una stringa con i nomi delle colonne per la query SQL
+        $columnsList = '`' . implode('`, `', $columns) . '`';
+        $query = "INSERT INTO `$title` ($columnsList) VALUES ";
+
+        // Array per tenere i placeholders per i valori (?, ?, ?), ecc.
+        $placeholders = array_fill(0, count($columns), '?');
+        $placeholdersString = '(' . implode(', ', $placeholders) . ')';
+
+        // Costruisci la parte VALUES della query SQL
+        $valuesArr = [];
+        $insertValues = [];
+        foreach ($rows as $row) {
+            $valuesArr[] = $placeholdersString;
+            $insertValues = array_merge($insertValues, $row);
+        }
+        $query .= implode(', ', $valuesArr);
+
+        // Preparazione della query
+        if ($stmt = $con->prepare($query)) {
+            // Determina i tipi di dati per bind_param dinamicamente
+            $types = '';
+            foreach ($insertValues as $value) {
+                if (is_numeric($value) && intval($value) == $value) {
+                    $types .= 'i';  // Tipo intero
+                } else {
+                    $types .= 's';  // Tipo stringa
+                }
+            }
+
+            // Associa i valori dinamicamente
+            $stmt->bind_param($types, ...$insertValues);
+
+            // Esecuzione della query
+            if (!$stmt->execute()) {
+                return "Errore nell'esecuzione della query: " . $stmt->error;
+            }
+
+            $stmt->close();
+        } else {
+            return "Errore nella preparazione della query: " . $con->error;
+        }
+        $con->close();
+        return 'Righe inserite con successo!';
     }
 
     public static function deleteTable($tableId) {
@@ -300,46 +347,6 @@ class Table {
     }
 
 
-// non usato
-    public static function updateTableRows($rows, $columns, $name) {
-        global $con;
-        mysqli_begin_transaction($con);
-
-        try {
-            foreach ($rows as $rowData) {
-                $updatePairs = [];
-                $whereConditions = [];
-
-                foreach ($columns as $index => $column) {
-                    $columnName = $column['nome']; // Assumiamo che 'name' sia il nome della colonna
-                    $value = $rowData[$index];
-
-                    if ($column['IsPK']) {
-                        // Prepara le condizioni per la chiave primaria
-                        $whereConditions[] = "$columnName = '" . mysqli_real_escape_string($con, $value) . "'";
-                    } else {
-                        // Prepara i campi da aggiornare
-                        $type = $column['type'];
-                        $valueFormatted = (strpos($type, 'smallint') !== false || strpos($type, 'float') !== false || strpos($type, 'decimal') !== false || strpos($type, 'double') !== false) ? $value : "'" . mysqli_real_escape_string($con, $value) . "'";
-                        $updatePairs[] = "$columnName = $valueFormatted";
-                    }
-                }
-
-                $q = "UPDATE " . $name . " SET " . implode(", ", $updatePairs) . " WHERE " . implode(" AND ", $whereConditions);
-                if (!mysqli_query($con, $q)) {
-                    throw new Exception("Errore nell'update della riga: " . mysqli_error($con));
-                }
-            }
-
-            mysqli_commit($con);
-            $response = "Update OK";
-        } catch (Exception $e) {
-            mysqli_rollback($con);
-            $response = "Errore: " . $e->getMessage();
-        }
-
-        return $response;
-    }
 
 
 }

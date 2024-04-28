@@ -1,5 +1,5 @@
 <?php
-include('../../controllers/utils/connect.php');
+include_once('../../controllers/utils/connect.php');
 
 class Answer {
 
@@ -16,7 +16,7 @@ class Answer {
             return("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
-        log('Salvataggio opzione '.$text.' della domanda a scelta multipla '.$IDMC);
+        logMongo('Salvataggio opzione '.$text.' della domanda a scelta multipla '.$IDMC);
         return "Saved correctly";
     }
 
@@ -33,7 +33,7 @@ class Answer {
             return("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
-        log('Aggiornamento opzione '.$text.' della domanda a scelta multipla '.$IDMC);
+        logMongo('Aggiornamento opzione '.$text.' della domanda a scelta multipla '.$IDMC);
 
         return "Saved correctly";
     }
