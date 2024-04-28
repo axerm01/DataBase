@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizza Tabelle</title>
+    <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styleBACK.css">
+    
+    <!-- Includi jQuery per semplificare la gestione delle richieste AJAX -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="check_session.js"></script>
+
+    <style>
+        /*Stile tabella*/
+        .table-container {
+            display: inline-block;
+            font-size:medium;
+            padding: 10px;
+            text-align: center;
+        }
+        table {
+            display: inline-table; /* Mantiene le tabelle in linea */
+            border-collapse: collapse; /* Per una migliore visualizzazione delle tabelle */
+        }
+
+        th, td {
+            border: 1px solid #ddd; /* Stile dei bordi */
+            padding: 5px; /* Padding delle celle */
+        }
+
+        th {
+            background-color: #f2f2f2; /* Colore di sfondo delle celle dell'intestazione */
+        }
+        .delete-button {
+            background-color: #a51b1bc3;
+            cursor: pointer; 
+            font-size: 10px;
+            width: 70px;
+            padding: 5px;
+            margin-left: 25px;
+        }
+        .title{
+            font-size: 20px; 
+            padding: 5px 0px 0px 20px;
+        }
+        /* l'area dove l'elenco tabelle.*/
+        #tablesDisplay{
+            font-size: 16px; 
+            color: #000000;
+            background-color: white;
+            width: fit-content;
+            margin: 0px 40px 0px 0px;
+            padding: 0px 40px 0px 20px;
+            font-weight: bold;
+
+        }
+        /* l'area dove le tabelle sono modificate.*/
+        #tablesView{
+            font-size: 16px; 
+            color: #000000;
+            background-color: white;
+            min-width: 40%;
+            max-width: fit-content;
+            font-weight: bold;
+            min-height: 25vh;
+            
+        }
+        #tableUpdate{
+            font-size: 14px; 
+            color: #000000;
+            width: 100%;
+            display: flex;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            padding-bottom: 10px;
+        }
+        #table{
+            font-size: 14px; 
+            color: #000000;
+            width: 100%;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            padding-bottom: 10px;
+        }
+
+
+        /* Stili per la lista */
+        ul {
+            list-style-type: none; /* Rimuove i marcatori di lista */
+            padding: 0;
+            margin: 20px;
+        }
+
+        /*Elementi della lista */
+        li {
+            margin-bottom: 5px; 
+            background-color: #f9f9f9;
+            padding: 5px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+            width: fit-content;
+        }
+
+        /* Stile base per i bottoni */
+        button {
+            margin-left: 10px;
+            padding: 5px 10px; 
+            border: none; 
+            color: white; 
+            font-weight: bold; 
+            cursor: pointer;
+        }
+
+        /* Stili specifici per il bottone Visualizza */
+        button.view {
+            background-color: #15c11e;
+            cursor: pointer; 
+            font-size: 10px;
+            color: #fff;
+            border: none;
+            padding: 6px 17px;
+            border-radius: 5px;
+            transition: background-color 0.3s; 
+        }
+
+        button.view:hover {
+            background-color: #108516; 
+        }
+        /* Stili specifici per il bottone Modifica */
+        button.update {
+            background-color: #decd15;
+            cursor: pointer;
+            font-size: 10px;
+            width: 80px;
+            color: #fff;
+            border: none;
+            padding: 6px 17px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        button.update:hover {
+            background-color: #94861b;
+        }
+
+        /* Stili specifici per il bottone Elimina */
+        button.delete {
+            background-color: #de1515;
+            cursor: pointer;
+            font-size: 10px;
+            width: 80px;
+            color: #fff;
+            border: none;
+            padding: 6px 17px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        button.delete:hover {
+            background-color: #941b1b;
+        }
+
+        /* Stile del modale */
+        .modal {
+            display: none; /* Nascosto di default */
+            position: fixed; /* Rimane fermo in posizione */
+            z-index: 1; /* Sopra tutto */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Abilita lo scroll se necessario */
+            background-color: rgba(0,0,0,0.4); 
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; 
+            padding: 20px;
+            border: 1px solid #888;
+            max-width: fit-content; 
+        }
+        /*Bottoni per chiudere il modale.*/
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        /*Applicato alla didascalia della tabella.*/
+        .caption-table{
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .main-content{
+            display: flex;
+            align-items: center; /* Allinea verticalmente al centro */
+            justify-content: space-around;
+            width: 80%;
+        }
+        /* Per tutti gli input all'interno di una riga specifica di una tabella */
+        #table tr td input[type="text"] {
+            width: 100%; /* Usa l'intera larghezza della cella */
+            padding: 2px; /* Meno spazio interno */
+            font-size: 12px; /* Dimensione del testo più piccola */
+            box-sizing: border-box;
+            margin: 0px;
+        }
+        .deleteButton{
+            color: white;
+            background-color: #be2525;
+            border: none;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 80%;
+            margin-left: 5px;
+            transform: scale(0.8);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Studia con ESQL</h1>
+        <div class="indietro">
+            <!-- Usa "javascript:history.back()" come href per tornare indietro -->
+            <span class="testo-indietro"><a href="javascript:history.back()">
+                <img src="image/arrow.png" alt="Torna indietro" style="width: 25px; height: 25px;">
+            </a>Indietro</span>
+        </div>  
+        <div class="logout-form">
+            <form action="../controllers/utils/logout.php" method="post">
+                <button type="submit" name="logout">Esci</button>
+            </form>
+        </div> 
+    </header>
+    
+    <div class="main-content">
+        <div id="tablesDisplay">
+            <p class="title">Tabelle create:</p>
+            <!-- Le tabelle saranno visualizzate qui -->
+        </div>
+        <div id="tablesView">
+            <span class="title">Modifica Tabella:</span>
+            <button class="black-button" type="button" id="addRowButton" onclick="addRow()"  style="display: none;">Aggiungi una riga</button>
+            <button class="black-button" type="button" id="addUpdateButton" onclick="submitForm()"  style="display: none;">Salva nuovi dati</button>
+            <div id="tableUpdate">
+                
+            </div>
+            <table id="table">
+            </table>
+        </div>
+    </div>
+    
+
+    <!-- Modale per la visualizzazione della tabella -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">×</span>
+            <div id="tableContainer"></div> <!-- Contenitore per la tabella -->
+        </div>
+    </div>
+    
+
+    <footer>
+        <p>Alma Mater Studiorum</p>
+        <h3>Università di Bologna</h3>
+    </footer>
+
+    <script>  
+    var IDTable = "";
+        $(document).ready(function() {
+            $.ajax({
+                type: "GET",
+                url: "../controllers/table/TableController.php?action=get_tables",
+                data: { },
+                success: function(data) {
+                    console.log("Successo GET nomi:", data);
+                    var list = $("<ul></ul>"); // Crea un elemento lista non ordinata
+                    $.each(data, function(index, table) {
+                        var listItem = $("<li></li>"); // Crea un elemento della lista
+                        listItem.text(table.Nome); // Imposta il nome della tabella come testo dell'elemento della lista
+                        
+                        // Crea il bottone Visualizza
+                        var viewButton = $("<button></button>").addClass("view").text("Visualizza");
+                        viewButton.on("click", function() {
+                            viewTable(table);
+                        });
+
+                        // Crea il bottone Visualizza
+                        var updateButton = $("<button></button>").addClass("update").text("Modifica");
+                        updateButton.on("click", function() {
+                            //console.log(table);
+                            updateTable(table);
+                        });
+
+                        // Crea il bottone Elimina
+                        var deleteButton = $("<button></button>").addClass("delete").text("Elimina");
+                        deleteButton.on("click", function() {
+                            deleteTable(table.IDTabella);
+                        });
+
+                        // Aggiungi i bottoni all'elemento della lista
+                        listItem.append(viewButton,updateButton,deleteButton);
+
+                        // Aggiungi l'elemento della lista alla lista principale
+                        list.append(listItem);
+                    });
+
+                    // Aggiungi la lista al corpo del documento o a un elemento specifico
+                    $("#tablesDisplay").append(list);
+                },
+                dataType: "json"
+            }).fail(function(jqxhr, textStatus, error) {
+                var err = textStatus + ", " + error;
+                console.log("Request Failed: " + err);
+            });
+        });
+
+        function viewTable(tab) {
+            console.log("Visualizza tabella con ID:", tab.IDTabella);
+            $.ajax({
+            type: "GET",
+            url: "../controllers/table/TableController.php?action=get_full_table",
+            data: { tableId: tab.IDTabella },
+            success: function(response) {
+                console.log(response);
+                showTableModal(response, tab.Nome);
+            },
+            dataType: "json"
+            }).fail(function(jqxhr, textStatus, error) {
+                var err = textStatus + ", " + error;
+                console.log("Request Failed: " + err);
+            });
+        }
+        var isUpdateTableCalled = false;
+        function updateTable(tab) {
+            if (!isUpdateTableCalled) {
+                var addRowButton = document.getElementById('addRowButton');
+                addRowButton.style.display = 'inline';
+                var addUpdateButton = document.getElementById('addUpdateButton');
+                addUpdateButton.style.display = 'inline';
+                isUpdateTableCalled = true;
+            }
+            IDTable = tab.IDTabella;
+            console.log("Visualizza tabella con ID:", tab.IDTabella);
+            $.ajax({
+            type: "GET",
+            url: "../controllers/table/TableController.php?action=get_full_table",
+            data: { tableId: tab.IDTabella },
+            success: function(response) {
+                console.log('restituita',response);
+                const tableUpdate = document.getElementById('tableUpdate');
+                    tableUpdate.innerHTML = ''; // Pulisce vecchie tabelle se presenti
+                const col = response.length > 1 ? Object.keys(response[1]) : [];
+                console.log(col);
+                tableUpdate.append(createTableMain(response.slice(1), col, tab.Nome));
+                // Aggiungi la riga dell'intestazione della tabella
+                const table = document.getElementById('table');
+                    table.innerHTML = '';
+                const headerRow = document.createElement('tr');
+                col.forEach(function(columnName) {
+                    const headerCell = document.createElement('th');
+                    headerCell.textContent = columnName;
+                    headerRow.appendChild(headerCell);
+                });
+                table.appendChild(headerRow);
+            },
+            dataType: "json"
+            }).fail(function(jqxhr, textStatus, error) {
+                var err = textStatus + ", " + error;
+                console.log("Request Failed: " + err);
+            });
+            
+        }
+
+        function addRow() {
+            var table = document.getElementById('table');
+            // Controlla se esiste almeno una riga di intestazione
+            if(table.getElementsByTagName('th').length === 0) {
+                console.error('La tabella non ha elementi <th> per definire le colonne.');
+                return;
+            }
+            var colCount = table.getElementsByTagName('th').length;
+            var newRow = table.insertRow(-1); 
+            for (var i = 0; i < colCount; i++) {
+                var newCell = newRow.insertCell(i);
+                newCell.innerHTML = '<input type="text" name="row">';
+            }
+            var deleteCell = newRow.insertCell(colCount);
+            deleteCell.innerHTML = '<button type="button" class="deleteButton" onclick="deleteRow(this)">X</button>';
+        }
+
+        function deleteRow(btn) {
+            var row = btn.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+
+        function deleteTable(tableId) {
+            // Mostra un messaggio di conferma
+            if (confirm("Sei sicuro di voler eliminare questa tabella?")) {
+                console.log("Elimina tabella con ID:", tableId);
+                $.ajax({
+                    type: "DELETE",
+                    url: "../controllers/table/TableController.php?tableId="+tableId,
+                    data: { },
+                    success: function(response) {
+                        console.log(response);
+                        //alert("Tabella eliminata con successo.");
+                        window.location.reload(); // Ricarica la pagina per vedere le modifiche
+                    },
+                    dataType: "json"
+                }).fail(function(jqxhr, textStatus, error) {
+                    var err = textStatus + ", " + error;
+                    console.log("Request Failed: " + err);
+                });
+            } else {
+                // L'utente ha annullato l'azione
+                console.log("Eliminazione annullata.");
+            }
+        }
+
+    </script>
+    <script>
+
+        function showTableModal(response, tName) {
+            // Creazione della tabella come prima
+            const col = response.length > 1 ? Object.keys(response[1]) : [];
+            const table = createTableMain(response.slice(1), col, tName);
+
+            // Trova il contenitore della tabella nel modale e aggiungi la tabella
+            const tableContainer = document.getElementById('tableContainer');
+            tableContainer.innerHTML = ''; // Pulisce vecchie tabelle se presenti
+            tableContainer.appendChild(table);
+
+            // Mostra il modale
+            const modal = document.getElementById('modal');
+            modal.style.display = 'block';
+
+            // Imposta l'evento per chiudere il modale
+            const closeButton = document.querySelector('.close-button');
+            closeButton.onclick = function() {
+                modal.style.display = 'none';
+            };
+
+            // Chiude il modale anche quando si clicca fuori dal suo contenuto
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            };
+        }
+
+        function createTableMain(resp,columns,tName) {
+            const table = document.createElement('table');
+            table.className = 'custom-table';
+            const caption = document.createElement('caption');
+            caption.textContent = tName;
+            caption.className = 'caption-table';
+            
+            // Creazione delle intestazioni della tabella
+            const thead = document.createElement('thead');
+            const trHead = document.createElement('tr');
+            if(caption.textContent){
+                thead.prepend(caption);
+            }
+            columns.forEach(colName => {
+                const th = document.createElement('th');
+                th.textContent = colName;
+                trHead.appendChild(th);
+            });
+            thead.appendChild(trHead);
+            table.appendChild(thead);
+
+            // Creazione del corpo della tabella
+            const tbody = document.createElement('tbody');
+            resp.forEach(obj => {
+                const tr = document.createElement('tr');
+                columns.forEach(column => {
+                    const td = document.createElement('td');
+                    td.textContent = obj[column];
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+
+            // Restituisce l'elemento <table> creato
+            return table;
+        }
+
+    </script>
+    <script>
+        function submitForm(){
+            var table = document.getElementById('table');
+            var headers = table.getElementsByTagName('th');
+            var rows = table.getElementsByTagName('tr');
+            var tableData = [];
+            console.log(headers,rows.length);
+
+            // Itera attraverso tutte le righe della tabella, escludendo la riga di intestazione
+            for (var i = 1; i < rows.length; i++) {
+                var rowData = {};
+                var cells = rows[i].getElementsByTagName('td');
+                console.log(cells.length-1, headers.length);
+                // Assicurati che il numero di celle corrisponda al numero di intestazioni
+                if (cells.length-1 === headers.length) {
+                    for (var j = 0; j < headers.length; j++) {
+                        var headerName = headers[j].textContent.trim().replace(/\s+/g, '_').toLowerCase();
+                        var inputElement = cells[j].querySelector('input[type="text"]');
+                        var inputValue = inputElement ? inputElement.value : '';
+                        rowData[headerName] = inputValue;
+                    }
+                    tableData.push(rowData);
+                }
+            }
+            console.log(tableData);
+            var formData = new FormData(); // Inizializza FormData qui
+            formData.append('data', JSON.stringify(tableData));
+
+            $.ajax({
+                type: 'PUT',
+                url: '../controllers/table/TableController.php?action=update_table&tableId='+IDTable,
+                data: formData,
+                contentType: 'application/json',
+                processData: false,
+                success: function(response) {
+                    console.log(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Errore durante l'invio dei dati:", status, error);
+                    // Gestire eventuali errori qui
+                }
+            });
+        }
+    </script>
+</body>
+</html>
