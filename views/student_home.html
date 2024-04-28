@@ -170,10 +170,10 @@
         <div class="selector-container">
             <select id="filter-tests">
                 <option value="all">Mostra Tutti</option>
-                <option value="test-inProgress">In Completamento</option>
-                <option value="test-open">Aperti</option>
-                <option value="test-new">Nuovi</option>
-                <option value="test-close">Conclusi</option>
+                <option value="test-inProgress">In Progress</option>
+                <option value="test-open">Open</option>
+                <option value="test-new">New</option>
+                <option value="test-close">Close</option>
             </select>
             <button class="black-button" onclick="window.location.href='statistics.html'">Statistiche</button>
         </div>  
@@ -181,7 +181,7 @@
 
     <div class="test-list">
         <div class="test-inProgress">
-            <span>In Completamento</span>
+            <span>in Progress..</span>
             <div class="test-header">
                 <div class="test-header-60">
                     <h4>Titolo</h4>        
@@ -194,7 +194,7 @@
             </div>
         </div>
         <div class="test-open">
-            <span>Aperti</span>
+            <span>Open..</span>
             <div class="test-header">
                 <div class="test-header-60">
                     <h4>Titolo</h4>        
@@ -207,7 +207,7 @@
             </div>
         </div>
         <div class="test-new">
-            <span>Nuovi</span>
+            <span>New..</span>
             <div class="test-header">
                 <div class="test-header-60">
                     <h4>Titolo</h4>        
@@ -220,7 +220,7 @@
             </div>
         </div>
         <div class="test-close">
-            <span>Conclusi</span>
+            <span>Close.</span>
             <div class="test-header">
                 <div class="test-header-60">
                     <h4>Titolo</h4>        
@@ -280,9 +280,9 @@
             $.when(AllTests()).then(function() {
                 // Quando abbiamo la risposta, procediamo con le altre chiamate
                 $.when(
-                    fetchTests('InCompletamento', '.test-inProgress'),
-                    fetchTests('Aperto', '.test-open'),
-                    fetchTests('Concluso', '.test-close')
+                    fetchTests('InProgress', '.test-inProgress'),
+                    fetchTests('Open', '.test-open'),
+                    fetchTests('Close', '.test-close')
                 ).then(function() {
                     // Ora, eseguo le istruzioni che dipendono dalla chiamata get_all_tests
                     //console.log(allTests);
@@ -365,15 +365,24 @@
                     test.ID +'&resume=' + resume + 
                     '&titolo=' + encodeURIComponent(test.Titolo) +'\'">Avvia test</button>');
                 } else if(classe == 'test-close'){
-                    date = $('<p>' + test.DataPrimaRisposta  + '</p>');
+                    allTests.forEach(element => {
+                        //console.log(element.ID, test.IDTest);
+                        if(element.ID == test.IDTest){
+                            title = $('<p>' + element.Titolo + '</p>');
+                            textTitle = element.Titolo;
+                        }
+                    });
+                    
+                    date = $('<p>' + test.DataPrimaRisposta + '</p>');
                     status = $('<p>' + test.Stato + '</p>');
-                    enterButton = $('<button class="black-button" onclick="window.location.href=">Visualizza Esito</button>');
+                    enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test_C.html?id=' +
+                    test.IDTest + '&titolo=' + encodeURIComponent(textTitle) +'\'">Visualizza Esito</button>');
                 }
 
                 testDetails.append(title, date, status);
 
                 var messageButton = $('<button class="black-button" onclick="window.location.href=\'student_message.html?id=' +
-                test.IDTest +'&titolo=' + test.Titolo + '\'">Messaggi</button>');
+                test.ID +'&titolo=' + encodeURIComponent(test.Titolo) + '\'">Messaggi</button>');
 
                 buttonContainer.append(enterButton, messageButton);
                 testContainer.append(testDetails, buttonContainer);
