@@ -1,5 +1,5 @@
 <?php
-include('../../controllers/utils/connect.php');
+include_once('../../controllers/utils/connect.php');
 
 class Reference
 {
@@ -15,7 +15,7 @@ class Reference
         if (!$stmt->execute()) {
             die("Errore nell'esecuzione della query: " . $stmt->error);
         }
-
+        log('Vincolo salvato: '.$tab1.$tab2.$att1.$att2);
         $stmt->close();
     }
 

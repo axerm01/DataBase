@@ -44,6 +44,7 @@ class Message {
             $response = "Errore nell'esecuzione della query: " . $stmt->error;
         }
         $stmt->close();
+        log('Inserimento di un messaggio dello studente '.$student_email.' : '.$titolo);
         return $response;
     }
 
@@ -60,6 +61,7 @@ class Message {
             $response = "Errore nell'esecuzione della query: " . $stmt->error;
         }
         $stmt->close();
+        log('Inserimento di un messaggio del docente '.$prof_email.' : '.$titolo);
         return $response;
     }
 }

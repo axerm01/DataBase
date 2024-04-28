@@ -64,7 +64,7 @@ class MultipleChoiceQuestion {
         foreach ($answers as $answer) {
             Answer::saveMCAnswersData($answer['id'],$IDTest,$ID,$answer['text'],$answer['isCorrect'] );
         }
-
+        log('Salvataggio domanda a scelta multipla: '.$description);
         return "Saved correctly";
     }
 
@@ -81,7 +81,7 @@ class MultipleChoiceQuestion {
             return("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
-
+        log('Aggiornamento testo della domanda a scelta multipla: '.$description);
         return "Saved correctly";
     }
 
@@ -98,7 +98,7 @@ class MultipleChoiceQuestion {
             return("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
-
+        log('Aggiornamento difficoltà della domanda a scelta multipla '.$ID.' a '.$diff);
         return "Saved correctly";
     }
     public static function updateMCNumAnswers($IDTest,$ID, $numAnswDifferential)
@@ -114,7 +114,7 @@ class MultipleChoiceQuestion {
             return("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
-
+        log('Aggiornamento numero risposte della domanda a scelta multipla '.$ID);
         return "Saved correctly";
     }
     public static function updateMCAnswers($IDTest,$IDMC, $answers)
@@ -141,40 +141,5 @@ class MultipleChoiceQuestion {
         $stmt->close();
         Answer::deleteMCAnswersData($IDTest,$IDMC);
     }
-
-    public static function getQuestion($id, $testId) {
-        global $con; // Assicurati che $con sia la tua connessione al database
-
-        $query = "SELECT * FROM scelta_multipla WHERE ID = ? AND IDTest = ?";
-        $stmt = $con->prepare($query);
-        $stmt->bind_param('ii', $id, $testId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $data = [];
-
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $data[] = $row;  // Aggiunge ogni riga all'array $data
-            }
-        }
-        else {
-            return 0;
-        }
-        $stmt->close();
-
-        $query = "SELECT * FROM scelta WHERE IDScMult = ? AND IDTest = ?";
-        $stmt = $con->prepare($query);
-        $stmt->bind_param('ii', $id, $testId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $data[] = $row;  // Aggiunge ogni riga all'array $data
-            }
-        }
-
-        return $data;
-    } // Da verificare se corretto
 
 }

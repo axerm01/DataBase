@@ -16,6 +16,7 @@ class Answer {
             return("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
+        log('Salvataggio opzione '.$text.' della domanda a scelta multipla '.$IDMC);
         return "Saved correctly";
     }
 
@@ -32,6 +33,8 @@ class Answer {
             return("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
+        log('Aggiornamento opzione '.$text.' della domanda a scelta multipla '.$IDMC);
+
         return "Saved correctly";
     }
 
@@ -63,19 +66,6 @@ class Answer {
             die("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
-    }
-
-    public static function getTestMCAnswers($testId) {
-        global $con; // Assumi che $con sia la tua connessione al database
-
-        $mcAnsQuery = $con->prepare("CALL ViewAllAnswers(?)");
-        $mcAnsQuery->bind_param('i', $testId);
-        $mcAnsQuery->execute();
-        $result = $mcAnsQuery->get_result();
-        $mcAnsData = $result->fetch_all(MYSQLI_ASSOC);
-        $mcAnsQuery->close();
-
-        return $mcAnsData;
     }
 
 }

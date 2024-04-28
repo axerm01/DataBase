@@ -26,6 +26,7 @@ class Table {
             Column::saveTableColumns($id, $column['name'], $column['type'], $column['PK']);
         }
 
+        log('Tabella salvata: '.$name);
         return $id;
     }
 
@@ -82,6 +83,7 @@ class Table {
         } else {
             $response .= "Errore nella crezione del trigger: " . $con->error;
         }
+        log('Tabella e Trigger creati: '.$name);
         return $response;
     }
 
@@ -115,7 +117,7 @@ class Table {
             // Gestisci l'errore
             $response = "Errore: " . $e->getMessage();
         }
-
+        log('Righe aggiunte a tabella '.$name.' :'.json_encode($rows));
         return $response;
     }
 

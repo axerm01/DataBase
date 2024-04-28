@@ -1102,6 +1102,16 @@ FROM Test
 WHERE MailDocente = MailDocenteAtt;
 END //
 
+CREATE PROCEDURE `UpdateTestTitle`(
+    in IDAtt int,
+    in TitleAtt varchar(45)
+)
+BEGIN
+UPDATE TEST
+SET Titolo = TitleAtt
+WHERE ID = IDAtt;
+END //
+
 CREATE PROCEDURE `CreateRispostaStudente`(
     in StudenteAtt varchar(45), in IDTestAtt int , in IDDomandaAtt int ,in IDRispostaAtt int, in EsitoAtt boolean
 )

@@ -73,7 +73,7 @@ class Test {
                 $stmt->close();
             }
         }
-
+        log('Test salvato: '.$title);
         return $id;
     }
 
@@ -101,6 +101,7 @@ class Test {
         }
         // Chiudi lo statement e la connessione
         $stmt->close();
+        log('Tabelle '.json_encode($list).' collegate a test '.$testId);
     }
 
     public static function getAllTests(){
@@ -182,24 +183,18 @@ class Test {
         global $con; // Assumi che $con sia la tua connessione al database (mysqli)
 
         // Preparazione della query SQL
-        $stmt = $con->prepare("UPDATE TEST SET Titolo = ? WHERE ID = ?");
-
-        // Verifica se la preparazione della query ha avuto successo
+        $stmt = $con->prepare("CALL UpdateTestTitle(?,?)");
         if ($stmt === false) {
             die("Errore nella preparazione della query: " . $con->error);
         }
+        $stmt->bind_param('si', $testId,$title);
 
-        // Associa i parametri alla query preparata
-        $stmt->bind_param('si', $title, $testId);
-
-        // Esegui la query
         if (!$stmt->execute()) {
             die("Errore nell'esecuzione della query: " . $stmt->error);
         }
 
-        // Chiusura dello statement
         $stmt->close();
-
+        log('Titolo Test '.$testId.' aggiornato a '.$title);
         return "Aggiornamento del titolo completato con successo.";
     }
 

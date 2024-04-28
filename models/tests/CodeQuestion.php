@@ -2,30 +2,6 @@
 include('../../controllers/utils/connect.php');
 
 class CodeQuestion  {
-
-    public static function getQuestion($id, $testId) {
-        global $con; // Assicurati che $con sia la tua connessione al database
-
-        $query = "SELECT * FROM codice WHERE ID = ? AND IDTest = ?";
-        $stmt = $con->prepare($query);
-        $stmt->bind_param('ii', $id, $testId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $data = [];
-
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $data[] = $row;  // Aggiunge ogni riga all'array $data
-            }
-        }
-        else {
-            $data = 0;
-        }
-
-        $stmt->close();
-        return $data;
-    }
-
     public static function getTestQuestions($testId) {
         global $con; // Assumi che $con sia la tua connessione al database
 
@@ -56,6 +32,7 @@ class CodeQuestion  {
         if (!$stmt->execute()) {
             return("Errore nell'esecuzione della query: " . $stmt->error);
         }
+        log('Salvataggio della domanda di codice: '.$text);
 
         $stmt->close();
         return "Saved correctly";
@@ -75,6 +52,7 @@ class CodeQuestion  {
         }
 
         $stmt->close();
+        log('Aggiornamento del testo della domanda di codice: '.$text);
         return "Saved correctly";
     }
 
@@ -92,6 +70,7 @@ class CodeQuestion  {
         }
 
         $stmt->close();
+        log('Aggiornamento della query corretta della domanda di codice: '.$sql);
         return "Saved correctly";
     }
 
@@ -109,6 +88,7 @@ class CodeQuestion  {
         }
 
         $stmt->close();
+        log('Aggiornamento della difficoltà della domanda di codice '.$ID.' a: '.$diff);
         return "Saved correctly";
     }
     public static function deleteCodeQuestion($IDTest, $ID)

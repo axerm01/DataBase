@@ -1,4 +1,5 @@
 <?php
+include_once('../../controllers/utils/connect.php');
 class Column {
     public static function saveTableColumns($tableId, $name, $type, $isPK){
         global $con;
@@ -13,6 +14,7 @@ class Column {
             die("Errore nell'esecuzione della query: " . mysqli_stmt_error($stmt));
         }
         mysqli_stmt_close($stmt);
+        log('Attributo salvato: '.$name);
     }
     public static function getTableColumns($tableId)
     {
