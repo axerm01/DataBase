@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `TEST` (
     `DataCreazione` DATETIME,
     `VisualizzaRisposte` VARCHAR(45) DEFAULT 'FALSE',
     `MailDocente` VARCHAR(45) NOT NULL,
-    PRIMARY KEY (`ID`,`Titolo`),
+    PRIMARY KEY (`ID`),
     CONSTRAINT `FK_Test_MailDocente`
     FOREIGN KEY (`MailDocente`)
     REFERENCES `DOCENTE` (`Mail`)
