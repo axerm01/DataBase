@@ -695,34 +695,39 @@
 
         function submitFormTest() {
             var sendDataTest = pickupData();
-            var formData = new FormData();
+            if(sendDataTest.answers.length !== 0){
+                var formData = new FormData();
 
-            // Aggiunge i dati testuali al FormData
-            formData.append("student_answers", JSON.stringify(sendDataTest));
+                // Aggiunge i dati testuali al FormData
+                formData.append("student_answers", JSON.stringify(sendDataTest));
 
-            // Aggiunge l'action al FormData
-            formData.append("action" , "save_response");
-            formData.append("testId" , testID);
-            // Aggiunge la data di inizio e fine
-            formData.append("first_response_date", firstAnswerTime ? formatDateTime(firstAnswerTime) : null);
-            formData.append("last_response_date", lastAnswerTime ? formatDateTime(lastAnswerTime) : null);
-            // Invio dei dati al file PHP tramite AJAX
-            $.ajax({
-                type: 'POST',
-                url: '../controllers/test/StudentTestController.php', //action è gia stata appesa
-                data: formData,
-                contentType: false, // Importante per il corretto invio di FormData
-                processData: false,
-                success: function(response) {
-                    console.log(response);
-                    alert('Dati Salvati con successo'); // mostra una notifica dell'avvenuto invio
-                    window.location.href = 'student_home.html'; // sostituisci con il percorso della pagina desiderata
-                },
-                error: function(xhr, status, error) {
-                    console.error("Errore durante l'invio dei dati:", status, error);
-                    // Gestire eventuali errori qui
-                }
-            });
+                // Aggiunge l'action al FormData
+                formData.append("action" , "save_response");
+                formData.append("testId" , testID);
+                // Aggiunge la data di inizio e fine
+                formData.append("first_response_date", firstAnswerTime ? formatDateTime(firstAnswerTime) : null);
+                formData.append("last_response_date", lastAnswerTime ? formatDateTime(lastAnswerTime) : null);
+                // Invio dei dati al file PHP tramite AJAX
+                $.ajax({
+                    type: 'POST',
+                    url: '../controllers/test/StudentTestController.php', //action è gia stata appesa
+                    data: formData,
+                    contentType: false, // Importante per il corretto invio di FormData
+                    processData: false,
+                    success: function(response) {
+                        console.log(response);
+                        alert('Dati Salvati con successo'); // mostra una notifica dell'avvenuto invio
+                        window.location.href = 'student_home.html'; // sostituisci con il percorso della pagina desiderata
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Errore durante l'invio dei dati:", status, error);
+                        // Gestire eventuali errori qui
+                    }
+                });
+            }
+            else {
+                alert("Per salvare i dati devi inserire almeno una risposta");
+            }
         }
     </script>
 </body>

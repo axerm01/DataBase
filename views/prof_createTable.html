@@ -206,81 +206,92 @@
         var title = $('#title').val(); // Utilizzo di jQuery per ottenere il valore
         var attributes = [];
         var rows = [];
-        // Prima invia una richiesta GET per verificare il titolo
-        $.ajax({
-            type: 'GET', // Cambiato in GET
-            url: '../controllers/table/TableController.php?action=check_name&name='+title, // URL dello script PHP per la verifica del titolo
-            data: { }, // Parametri inviati nella stringa di query URL
-            success: function(data) {
-                if(data) {
-                    alert("Il titolo inserito esiste già. Scegline un altro.");
-                } else {
-                    // Se il titolo non esiste, procedi con l'invio del form
-                    var table = $('#table')[0]; // Utilizzo di jQuery con accesso diretto all'elemento DOM
-                    var headerRow = table.rows[0];
-                    for (var i = 1; i < headerRow.cells.length; i++) {
-                        var cell = $(headerRow.cells[i]);
-                        var attributeName = cell.find('input[type="text_attr"]').val();
-                        var attributeType = cell.find('select[name="attribute_type"]').val();
-                        var isPK = cell.find('input[name="pk"]').prop('checked');
 
-                        var attribute = {
-                            name: attributeName,
-                            type: attributeType,
-                            PK: isPK
-                        };
-                        attributes.push(attribute); // Aggiungo l'attributo
-                    }
+            if (title == null || title === "") {
+                alert("Per creare una tabella devi assegnare un titolo diverso da quello delle altre tabelle");
+            }
+            else {
+                $.ajax({
+                    type: 'GET', // Cambiato in GET
+                    url: '../controllers/table/TableController.php?action=check_name&name='+title, // URL dello script PHP per la verifica del titolo
+                    data: { }, // Parametri inviati nella stringa di query URL
+                    success: function(data) {
+                        if(data) {
+                            alert("Il titolo inserito esiste già. Scegline un altro.");
+                        } else {
+                                // Se il titolo non esiste, procedi con l'invio del form
+                                var table = $('#table')[0]; // Utilizzo di jQuery con accesso diretto all'elemento DOM
+                                var headerRow = table.rows[0];
+                                for (var i = 1; i < headerRow.cells.length; i++) {
+                                    var cell = $(headerRow.cells[i]);
+                                    var attributeName = cell.find('input[type="text_attr"]').val();
+                                    var attributeType = cell.find('select[name="attribute_type"]').val();
+                                    var isPK = cell.find('input[name="pk"]').prop('checked');
 
-                    // Inserisce in rows tutte le righe
-                    for (var i = 1; i < table.rows.length; i++) {
-                        var rowData = [];
-                        for (var j = 1; j < table.rows[i].cells.length; j++) {
-                            rowData.push($(table.rows[i].cells[j]).find('input[name="row"]').val());
+                                    var attribute = {
+                                        name: attributeName,
+                                        type: attributeType,
+                                        PK: isPK
+                                    };
+                                    attributes.push(attribute); // Aggiungo l'attributo
+                                }
+
+                                // Inserisce in rows tutte le righe
+                                for (var i = 1; i < table.rows.length; i++) {
+                                    var rowData = [];
+                                    for (var j = 1; j < table.rows[i].cells.length; j++) {
+                                        rowData.push($(table.rows[i].cells[j]).find('input[name="row"]').val());
+                                    }
+                                    rows.push(rowData);
+                                }
+
+                            if ( attributes.length === 0 || rows.length === 0) {
+                                alert("Inserisci almeno una riga e una colonna");
+                            }
+                            else {
+                                var formData = new FormData(); // Inizializza FormData qui
+                                formData.append('data', JSON.stringify({title: title, attributes: attributes, rows: rows})); // Converti anche questo array
+                                formData.append('action', 'save_table');
+
+                                //Questo for serve solo per visualizzare i dati di FormData nella Console.
+                                for (var pair of formData.entries()) {
+                                    try {
+                                        // Prova a parse il valore come JSON per vedere se è un oggetto o un array
+                                        var obj = JSON.parse(pair[1]);
+                                        console.log(pair[0] + ': ', obj);
+                                    } catch (e) {
+                                        // Se non è JSON, logga il valore come una stringa
+                                        console.log(pair[0]+ ': ' + pair[1]);
+                                    }
+                                }
+
+                                // Invia i dati in formato JSON al file PHP per l'inserimento
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '../controllers/table/TableController.php',
+                                    data: formData,
+                                    contentType: false,
+                                    processData: false,
+                                    success: function(response) {
+                                        console.log(response);
+                                        alert(response);
+                                        window.location.reload();
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.error('Errore:', error);
+                                    }
+                                });
+                            }
                         }
-                        rows.push(rowData);
-                    }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Errore:', error);
+                    },
+                    dataType: 'json' // Aspettati una risposta JSON
+                });
+            }
 
-                    var formData = new FormData(); // Inizializza FormData qui
-                    formData.append('data', JSON.stringify({title: title, attributes: attributes, rows: rows})); // Converti anche questo array
-                    formData.append('action', 'save_table');
-
-                    //Questo for serve solo per visualizzare i dati di FormData nella Console.
-                    for (var pair of formData.entries()) {
-                        try {
-                            // Prova a parse il valore come JSON per vedere se è un oggetto o un array
-                            var obj = JSON.parse(pair[1]);
-                            console.log(pair[0] + ': ', obj);
-                        } catch (e) {
-                            // Se non è JSON, logga il valore come una stringa
-                            console.log(pair[0]+ ': ' + pair[1]); 
-                        }
-                    }
-
-                    // Invia i dati in formato JSON al file PHP per l'inserimento
-                    $.ajax({
-                        type: 'POST',
-                        url: '../controllers/table/TableController.php',
-                        data: formData,
-                        contentType: false,
-                        processData: false,
-                        success: function(response) {
-                            console.log(response);
-                            alert(response);
-                            window.location.reload();
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Errore:', error);
-                        }
-                    });
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('Errore:', error);
-            },
-            dataType: 'json' // Aspettati una risposta JSON
-        });
-    }        
+        }
 
     </script>
     

@@ -908,15 +908,24 @@
                     $(this).find('.answer').each(function() {
                         var answerText = $(this).find('.answer-input').val();
                         var isCorrect = $(this).find('.correct-checkbox').is(':checked');
-                        answers.push({ id: answerId, text: answerText, isCorrect: isCorrect });
-                        answerId++;
+                        if(answerText !== ""){
+                            answers.push({ id: answerId, text: answerText, isCorrect: isCorrect });
+                            answerId++;
+                        }
                     });
-                    sendDataTest.questions.push({ type: "mc", id: questionId, questionText: questionText, answers: answers, difficulty: difficultyLevel });
-                } else if (questionType === 'code') {
-                    var sqlCode = $(this).find('.code-textarea').val();
-                    sendDataTest.questions.push({ type: "code", id: questionId, questionText: questionText, sqlCode: sqlCode, difficulty: difficultyLevel });
+                    if(questionText !== "" && answers.length !== 0 && difficultyLevel !== ""){
+                        sendDataTest.questions.push({ type: "mc", id: questionId, questionText: questionText, answers: answers, difficulty: difficultyLevel });
+                        questionId++;
+                    }
                 }
-                questionId++;
+                else if (questionType === 'code') {
+                    var sqlCode = $(this).find('.code-textarea').val();
+                    if(questionText !== "" && sqlCode !== "" && difficultyLevel !== ""){
+                        sendDataTest.questions.push({ type: "code", id: questionId, questionText: questionText, sqlCode: sqlCode, difficulty: difficultyLevel });
+                        questionId++;
+                    }
+                }
+
             });
             // Raccogliere dati dei vincoli  
             $('.flex-container').each(function(index) {
@@ -946,6 +955,9 @@
             var name = sendDataTest.title;
             if (name == null || name === "") {
                 alert("Per creare un test devi assegnare un titolo diverso da quello degli altri test");
+            }
+            if (sendDataTest.questions.length === 0) {
+                alert("Per creare un test devi inserire almeno una domanda");
             }
             else {
 
