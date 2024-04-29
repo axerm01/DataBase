@@ -417,7 +417,7 @@
                         console.error('No constraints found or JSON is invalid');
                     }
 
-                    if (response.image) {
+                    if (response.image[0]) {
                         // Crea un elemento img e imposta il suo src all'immagine base64
                         //console.log(response.image[0].Foto);
                         var img = $('<img>', {
@@ -426,7 +426,7 @@
                         });
                         $('#image-container').append(img);
                     } else {
-                        console.error('No image found or JSON is invalid');
+                        //console.error('No image found or JSON is invalid');
                     }
 
                     var questions = response.questions;

@@ -376,13 +376,13 @@
                     date = $('<p>' + test.DataPrimaRisposta + '</p>');
                     status = $('<p>' + test.Stato + '</p>');
                     enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test_C.html?id=' +
-                    test.IDTest + '&titolo=' + encodeURIComponent(textTitle) +'\'">Visualizza Esito</button>');
+                    test.ID + '&titolo=' + encodeURIComponent(textTitle) +'\'">Visualizza Esito</button>');
                 }
 
                 testDetails.append(title, date, status);
 
                 var messageButton = $('<button class="black-button" onclick="window.location.href=\'student_message.html?id=' +
-                test.IDTest +'&titolo=' + test.Titolo + '\'">Messaggi</button>');
+                test.ID +'&titolo=' + test.Titolo + '\'">Messaggi</button>');
 
                 buttonContainer.append(enterButton, messageButton);
                 testContainer.append(testDetails, buttonContainer);
