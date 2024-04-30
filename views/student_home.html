@@ -7,8 +7,6 @@
     <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="styleBACK.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="check_session.js"></script>
     <style>
         .home-student-container{
             background-color: #fff;
@@ -327,7 +325,7 @@
                 var testDetails = $('<div class="test-details"></div>');
                 var buttonContainer = $('<div class="button-container "></div>');
 
-                var textTitle, title, date, status, resume, enterButton, messageButton;
+                var textTitle, title, date, status, resume, enterButton;
 
                 var classe = testZone.attr('class');
                 if(classe == 'test-inProgress'){
@@ -336,23 +334,19 @@
                         if(element.ID == test.IDTest){
                             title = $('<p>' + element.Titolo + '</p>');
                             textTitle = element.Titolo;
-                            console.log(textTitle, test.IDTest);
                         }
                     });
                     
                     date = $('<p>' + test.DataPrimaRisposta + '</p>');
                     status = $('<p>' + test.Stato + '</p>');
                     enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test_R.html?id=' +
-                        test.IDTest + '&titolo=' + encodeURIComponent(textTitle) +'\'">Riprendi test</button>');
-                    messageButton = $('<button class="black-button" onclick="window.location.href=\'student_message.html?id=' +
-                        test.IDTest +'&titolo=' + encodeURIComponent(textTitle) + '\'">Messaggi</button>');
+                    test.IDTest + '&titolo=' + encodeURIComponent(textTitle) +'\'">Riprendi test</button>');
                 }else if(classe == 'test-open'){
                     allTests.forEach(element => {
                         //console.log(element.ID, test.IDTest);
                         if(element.ID == test.IDTest){
                             title = $('<p>' + element.Titolo + '</p>');
                             textTitle = element.Titolo;
-                            console.log(textTitle, test.IDTest);
                         }
                     });
                     
@@ -360,20 +354,16 @@
                     status = $('<p>' + test.Stato + '</p>');
                     resume = 1;
                     enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test_S.html?id=' +
-                        test.IDTest +'&resume=' + resume + 
-                        '&titolo=' + encodeURIComponent(textTitle) +'\'">Rinizia test</button>');
-                    messageButton = $('<button class="black-button" onclick="window.location.href=\'student_message.html?id=' +
-                        test.IDTest +'&titolo=' + encodeURIComponent(textTitle) + '\'">Messaggi</button>');
+                    test.IDTest +'&resume=' + resume + 
+                    '&titolo=' + encodeURIComponent(textTitle) +'\'">Rinizia test</button>');
                 } else if(classe == 'test-new'){
                     title = $('<p>' + test.Titolo + '</p>');
                     date = $('<p>' + "--------" + '</p>');
                     status = $('<p>' + 'New' + '</p>');
                     resume = 0;
                     enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test_S.html?id=' +
-                        test.ID +'&resume=' + resume + 
-                        '&titolo=' + encodeURIComponent(test.Titolo) +'\'">Avvia test</button>');
-                    messageButton = $('<button class="black-button" onclick="window.location.href=\'student_message.html?id=' +
-                        test.IDTest +'&titolo=' + encodeURIComponent(test.Titolo) + '\'">Messaggi</button>');
+                    test.ID +'&resume=' + resume + 
+                    '&titolo=' + encodeURIComponent(test.Titolo) +'\'">Avvia test</button>');
                 } else if(classe == 'test-close'){
                     allTests.forEach(element => {
                         //console.log(element.ID, test.IDTest);
@@ -386,14 +376,15 @@
                     date = $('<p>' + test.DataPrimaRisposta + '</p>');
                     status = $('<p>' + test.Stato + '</p>');
                     enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test_C.html?id=' +
-                        test.IDTest + '&titolo=' + encodeURIComponent(textTitle) +'\'">Visualizza Esito</button>');
-                    messageButton = $('<button class="black-button" onclick="window.location.href=\'student_message.html?id=' +
-                        test.IDTest +'&titolo=' + encodeURIComponent(textTitle) + '\'">Messaggi</button>');
+                    test.ID + '&titolo=' + encodeURIComponent(textTitle) +'\'">Visualizza Esito</button>');
                 }
 
                 testDetails.append(title, date, status);
+
+                var messageButton = $('<button class="black-button" onclick="window.location.href=\'student_message.html?id=' +
+                test.ID +'&titolo=' + test.Titolo + '\'">Messaggi</button>');
+
                 buttonContainer.append(enterButton, messageButton);
-                
                 testContainer.append(testDetails, buttonContainer);
                 testZone.append(testContainer);
             });
