@@ -402,7 +402,7 @@
         const urlParams = new URLSearchParams(queryString);
 
         const testTitolo = urlParams.get('titolo');
-        const testID = urlParams.get('id');
+        const testID = parseInt(urlParams.get('id'), 10);;
 
         document.addEventListener('DOMContentLoaded', function() {
             

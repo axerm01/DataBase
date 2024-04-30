@@ -215,18 +215,44 @@
             color: rgb(0, 0, 0);
             text-shadow: 2px 2px 4px rgba(76, 76, 76, 0.5);
         }
-        #testContainer {
+        #test{
+            display: flex;
+            width: 94%;
+            padding: 0px;
+            margin: 0px;
+            height: 100%;
+        }
+        #test-date {
             display: flex;
             flex-direction: row; 
             flex-wrap: wrap;
             width: 90%;
             padding: 20px;
-            margin: auto;
+            margin: 0px;
             border: 2px solid #ccc;
             border-radius: 5px;
             align-items: flex-start;
             justify-content: flex-start; 
         }
+        #testContainer, #testContainer-prof {
+            flex: 1;
+            display: flex;
+            flex-direction: column; 
+            flex-wrap: wrap;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            margin: 0px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            align-items: flex-start;
+            justify-content: flex-start; 
+        }
+        #testContainer{
+            margin-right: 20px;
+        }
+        
+
 
 
         .tableContainer-test {
@@ -264,6 +290,32 @@
             max-width: 150px;
             height: auto;
         }
+        .question-test-code, .question-test-mc {
+            width: 90%;
+            margin-top: 10px;
+            border: 1px solid #ccc; /* Add border around the question */
+            border-radius: 5px; /* Add rounded corners for the question box */
+            padding: 10px 20px 10px 20px; /* Add padding inside the question box */
+            background-color: #f9f9f9; /* Set background color for the question box */
+        }
+        .question-test-code, .question-test-mc {
+            text-align: left;
+            padding-left: 20px;
+        }
+        /*stile per difficolta*/
+        .question-test-mc span,.question-test-code p{
+            float:inline-end;
+            color: #868686;
+            font-weight: bold;
+        }
+        /*Stile per le risposte*/
+        .question-test-mc p{
+            padding-left: 70px;
+        }
+        .correct-answer {
+            color: green;
+            font-weight: bold;
+        }
     </style>
         
 </head>
@@ -295,12 +347,17 @@
             </div>
         </div>
     </div>
+    <div id="test-date">
 
-    <div id="testContainer">
-        <!-- Qui -->
     </div>
-    <button id="submitTestButton" style="float: inline-end;">Salva ed Esci</button> <!-- Bottone salvataggio -->
+    <div id="test">
+        <div id="testContainer">
+            <!-- Qui -->
+        </div>
+        <div id="testContainer-prof">
     
+        </div>
+    </div>
 
     <!-- Modale per la visualizzazione della tabella -->
     <div id="modal" class="modal">
@@ -313,14 +370,14 @@
     <script>
         $(document).ready(function() {
             // Setup listeners dopo che il DOM è completamente caricato
-            setupListeners();
+            //setupListeners();
             // Prevengo il comportamento di sottomissione standard del form per il bottone del submit
-            $('#submitTestButton').click(function(e) {
+            /*$('#submitTestButton').click(function(e) {
                 e.preventDefault(); 
                 submitFormTest();
-            });
+            });*/
         });
-        function setupListeners() {
+        /*function setupListeners() {
             // Aggiungi listener a tutti i radio e textarea presenti ora e futuri nel DOM
             $(document).on('change', '.answer input[type="radio"]', recordAnswerTime);
             $(document).on('input', '.code-textarea', recordAnswerTime);
@@ -329,7 +386,7 @@
                 var $questionContainer = $(this).closest('.question');
                 $questionContainer.data('changed', true);
             });
-        }
+        }*/
     </script>
 
     <script>
@@ -353,6 +410,7 @@
                 titleElement.appendChild(titleText);
                 titleElement.classList.add('title');
             }
+
             $.ajax({
                 type: "GET",
                 url: "../controllers/test/StudentTestController.php?action=resume_test",
@@ -394,7 +452,7 @@
 
                             // Aggiungi la tabella costruita al contenitore
                             container.append(viewTable);
-                            $("#testContainer").append(container);
+                            $("#test-date").append(container);
                         });
                     } else {
                         console.error('No tables found or JSON is invalid');
@@ -410,23 +468,19 @@
                             var referenceText = `${nomeT1 || 'ID sconosciuto'}: [ ${ref.NomeAttributo1} ] ---> ${nomeT2 || 'ID sconosciuto'}: [ ${ref.NomeAttributo2} ]`;
                             var textElement = $("<p></p>").text(referenceText);
                             container.append(textElement);
-                            $("#testContainer").append(container);
+                            $("#test-date").append(container);
                             
                         });
                     } else {
                         console.error('No constraints found or JSON is invalid');
                     }
 
-                    if (response.image) {
-                        // Crea un elemento img e imposta il suo src all'immagine base64
-                        //console.log(response.image[0].Foto);
+                    if (response.image[0]) {
                         var img = $('<img>', {
                             src: 'data:image/jpeg;base64,' + response.image[0].Foto,
                             alt: 'Descrizione dell\'immagine'
                         });
                         $('#image-container').append(img);
-                    } else {
-                        console.error('No image found or JSON is invalid');
                     }
 
                     var questions = response.questions;
@@ -445,30 +499,18 @@
                                     .addClass('question')
                                     .attr('id', containerId)
                                     .attr('type', quest.type)
-                                    .data('already_answered', false)
-                                    .data('changed', false);
 
                                 var textQuestion = $("<strong></strong>").text("Quesito: " + quest.Descrizione + " ");
                                 container.append(textQuestion);
-                                const codeTextarea = document.createElement('textarea');
-                                    //codeTextarea.name = 'code' + questionCodeCount;
-                                    codeTextarea.placeholder = 'Inserisci codice MySQL';
+                                const codeTextarea = document.createElement('p');
                                     codeTextarea.classList.add('code-textarea');
-                                    //codeTextarea.addEventListener('input', recordAnswerTime);
                                 responses.forEach(resp => {
                                     if(resp.IDDomanda == containerId){
                                         codeTextarea.value = resp.CodiceRisposta;
-                                        container.data('already_answered', true);
+                                        codeCheck(resp.CodiceRisposta);
                                     }
                                 });
                                 container.append(codeTextarea);
-                                const addCodeAnswerButton = document.createElement('button');
-                                    addCodeAnswerButton.textContent = 'Verifica Codice';
-                                    addCodeAnswerButton.classList.add('add-check-button');
-                                    addCodeAnswerButton.onclick = function() {
-                                        codeCheck(this);
-                                    };
-                                container.append(addCodeAnswerButton);
 
                                 var difficultyQuestion = $("<p></p>").text("Difficolta: " + quest.Difficolta);
                                 container.append(difficultyQuestion);
@@ -479,8 +521,6 @@
                                     .addClass('question')
                                     .attr('id', containerId)
                                     .attr('type', quest.type)
-                                    .data('already_answered', false)
-                                    .data('changed', false);
 
                                 var textQuestion = $("<strong></strong>").text("Quesito: " + quest.Descrizione);
                                 container.append(textQuestion);
@@ -503,7 +543,9 @@
                                             //console.log(index, ans.ID, resp.IDRisposta);
                                             if (ans.ID === resp.IDRisposta) { 
                                                 radioOption.prop('checked', true);
-                                                container.data('already_answered', true);
+                                                if(resp.Esito){
+                                                    radioOption.append(' ✔').addClass('correct-answer');
+                                                }
                                             }
                                         }
                                     });
@@ -519,7 +561,6 @@
                                 var difficultyQuestion = $("<span></span>").text("Difficolta: " + quest.Difficolta);
                                 container.append(difficultyQuestion);
                             }
-                            //container.append(textQuestion);
                             $("#testContainer").append(container);
                             
                         });
@@ -529,6 +570,77 @@
                 },
                 dataType: "json"
             });
+            // Dati Corretti
+            $.ajax({
+                type: "GET",
+                url: "../controllers/test/TestController.php?action=get_test_content",
+                data: { testId: testID },
+                success: function(response) {
+                    console.log(response);
+
+                    var questions = response.questions;
+                    if (questions) {
+                        questions.forEach(function(quest) {
+                            //console.log(quest);
+                            QID = quest.ID; 
+                            if(quest.type === 'code'){
+                                // Crea la tabella e aggiunge un'intestazione con il nome
+                                var container = $('<div></div>').addClass('question-test-code');
+                                var textQuestion = $("<strong></strong>").text("Quesito: " + quest.Descrizione + " ");
+                                container.append(textQuestion);
+                                $.ajax({
+                                    type: 'POST', // Tipo di richiesta HTTP
+                                    url: '../controllers/test/TestController.php',
+                                    data: { query: quest.Output , action: 'test_query'}, // Dati inviati al server
+                                    success: function(response) {
+                                        container.append($("<br>"));
+                                        //console.log(response);
+                                        const columns = response.length > 0 ? Object.keys(response[0]) : [];
+                                        container.append(createTableMain(response,columns,null));
+                                        container.append($("<br>"));
+                                    },
+                                    error: function(xhr, status, error) {
+                                        // Gestione degli errori
+                                        if (xhr.status === 0) {
+                                            alert('Errore di rete durante la verifica del codice.');
+                                        } else {
+                                            alert('Errore durante la verifica del codice.');
+                                        }
+                                    },
+                                    dataType: 'json' // Tipo di dati attesi dalla risposta
+                                });
+                                var difficultyQuestion = $("<p></p>").text("Difficolta: " + quest.Difficolta);
+                                container.append(difficultyQuestion);
+                            }else if(quest.type === 'mc'){
+                                // Crea la tabella e aggiunge un'intestazione con il nome
+                                var container = $('<div></div>').addClass('question-test-mc');
+                                var textQuestion = $("<strong></strong>").text("Quesito: " + quest.Descrizione);
+                                container.append(textQuestion);
+                                $.each(quest.answers, function(index, ans) {
+                                    //console.log(ans.Testo)
+                                // Crea un elemento di lista per ogni risposta
+                                    var option = $('<p></p>').text(ans.Testo);
+                                    ///////////each per itinerare le opzioni delle risposte
+                                    // Se la risposta è corretta, aggiungi una spunta verde e la classe per lo stile
+                                    if (ans.IsCorretta === 1) {
+                                        option.append(' ✔').addClass('correct-answer');
+                                    }
+                                    container.append(option);
+                                });
+                                var difficultyQuestion = $("<span></span>").text("Difficolta: " + quest.Difficolta);
+                                container.append(difficultyQuestion);
+                            }
+                            //container.append(textQuestion);
+                            $("#testContainer-prof").append(container);
+                            
+                        });
+                    } else {
+                        console.error('No constraints found or JSON is invalid');
+                    }
+                },
+                dataType: "json"
+            });
+
         });
     
         function getTableNameById(id, usedTables) {
@@ -540,21 +652,6 @@
                 }
             }
             return null; // Restituisce null se non viene trovato nessun ID corrispondente
-        }
-        function recordAnswerTime() {
-            const currentTime = new Date(); // Ottieni l'ora corrente
-            lastAnswerTime = currentTime; // Aggiorna sempre l'ultima ora di risposta
-        }
-
-        function formatDateTime(date) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0'); // getMonth() restituisce un valore da 0 a 11
-            const day = String(date.getDate()).padStart(2, '0');
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            const seconds = String(date.getSeconds()).padStart(2, '0');
-
-            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         }
 
     </script>
@@ -575,7 +672,8 @@
                 success: function(response) {
                     // Analizzare la risposta (con jQuery, la risposta è già un oggetto JS se il server risponde con JSON)
                     if (response.length > 0) {
-                        showTableModal(response);
+                        const col = response.length > 0 ? Object.keys(response[0]) : [];
+                        createTableMain(response, col, null);
                         // Il codice è valido
                         //alert('Il codice è valido!');
                     } else {
@@ -598,35 +696,6 @@
 
 
     <script>
-        function showTableModal(response) {
-            console.log(response);
-            // Creazione della tabella come prima
-            const col = response.length > 0 ? Object.keys(response[0]) : [];
-            const table = createTableMain(response, col, null);
-
-            // Trova il contenitore della tabella nel modale e aggiungi la tabella
-            const tableContainer = document.getElementById('tableContainer');
-            tableContainer.innerHTML = ''; // Pulisce vecchie tabelle se presenti
-            tableContainer.appendChild(table);
-
-            // Mostra il modale
-            const modal = document.getElementById('modal');
-            modal.style.display = 'block';
-
-            // Imposta l'evento per chiudere il modale
-            const closeButton = document.querySelector('.close-button');
-            closeButton.onclick = function() {
-                modal.style.display = 'none';
-            };
-
-            // Chiude il modale anche quando si clicca fuori dal suo contenuto
-            window.onclick = function(event) {
-                if (event.target == modal) {
-                    modal.style.display = 'none';
-                }
-            };
-        }
-
         function createTableMain(resp,columns,tName) {
             const table = document.createElement('table');
             table.className = 'custom-table';
@@ -663,90 +732,6 @@
 
             // Restituisce l'elemento <table> creato
             return table;
-        }
-    </script>
-
-    
-    <script>
-        
-        function pickupData() {
-            var sendDataTest = {
-                old_answers: [],
-                new_answers: []
-            };
-
-            // Assumendo che ogni questionario abbia un attributo data-id e un attributo data-type
-            $('.question').each(function() {
-                const questionId = $(this).attr('id');
-                const questionType = $(this).attr('type'); // Legge il tipo di domanda
-                const difficultyLevel = $(this).find('.difficulty-select').val(); // Livello di difficoltà
-                const isPreviouslyAnswered = $(this).data('already_answered'); // Presumo che tu abbia un modo per settare questo dato
-                const changed = $(this).data('changed');
-                if (questionType === 'mc') {
-                    // Prendi il valore della risposta selezionata
-                    const answerId = $(this).find('.answer input[type="radio"]:checked').attr('id');
-                    if (answerId) { // Controlla che una risposta sia stata selezionata
-                        const answerObject = {
-                            type: "mc",
-                            id: questionId,
-                            answerId: answerId
-                        };
-                        // Decide in quale array inserire in base a se era già stata risposta
-                        if (isPreviouslyAnswered) {
-                            if(changed){
-                                sendDataTest.old_answers.push(answerObject);
-                            }
-                        } else {
-                            sendDataTest.new_answers.push(answerObject);
-                        }
-                    }
-                } else if (questionType === 'code') {
-                    var sqlCode = $(this).find('.code-textarea').val();
-                    if (sqlCode) {
-                        const answerObject = {
-                            type: "code", 
-                            id: questionId, 
-                            sqlCode: sqlCode
-                        };
-                        // Decide in quale array inserire in base a se era già stata risposta
-                        if (isPreviouslyAnswered) {
-                            if(changed){
-                                sendDataTest.old_answers.push(answerObject);
-                            }
-                        } else {
-                            sendDataTest.new_answers.push(answerObject);
-                        }
-                    }
-                }
-            });
-            console.log('OLD',sendDataTest.old_answers);
-            console.log('NEW',sendDataTest.new_answers);
-            return sendDataTest;
-        }
-
-        function submitFormTest() {
-            var sendDataTest = pickupData();
-            var dataToSend = {
-                last_response_date: lastAnswerTime ? formatDateTime(lastAnswerTime) : null,
-                student_answers: sendDataTest
-            };
-
-            $.ajax({
-                type: 'PUT',
-                url: '../controllers/test/StudentTestController.php?action=update_response&testId='+testID,
-                data: JSON.stringify(dataToSend),
-                contentType: 'application/json',
-                processData: false,
-                success: function(response) {
-                    console.log(response);
-                    alert('Dati Salvati con successo'); // mostra una notifica dell'avvenuto invio
-                    window.location.href = 'student_home.html'; // sostituisci con il percorso della pagina desiderata
-                },
-                error: function(xhr, status, error) {
-                    console.error("Errore durante l'invio dei dati:", status, error);
-                    // Gestire eventuali errori qui
-                }
-            });
         }
     </script>
 </body>
