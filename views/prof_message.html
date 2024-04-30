@@ -10,9 +10,10 @@
     <link rel="stylesheet" href="styleBACK.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="check_session.js"></script>
-    <style>
+   
+    <style>        
         .attributes_student_message {
-            width: 78%;
+            width: 90%;
             margin-right: auto;
             /* Spingi il contenitore verso sinistra */
             margin-left: auto;
@@ -56,29 +57,33 @@
         }
 
         .messages {
-            width: 83%;
+            width: 90%;
+            padding: 0px 10px 5px 10px;
             display: flex;
-            margin-right: 265px;
-            margin-left: 265px;
             border-radius: 5px;
         }
 
         .square {
-            width: 50%;
-            /* Larghezza del quadrato */
-            height: 300px;
-            /* Altezza del quadrato */
+            width: 60%;
+            height: 430px;
             background-color: white;
-            /* Colore di sfondo bianco */
             border: 2px solid black;
-            /* Bordo nero di 2 pixel */
-            margin-right: 30px;
-            margin-left: 30px;
             border-radius: 5px;
-            /* Bordo arrotondato */
             display: inline-block;
-            /* Utilizziamo flex per centrare il testo verticalmente */
+            position: relative;
+            overflow-y: auto;
         }
+
+        #testMessages {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
 
         .square #messaggio {
             width: 90%;
@@ -109,14 +114,29 @@
             outline: none;
             font-size: inherit;
         }
-        .message_container{
+        .message-container{
             text-align: center;
             justify-content: center;
             font-family: Georgia, 'Times New Roman', Times, serif;
         }
-        .message_container p{
-            font-weight: bold;
+        .message-container p, .message-content p{
             margin: 0px;
+        }
+        .message-content p{
+            margin: 0px;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+        
+        }
+        .message-title {
+            text-align: center;
+        }
+        .message-text {
+            text-align: center;
+            font-size: 1.2em; /* Più grande e leggibile */
+            font-weight: bold;
+        }
+        .message-info {
+            color: #999; /* Colore più chiaro per data, ID test, e mail */
         }
     </style>
 </head>
@@ -137,7 +157,7 @@
         </div>
     </header>
 
-    <div class="message_container">
+    <div class="message-container">
         <h2>MESSAGGI</h2>
     </div>
 
@@ -146,7 +166,7 @@
         <h4>Scrivi il Messaggio</h4>
     </div>
     <div class="messages">
-        <div class="square">
+        <div class="square" style="margin-right: 25px;">
             <p id="testMessages"></p>
         </div>
         <div class="square">
@@ -170,11 +190,13 @@
                     console.log(response);
                     var formattedText = "";
                     response.forEach(function(message) {
-                        formattedText += "Titolo: " + message.Titolo + "<br>" +
-                            "Testo: " + message.Testo + "<br>" +
-                            "Data: " + message.Data + "<br>" +
-                            "ID Test: " + message.IDTest + "<br>" +
-                            "Mail Studente: " + message.MailStudente + "<br><br>";
+                        formattedText += "<div class='message-content' style='margin-bottom: 25px;'>" +
+                                            "<p class='message-title'>Titolo: " + message.Titolo + "</p>" +
+                                            "<p class='message-text'>" + message.Testo + "</p>" +
+                                            "<p class='message-info'>" + message.Data + "</p>" +
+                                            "<span class='message-info'>Test-id: " + message.IDTest + "</span>" +
+                                            "<span class='message-info'> Mail Studente: " + message.MailStudente + "</span>" +
+                                        "</div>";
                     });
                     $('#testMessages').html(formattedText);
                 },
@@ -218,9 +240,9 @@
             var testEmail = urlParams.get('mail');
             // Ottieni i messaggi relativi   al test quando la pagina viene caricata
             getMessagesForTest(testId);
-            var cont = document.querySelector('.message_container h2');
+            var cont = document.querySelector('.message-container h2');
             cont.append(" - ", testTitle);
-            var container = document.querySelector('.message_container');
+            var container = document.querySelector('.message-container');
             var pElement = document.createElement('p'); 
                 pElement.append(testEmail); 
                 container.append(pElement);
