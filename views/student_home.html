@@ -7,6 +7,8 @@
     <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="styleBACK.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="check_session.js"></script>
     <style>
         .home-student-container{
             background-color: #fff;
@@ -30,7 +32,7 @@
             border: 2px solid #ccc;
             border-radius: 5px;
             display: flex;
-            flex-direction: column; 
+            flex-direction: column;
         }
         .test-inProgress, .test-open,
         .test-new, .test-close{
@@ -45,7 +47,7 @@
         .test-new span, .test-close span{
             color: #fff;
         }
-        
+
         .test-header {
             display: flex;
             width: 100%;
@@ -149,246 +151,253 @@
 </head>
 
 <body>
-    <header>
-        <h1>Studia con ESQL</h1>
-        <div class="indietro">
-            <!-- Usa "javascript:history.back()" come href per tornare indietro -->
-            <span class="testo-indietro"><a href="javascript:history.back()">
+<header>
+    <h1>Studia con ESQL</h1>
+    <div class="indietro">
+        <!-- Usa "javascript:history.back()" come href per tornare indietro -->
+        <span class="testo-indietro"><a href="javascript:history.back()">
                 <img src="image/arrow.png" alt="Torna indietro" style="width: 25px; height: 25px;">
             </a>Indietro</span>
-        </div> 
-        <div class="logout-form">
-            <form action="../controllers/utils/logout.php" method="post">
-                <button type="submit" name="logout">Esci</button>
-            </form>
-        </div>
-    </header>
-
-    <div class="home-student-container">
-        <span>Home Studente</span>
-        <span> I TUOI TEST</span>  
-        <div class="selector-container">
-            <select id="filter-tests">
-                <option value="all">Mostra Tutti</option>
-                <option value="test-inProgress">In Completamento</option>
-                <option value="test-open">Aperti</option>
-                <option value="test-new">Nuovi</option>
-                <option value="test-close">Conclusi</option>
-            </select>
-            <button class="black-button" onclick="window.location.href='statistics.html'">Statistiche</button>
-        </div>  
     </div>
+    <div class="logout-form">
+        <form action="../controllers/utils/logout.php" method="post">
+            <button type="submit" name="logout">Esci</button>
+        </form>
+    </div>
+</header>
 
-    <div class="test-list">
-        <div class="test-inProgress">
-            <span>In Completamento</span>
-            <div class="test-header">
-                <div class="test-header-60">
-                    <h4>Titolo</h4>        
-                    <h4>Data Inizio</h4>
-                    <h4>Stato Test</h4>
-                </div>
-                <div class="test-header-40">
-                    <h4>Azioni</h4> 
-                </div>
+<div class="home-student-container">
+    <span>Home Studente</span>
+    <span> I TUOI TEST</span>
+    <div class="selector-container">
+        <select id="filter-tests">
+            <option value="all">Mostra Tutti</option>
+            <option value="test-inProgress">In Completamento</option>
+            <option value="test-open">Aperti</option>
+            <option value="test-new">Nuovi</option>
+            <option value="test-close">Conclusi</option>
+        </select>
+        <button class="black-button" onclick="window.location.href='statistics.html'">Statistiche</button>
+    </div>
+</div>
+
+<div class="test-list">
+    <div class="test-inProgress">
+        <span>In Completamento</span>
+        <div class="test-header">
+            <div class="test-header-60">
+                <h4>Titolo</h4>
+                <h4>Data Inizio</h4>
+                <h4>Stato Test</h4>
             </div>
-        </div>
-        <div class="test-open">
-            <span>Aperti</span>
-            <div class="test-header">
-                <div class="test-header-60">
-                    <h4>Titolo</h4>        
-                    <h4>Data Inizio</h4>
-                    <h4>Stato Test</h4>
-                </div>
-                <div class="test-header-40">
-                    <h4>Azioni</h4> 
-                </div>
-            </div>
-        </div>
-        <div class="test-new">
-            <span>Nuovi</span>
-            <div class="test-header">
-                <div class="test-header-60">
-                    <h4>Titolo</h4>        
-                    <h4>Data Inizio</h4>
-                    <h4>Stato Test</h4>
-                </div>
-                <div class="test-header-40">
-                    <h4>Azioni</h4> 
-                </div>
-            </div>
-        </div>
-        <div class="test-close">
-            <span>Conclusi</span>
-            <div class="test-header">
-                <div class="test-header-60">
-                    <h4>Titolo</h4>        
-                    <h4>Data Inizio</h4>
-                    <h4>Stato Test</h4>
-                </div>
-                <div class="test-header-40">
-                    <h4>Azioni</h4> 
-                </div>
+            <div class="test-header-40">
+                <h4>Azioni</h4>
             </div>
         </div>
     </div>
+    <div class="test-open">
+        <span>Aperti</span>
+        <div class="test-header">
+            <div class="test-header-60">
+                <h4>Titolo</h4>
+                <h4>Data Inizio</h4>
+                <h4>Stato Test</h4>
+            </div>
+            <div class="test-header-40">
+                <h4>Azioni</h4>
+            </div>
+        </div>
+    </div>
+    <div class="test-new">
+        <span>Nuovi</span>
+        <div class="test-header">
+            <div class="test-header-60">
+                <h4>Titolo</h4>
+                <h4>Data Inizio</h4>
+                <h4>Stato Test</h4>
+            </div>
+            <div class="test-header-40">
+                <h4>Azioni</h4>
+            </div>
+        </div>
+    </div>
+    <div class="test-close">
+        <span>Conclusi</span>
+        <div class="test-header">
+            <div class="test-header-60">
+                <h4>Titolo</h4>
+                <h4>Data Inizio</h4>
+                <h4>Stato Test</h4>
+            </div>
+            <div class="test-header-40">
+                <h4>Azioni</h4>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <footer>
-        <p>Alma Mater Studiorum</p>
-        <h3>Università di Bologna</h3>
-    </footer>
-    <!-- Includi jQuery per semplificare la gestione delle richieste AJAX -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>  
-        var allTests = []; // Variabile esterna per memorizzare i test totali
-        $(document).ready(function() {
-            
-            var started = [];
+<footer>
+    <p>Alma Mater Studiorum</p>
+    <h3>Università di Bologna</h3>
+</footer>
+<!-- Includi jQuery per semplificare la gestione delle richieste AJAX -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    var allTests = []; // Variabile esterna per memorizzare i test totali
+    $(document).ready(function() {
 
-            // Funzione per ottenere tutti i test
-            function AllTests() {
-                return $.ajax({
-                    type: "GET",
-                    url: "../controllers/test/StudentTestController.php",
-                    data: { action: 'get_all_tests' },
-                    dataType: "json",
-                    success: function(response) {
-                        allTests = response; // Memorizziamo la risposta in allTests
-                    }
-                });
-            }
-            // Funzioni per ottenere i test filtrati
-            function fetchTests(filter, testClass) {
-                return $.ajax({
-                    type: "GET",
-                    url: "../controllers/test/StudentTestController.php",
-                    data: { action: 'get_filtered_tests', filter: filter },
-                    dataType: "json",
-                    success: function(response) {
-                        console.log(response);
-                        var test = $(testClass);
-                        populateTestList(response, test);
-                        response.forEach(element => {
-                            started = started.concat(element.IDTest);
-                        });
-                        //console.log(started);
-                    }
-                });
-            }
-            // Prima assicuriamo che la chiamata get_all_tests sia completata
-            $.when(AllTests()).then(function() {
-                // Quando abbiamo la risposta, procediamo con le altre chiamate
-                $.when(
-                    fetchTests('InCompletamento', '.test-inProgress'),
-                    fetchTests('Aperto', '.test-open'),
-                    fetchTests('Concluso', '.test-close')
-                ).then(function() {
-                    // Ora, eseguo le istruzioni che dipendono dalla chiamata get_all_tests
-                    //console.log(allTests);
-                    var test = $('.test-new');
-                    // Filtra allTests rimuovendo quelli già visualizzati
-                    var newT = allTests.filter(item => !started.includes(item.ID));
-                    console.log(newT);
-                    populateTestList(newT, test);
-                }).fail(function(jqxhr, textStatus, error) {
-                    var err = textStatus + ", " + error;
-                    console.log("Request Failed: " + err);
-                });
+        var started = [];
+
+        // Funzione per ottenere tutti i test
+        function AllTests() {
+            return $.ajax({
+                type: "GET",
+                url: "../controllers/test/StudentTestController.php",
+                data: { action: 'get_all_tests' },
+                dataType: "json",
+                success: function(response) {
+                    allTests = response; // Memorizziamo la risposta in allTests
+                }
+            });
+        }
+        // Funzioni per ottenere i test filtrati
+        function fetchTests(filter, testClass) {
+            return $.ajax({
+                type: "GET",
+                url: "../controllers/test/StudentTestController.php",
+                data: { action: 'get_filtered_tests', filter: filter },
+                dataType: "json",
+                success: function(response) {
+                    console.log(response);
+                    var test = $(testClass);
+                    populateTestList(response, test);
+                    response.forEach(element => {
+                        started = started.concat(element.IDTest);
+                    });
+                    //console.log(started);
+                }
+            });
+        }
+        // Prima assicuriamo che la chiamata get_all_tests sia completata
+        $.when(AllTests()).then(function() {
+            // Quando abbiamo la risposta, procediamo con le altre chiamate
+            $.when(
+                fetchTests('InCompletamento', '.test-inProgress'),
+                fetchTests('Aperto', '.test-open'),
+                fetchTests('Concluso', '.test-close')
+            ).then(function() {
+                // Ora, eseguo le istruzioni che dipendono dalla chiamata get_all_tests
+                //console.log(allTests);
+                var test = $('.test-new');
+                // Filtra allTests rimuovendo quelli già visualizzati
+                var newT = allTests.filter(item => !started.includes(item.ID));
+                console.log(newT);
+                populateTestList(newT, test);
             }).fail(function(jqxhr, textStatus, error) {
                 var err = textStatus + ", " + error;
                 console.log("Request Failed: " + err);
             });
-
-            // Aggiunta del nuovo gestore eventi per il menu a tendina
-            $('#filter-tests').change(function() {
-                var selectedFilter = $(this).val(); // Ottiene l'opzione selezionata
-
-                // Nasconde tutti i contenitori di test
-                $('.test-inProgress, .test-open, .test-new, .test-close').hide();
-
-                // Mostra solo il contenitore selezionato, a meno che l'opzione non sia 'all'
-                if (selectedFilter === 'all') {
-                    $('.test-inProgress, .test-open, .test-new, .test-close').show();
-                } else {
-                    $('.' + selectedFilter).show();
-                }
-            });
+        }).fail(function(jqxhr, textStatus, error) {
+            var err = textStatus + ", " + error;
+            console.log("Request Failed: " + err);
         });
 
+        // Aggiunta del nuovo gestore eventi per il menu a tendina
+        $('#filter-tests').change(function() {
+            var selectedFilter = $(this).val(); // Ottiene l'opzione selezionata
 
-        // Funzione per popolare la sezione dei test con i dati ottenuti dalla richiesta AJAX
-        function populateTestList(tests, testZone) {
-            // Per ogni test, crea un contenitore div e aggiungi i dati
-            $.each(tests, function(index, test) {
-                var testContainer = $('<div class="test-container"></div>');
-                var testDetails = $('<div class="test-details"></div>');
-                var buttonContainer = $('<div class="button-container "></div>');
+            // Nasconde tutti i contenitori di test
+            $('.test-inProgress, .test-open, .test-new, .test-close').hide();
 
-                var textTitle, title, date, status, resume, enterButton;
+            // Mostra solo il contenitore selezionato, a meno che l'opzione non sia 'all'
+            if (selectedFilter === 'all') {
+                $('.test-inProgress, .test-open, .test-new, .test-close').show();
+            } else {
+                $('.' + selectedFilter).show();
+            }
+        });
+    });
 
-                var classe = testZone.attr('class');
-                if(classe == 'test-inProgress'){
-                    allTests.forEach(element => {
-                        //console.log(element.ID, test.IDTest);
-                        if(element.ID == test.IDTest){
-                            title = $('<p>' + element.Titolo + '</p>');
-                            textTitle = element.Titolo;
-                        }
-                    });
-                    
-                    date = $('<p>' + test.DataPrimaRisposta + '</p>');
-                    status = $('<p>' + test.Stato + '</p>');
-                    enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test_R.html?id=' +
+
+    // Funzione per popolare la sezione dei test con i dati ottenuti dalla richiesta AJAX
+    function populateTestList(tests, testZone) {
+        // Per ogni test, crea un contenitore div e aggiungi i dati
+        $.each(tests, function(index, test) {
+            var testContainer = $('<div class="test-container"></div>');
+            var testDetails = $('<div class="test-details"></div>');
+            var buttonContainer = $('<div class="button-container "></div>');
+
+            var textTitle, title, date, status, resume, enterButton, messageButton;
+
+            var classe = testZone.attr('class');
+            if(classe == 'test-inProgress'){
+                allTests.forEach(element => {
+                    //console.log(element.ID, test.IDTest);
+                    if(element.ID == test.IDTest){
+                        title = $('<p>' + element.Titolo + '</p>');
+                        textTitle = element.Titolo;
+                        console.log(textTitle, test.IDTest);
+                    }
+                });
+
+                date = $('<p>' + test.DataPrimaRisposta + '</p>');
+                status = $('<p>' + test.Stato + '</p>');
+                enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test_R.html?id=' +
                     test.IDTest + '&titolo=' + encodeURIComponent(textTitle) +'\'">Riprendi test</button>');
-                }else if(classe == 'test-open'){
-                    allTests.forEach(element => {
-                        //console.log(element.ID, test.IDTest);
-                        if(element.ID == test.IDTest){
-                            title = $('<p>' + element.Titolo + '</p>');
-                            textTitle = element.Titolo;
-                        }
-                    });
-                    
-                    date = $('<p>' + test.DataPrimaRisposta + '</p>');
-                    status = $('<p>' + test.Stato + '</p>');
-                    resume = 1;
-                    enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test_S.html?id=' +
-                    test.IDTest +'&resume=' + resume + 
+                messageButton = $('<button class="black-button" onclick="window.location.href=\'student_message.html?id=' +
+                    test.IDTest +'&titolo=' + encodeURIComponent(textTitle) + '\'">Messaggi</button>');
+            }else if(classe == 'test-open'){
+                allTests.forEach(element => {
+                    //console.log(element.ID, test.IDTest);
+                    if(element.ID == test.IDTest){
+                        title = $('<p>' + element.Titolo + '</p>');
+                        textTitle = element.Titolo;
+                        console.log(textTitle, test.IDTest);
+                    }
+                });
+
+                date = $('<p>' + test.DataPrimaRisposta + '</p>');
+                status = $('<p>' + test.Stato + '</p>');
+                resume = 1;
+                enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test_S.html?id=' +
+                    test.IDTest +'&resume=' + resume +
                     '&titolo=' + encodeURIComponent(textTitle) +'\'">Rinizia test</button>');
-                } else if(classe == 'test-new'){
-                    title = $('<p>' + test.Titolo + '</p>');
-                    date = $('<p>' + "--------" + '</p>');
-                    status = $('<p>' + 'New' + '</p>');
-                    resume = 0;
-                    enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test_S.html?id=' +
-                    test.ID +'&resume=' + resume + 
+                messageButton = $('<button class="black-button" onclick="window.location.href=\'student_message.html?id=' +
+                    test.IDTest +'&titolo=' + encodeURIComponent(textTitle) + '\'">Messaggi</button>');
+            } else if(classe == 'test-new'){
+                title = $('<p>' + test.Titolo + '</p>');
+                date = $('<p>' + "--------" + '</p>');
+                status = $('<p>' + 'New' + '</p>');
+                resume = 0;
+                enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test_S.html?id=' +
+                    test.ID +'&resume=' + resume +
                     '&titolo=' + encodeURIComponent(test.Titolo) +'\'">Avvia test</button>');
-                } else if(classe == 'test-close'){
-                    allTests.forEach(element => {
-                        //console.log(element.ID, test.IDTest);
-                        if(element.ID == test.IDTest){
-                            title = $('<p>' + element.Titolo + '</p>');
-                            textTitle = element.Titolo;
-                        }
-                    });
-                    
-                    date = $('<p>' + test.DataPrimaRisposta + '</p>');
-                    status = $('<p>' + test.Stato + '</p>');
-                    enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test_C.html?id=' +
-                    test.ID + '&titolo=' + encodeURIComponent(textTitle) +'\'">Visualizza Esito</button>');
-                }
+                messageButton = $('<button class="black-button" onclick="window.location.href=\'student_message.html?id=' +
+                    test.IDTest +'&titolo=' + encodeURIComponent(test.Titolo) + '\'">Messaggi</button>');
+            } else if(classe == 'test-close'){
+                allTests.forEach(element => {
+                    //console.log(element.ID, test.IDTest);
+                    if(element.ID == test.IDTest){
+                        title = $('<p>' + element.Titolo + '</p>');
+                        textTitle = element.Titolo;
+                    }
+                });
 
-                testDetails.append(title, date, status);
+                date = $('<p>' + test.DataPrimaRisposta + '</p>');
+                status = $('<p>' + test.Stato + '</p>');
+                enterButton = $('<button class="black-button" onclick="window.location.href=\'student_test_C.html?id=' +
+                    test.IDTest + '&titolo=' + encodeURIComponent(textTitle) +'\'">Visualizza Esito</button>');
+                messageButton = $('<button class="black-button" onclick="window.location.href=\'student_message.html?id=' +
+                    test.IDTest +'&titolo=' + encodeURIComponent(textTitle) + '\'">Messaggi</button>');
+            }
 
-                var messageButton = $('<button class="black-button" onclick="window.location.href=\'student_message.html?id=' +
-                test.ID +'&titolo=' + test.Titolo + '\'">Messaggi</button>');
+            testDetails.append(title, date, status);
+            buttonContainer.append(enterButton, messageButton);
 
-                buttonContainer.append(enterButton, messageButton);
-                testContainer.append(testDetails, buttonContainer);
-                testZone.append(testContainer);
-            });
-        }
-    </script>
+            testContainer.append(testDetails, buttonContainer);
+            testZone.append(testContainer);
+        });
+    }
+</script>
 </body>
 </html>
