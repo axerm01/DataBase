@@ -6,13 +6,24 @@
     <title>Login-ESQL-Esercitazioni</title>
     <link rel="shortcut icon" href="image/Seal_Bologna.svg.png" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .left-column {
+            flex: 1; 
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end; 
+            height: 100%;
+        }
+    </style>
 </head>
 
 <body class="signin_body">
     <header class="signin_header">
         <h1>Studia con ESQL</h1>
     </header>
-
+    <div class="left-column">
+        <img src="image/login.png" alt="grafica logo">
+    </div>
     <div class="signin-container">
         <h2>Accedi</h2>
         <h5>Inserisci le credenziali istituzionali di Ateneo.</h5>
@@ -27,9 +38,6 @@
             <button type="submit">Accedi</button>
         </form>
         <p class="link"><a href="signin.html">Registrati</a></p>
-    </div>
-    <div class="image">
-        <img src="image/login.png" alt="grafica logo">
     </div>
     <footer class="signin_footer">
         <p>Alma Mater Studiorum</p>

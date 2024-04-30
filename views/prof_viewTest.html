@@ -166,7 +166,7 @@
 
                 var buttonContainer = $('<div class="button-container"></div>');
                 //var viewButton = $('<button class="black-button" onclick="window.location.href=\'prof_viewTest.html\'"> Visualizza Test</button>');
-                var updateButton = $('<button class="black-button" onclick="window.location.href=\'prof_updateTest.html?id=' + test.ID + '&titolo=' + encodeURIComponent(test.Titolo) + '&mail=' + encodeURIComponent(test.MailDocente) + '\'"> Modifica Test</button>');
+                var updateButton = $('<button class="black-button" onclick="window.location.href=\'prof_Test.html?id=' + test.ID + '&titolo=' + encodeURIComponent(test.Titolo) +'\'"> Modifica Test</button>');
                 var messageButton = $('<button class="black-button" onclick="window.location.href=\'prof_message.html?id=' + test.ID + '&titolo=' + encodeURIComponent(test.Titolo) + '&mail=' + encodeURIComponent(test.MailDocente) + '\'">Messaggi</button>');
                 buttonContainer.append(/*viewButton,*/ updateButton, messageButton);
 

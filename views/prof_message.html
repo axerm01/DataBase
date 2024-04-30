@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="styleBACK.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
+    <script src="check_session.js"></script>
     <style>
         .attributes_student_message {
             width: 78%;
@@ -109,6 +109,15 @@
             outline: none;
             font-size: inherit;
         }
+        .message_container{
+            text-align: center;
+            justify-content: center;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+        }
+        .message_container p{
+            font-weight: bold;
+            margin: 0px;
+        }
     </style>
 </head>
 
@@ -146,7 +155,7 @@
         </div>
     </div>
     <div class="button_student_message">
-        <button onclick="submitForm()">Invia</button>
+        <button class="black-button" onclick="submitForm()">Invia</button>
     </div>
 
 
@@ -193,6 +202,7 @@
         data: formData, // Converte i dati del form in stringa JSON
         success: function (response) {
             console.log(response); // Gestisci la risposta qui
+            window.location.reload();
         },
         error: function (xhr, status, error) {
             console.error('Errore:', error);
@@ -204,9 +214,16 @@
             // Recupera i parametri dall'URL
             var urlParams = new URLSearchParams(window.location.search);
             var testId = parseInt(urlParams.get('id'));
-
+            var testTitle = urlParams.get('titolo');
+            var testEmail = urlParams.get('mail');
             // Ottieni i messaggi relativi   al test quando la pagina viene caricata
             getMessagesForTest(testId);
+            var cont = document.querySelector('.message_container h2');
+            cont.append(" - ", testTitle);
+            var container = document.querySelector('.message_container');
+            var pElement = document.createElement('p'); 
+                pElement.append(testEmail); 
+                container.append(pElement);
         });
     </script>
     <footer>
