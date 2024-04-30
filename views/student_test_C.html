@@ -656,13 +656,8 @@
 
     </script>
     <script>
-        function codeCheck(buttonElement) {
-            // Trova il contenitore della domanda relativo al bottone
-            const questionDiv = buttonElement.closest('.question');
-            // Trova il textarea all'interno di questo contenitore specifico
-            const textarea = questionDiv.querySelector('.code-textarea');
-            // Ottenere il codice MySQL inserito dall'utente
-            const query = textarea.value;
+        function codeCheck(element) {
+            const query = element;
 
             // Effettuare una chiamata AJAX per inviare il codice al server
             $.ajax({

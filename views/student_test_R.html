@@ -588,7 +588,7 @@
                     if (xhr.status === 0) {
                         alert('Errore di rete durante la verifica del codice.');
                     } else {
-                        alert('Errore durante la verifica del codice.');
+                        alert('Errore durante la verifica del codice: '+xhr.responseText);
                     }
                 },
                 dataType: 'json' // Tipo di dati attesi dalla risposta

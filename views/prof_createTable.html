@@ -222,11 +222,15 @@
                                 // Se il titolo non esiste, procedi con l'invio del form
                                 var table = $('#table')[0]; // Utilizzo di jQuery con accesso diretto all'elemento DOM
                                 var headerRow = table.rows[0];
+                                var check = false;
                                 for (var i = 1; i < headerRow.cells.length; i++) {
                                     var cell = $(headerRow.cells[i]);
                                     var attributeName = cell.find('input[type="text_attr"]').val();
                                     var attributeType = cell.find('select[name="attribute_type"]').val();
                                     var isPK = cell.find('input[name="pk"]').prop('checked');
+                                    if(isPK){
+                                        check = true;
+                                    }
 
                                     var attribute = {
                                         name: attributeName,
@@ -247,6 +251,9 @@
 
                             if ( attributes.length === 0 || rows.length === 0) {
                                 alert("Inserisci almeno una riga e una colonna");
+                            }
+                            else if(!check){
+                                alert("Inserisci almeno una chiave primaria");
                             }
                             else {
                                 var formData = new FormData(); // Inizializza FormData qui

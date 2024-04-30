@@ -905,22 +905,32 @@
                 if (questionType === 'mc') {
                     var answers = [];
                     let answerId = 1;
+                    let check = false;
                     $(this).find('.answer').each(function() {
                         var answerText = $(this).find('.answer-input').val();
                         var isCorrect = $(this).find('.correct-checkbox').is(':checked');
+                        if(isCorrect){
+                            check = true;
+                        }
                         if(answerText !== ""){
                             answers.push({ id: answerId, text: answerText, isCorrect: isCorrect });
                             answerId++;
                         }
                     });
-                    if(questionText !== "" && answers.length !== 0 && difficultyLevel !== ""){
+                    if(questionText === "" || answers.length === 0 || difficultyLevel === null || !check){
+                        alert("Attenzione dati o spunte mancanti");
+                    }
+                    else {
                         sendDataTest.questions.push({ type: "mc", id: questionId, questionText: questionText, answers: answers, difficulty: difficultyLevel });
                         questionId++;
                     }
                 }
                 else if (questionType === 'code') {
                     var sqlCode = $(this).find('.code-textarea').val();
-                    if(questionText !== "" && sqlCode !== "" && difficultyLevel !== ""){
+                    if(questionText === "" || sqlCode === "" || difficultyLevel === null){
+                        alert("Attenzione dati mancanti");
+                    }
+                    else {
                         sendDataTest.questions.push({ type: "code", id: questionId, questionText: questionText, sqlCode: sqlCode, difficulty: difficultyLevel });
                         questionId++;
                     }

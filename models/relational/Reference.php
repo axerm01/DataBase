@@ -41,7 +41,7 @@ class Reference
         $tableIdsString = implode(',', array_map('intval', $tableIds));
 
         // Prepara la query SQL
-        $query = "SELECT * FROM Referenze WHERE IDT1 IN ($tableIdsString) OR IDT2 IN ($tableIdsString)";
+        $query = "SELECT * FROM Referenze WHERE IDT1 IN ($tableIdsString) AND IDT2 IN ($tableIdsString)";
 
         // Esegui la query
         $result = $con->query($query);
