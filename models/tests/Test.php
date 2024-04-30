@@ -31,7 +31,7 @@ class Test {
         $result = $stmt->get_result();
         $data = [];
         while ($row = $result->fetch_assoc()) {
-            $data[] = $row;  // Aggiunge ogni riga all'array $data
+            $data[] = $row;
         }
         $stmt->close();
         return $data;
@@ -57,14 +57,13 @@ class Test {
 
         if($image != null) {
             if (getimagesize($image['tmp_name'])) {
-                // Leggi il contenuto del file
                 $imageBlob = file_get_contents($image['tmp_name']);
                 $stmt = $con->prepare("CALL AddToGalleria(?, ?)");
                 if ($stmt === false) {
                     die("Errore nella preparazione della query: " . $con->error);
                 }
 
-                $null = null; // mysqli richiede questo per i blob
+                $null = null;
                 $stmt->bind_param('ib', $id, $null);
                 $stmt->send_long_data(1, $imageBlob); // invia i dati BLOB
                 if (!$stmt->execute()) {
@@ -83,23 +82,17 @@ class Test {
             die("Connessione fallita: " . $con->connect_error);
         }
         try {
-            // Inizia la transazione
             $con->begin_transaction();
-            // Prepara lo statement SQL
             $stmt = $con->prepare("INSERT INTO TEST_TABELLA (IDTabella, IDTest) VALUES (?, ?)");
             foreach ($list as $tableId) {
-                // Bind dei parametri e esecuzione dello statement
                 $stmt->bind_param("ii", $tableId, $testId);
                 $stmt->execute();
             }
-            // Committa la transazione
             $con->commit();
         } catch (Exception $e) {
-            // Qualcosa è andato storto: esegui il rollback
             $con->rollback();
             echo "Errore: " . $e->getMessage();
         }
-        // Chiudi lo statement e la connessione
         $stmt->close();
         logMongo('Tabelle '.json_encode($list).' collegate a test '.$testId);
     }
@@ -119,10 +112,9 @@ class Test {
         $data = [];
 
         while ($row = $result->fetch_assoc()) {
-            $data[] = $row;  // Aggiunge ogni riga all'array $data
+            $data[] = $row;
         }
         $stmt->close();
-
         return $data;
     }
 
@@ -142,7 +134,7 @@ class Test {
         $data = [];
 
         while ($row = $result->fetch_assoc()) {
-            $data[] = $row;  // Aggiunge ogni riga all'array $data
+            $data[] = $row;
         }
         $stmt->close();
 
@@ -169,20 +161,17 @@ class Test {
         $data = [];
 
         while ($row = $result->fetch_assoc()) {
-            // Per i dati BLOB, considera la necessità di elaborarli prima di aggiungerli all'array $data
-            $row['Foto'] = base64_encode($row['Foto']); // Codifica il BLOB in base64 se intendi inviarlo al client, ad esempio per visualizzarlo come immagine
-            $data[] = $row; // Aggiunge ogni riga all'array $data
+            $row['Foto'] = base64_encode($row['Foto']);
+            $data[] = $row;
         }
 
         $stmt->close();
-
         return $data;
     }
 
     public static function updateTestTitle($testId, $title) {
-        global $con; // Assumi che $con sia la tua connessione al database (mysqli)
+        global $con;
 
-        // Preparazione della query SQL
         $stmt = $con->prepare("CALL UpdateTestTitle(?,?)");
         if ($stmt === false) {
             die("Errore nella preparazione della query: " . $con->error);
@@ -199,78 +188,51 @@ class Test {
     }
 
     public static function updateVisualizzaRisposte($testId) {
-        global $con; // Assumi che $con sia la tua connessione al database (mysqli)
+        global $con;
 
-        // Preparazione della query SQL
         $stmt = $con->prepare("CALL UpdateVisualizzaRisposteTest(?)");
-
-        // Verifica se la preparazione della query ha avuto successo
         if ($stmt === false) {
             die("Errore nella preparazione della query: " . $con->error);
         }
-
-        // Associa i parametri alla query preparata
         $stmt->bind_param('i', $testId);
-
-        // Esegui la query
         if (!$stmt->execute()) {
             die("Errore nell'esecuzione della query: " . $stmt->error);
         }
-
-        // Chiusura dello statement
         $stmt->close();
-
         return "Aggiornato Visualizza Risoste a True";
     }
 
     public static function deleteTableTestLink($list, $testId){
         global $con;
         try {
-            // Inizia la transazione
             $con->begin_transaction();
-            // Prepara lo statement SQL
             $stmt = $con->prepare("DELETE FROM TABELLE_TEST WHERE IDTest = ? AND IDTabella = ?");
             foreach ($list as $tableId) {
-                // Bind dei parametri e esecuzione dello statement
                 $stmt->bind_param("ii", $testId, $tableId);
                 $stmt->execute();
             }
-            // Committa la transazione
             $con->commit();
         } catch (Exception $e) {
-            // Qualcosa è andato storto: esegui il rollback
             $con->rollback();
             echo "Errore: " . $e->getMessage();
         }
-        // Chiudi lo statement e la connessione
         $stmt->close();
     }
 
     public static function checkIfTestNameExists($nome, $email) {
         global $con;
 
-        // Prepara la chiamata alla stored procedure
         $stmt = $con->prepare("CALL CheckIfTestNameExists(?,?, @result)");
         if ($stmt === false) {
-            // Gestisci l'errore di preparazione della query
             throw new Exception("Errore nella preparazione della query: " . $con->error);
         }
-
-        // Lega i parametri
         $stmt->bind_param('ss', $nome, $email);
-
-        // Esegui la stored procedure
         if (!$stmt->execute()) {
-            // Gestisci l'errore di esecuzione della query
             throw new Exception("Errore nell'esecuzione della query: " . $stmt->error);
         }
-
-        // Recupera il risultato
         $result = $con->query("SELECT @result AS result")->fetch_assoc();
 
         $stmt->close();
-
-        // Restituisce il risultato booleano
         return (bool) $result['result'];
     }
 

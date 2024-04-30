@@ -35,28 +35,19 @@ class Reference
         $stmt->close();
     }
     public static function getReferencesByTableIds($tableIds) {
-        global $con; // Assumi che $con sia la tua connessione al database
-
-        // Converti l'array di ID in una stringa per la query SQL
+        global $con;
+        // Converte l'array di ID in una stringa per la query SQL
         $tableIdsString = implode(',', array_map('intval', $tableIds));
 
-        // Prepara la query SQL
         $query = "SELECT * FROM Referenze WHERE IDT1 IN ($tableIdsString) AND IDT2 IN ($tableIdsString)";
-
-        // Esegui la query
         $result = $con->query($query);
-
-        // Verifica che la query sia stata eseguita correttamente
         if (!$result) {
-            die("Errore nell'esecuzione della query: " . $con->error);
+            return "Errore nell'esecuzione della query: " . $con->error;
         }
-
-        // Estrai i risultati
         $references = [];
         while ($row = $result->fetch_assoc()) {
             $references[] = $row;
         }
-
         return $references;
     }
 

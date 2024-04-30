@@ -1,5 +1,5 @@
 <?php
-session_start(); // Avvia la sessione
+session_start();
 include_once('connect.php');
 include_once '../../models/users/Student.php';
 include_once '../../models/users/Professor.php';
@@ -16,7 +16,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if ($login) {
-        // Imposta variabili di sessione
         $_SESSION["loggedin"] = true;
         $_SESSION["email"] = $email;
         $_SESSION["role"] = $role;

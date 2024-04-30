@@ -3,7 +3,7 @@ include_once('../../controllers/utils/connect.php');
 class Message {
 
     public static function getProfMessages($testId) {
-        global $con; // Assumi che $con sia l'oggetto di connessione al database mysqli
+        global $con;
         $stmt = $con->prepare("CALL ViewMessaggiDocente(?)");
         $stmt->bind_param('i', $testId);
         $stmt->execute();
@@ -18,7 +18,7 @@ class Message {
     }
 
     public static function getStudentMessages($testId) {
-        global $con; // Assumi che $con sia l'oggetto di connessione al database mysqli
+        global $con;
         $stmt = $con->prepare("CALL ViewMessaggiStudente(?)");
         $stmt->bind_param('i', $testId);
         $stmt->execute();
@@ -33,7 +33,7 @@ class Message {
     }
 
     public static function sendStudentMessage($testId, $student_email, $titolo, $testo, $data) {
-        global $con; // Assumi che $con sia l'oggetto di connessione al database mysqli
+        global $con;
         $response = "All ok";
         $stmt = $con->prepare("CALL CreateMessaggioStudente(?, ?, ?, ?, ?)");
         if ($stmt === false) {
@@ -49,7 +49,7 @@ class Message {
     }
 
     public static function sendProfMessage($testId, $prof_email, $titolo, $testo, $data) {
-        global $con; // Assumi che $con sia l'oggetto di connessione al database mysqli
+        global $con;
         $response = "All ok";
 
         $stmt = $con->prepare("CALL CreateMessaggioDocente(?, ?, ?, ?, ?)");

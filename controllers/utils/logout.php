@@ -1,9 +1,8 @@
 <?php
-// Inizia la sessione
 session_start();
 
 if (isset($_POST['logout'])) {
-    // Rimuove tutte le variabili di sessione   session_unset();
+    // Rimuove tutte le variabili di sessione
     $_SESSION["loggedin"] = false;
     $_SESSION["email"] = "";
     $_SESSION["role"] = "";

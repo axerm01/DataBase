@@ -3,20 +3,18 @@ include_once('../../controllers/utils/connect.php');
 
 class CodeQuestion  {
     public static function getTestQuestions($testId) {
-        global $con; // Assumi che $con sia la tua connessione al database
+        global $con;
 
         $codiceQuery = $con->prepare("CALL ViewAllCodice(?)");
         $codiceQuery->bind_param('i', $testId);
         $codiceQuery->execute();
         $result = $codiceQuery->get_result();
-        // Estrai i risultati
         $codiceData = [];
         while ($row = $result->fetch_assoc()) {
             $row['type'] = "code";
             $codiceData[] = $row;
         }
         $codiceQuery->close();
-
         return $codiceData;
     }
 

@@ -33,7 +33,7 @@ switch ($method) {
                     break;
             }
 
-            echo json_encode($data);  // Converte l'array $data in JSON e lo invia
+            echo json_encode($data);
 
         } else {
             echo json_encode("no action");

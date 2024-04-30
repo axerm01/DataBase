@@ -3,9 +3,6 @@ include_once 'connect.php';
 include_once '../../models/users/Student.php';
 include_once '../../models/users/Professor.php';
 
-
-
-// Controlla se il modulo è stato inviato
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];
@@ -28,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    // Cripta la password - valutare se usare questa funzione.
+    // Cripta la password
     $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
     if($_POST['role'] == 'student'){
@@ -37,6 +34,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     else if ($_POST['role'] == 'professor') {
         Professor::signin($_POST['name'], $_POST['surname'], $email, $_POST['course'], $_POST['department'], $_POST['phone'], $password_hash);
     }
-
-
 }

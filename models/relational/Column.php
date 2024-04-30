@@ -5,15 +5,15 @@ class Column {
         global $con;
         $isPK = (int) $isPK;
         $q = "CALL CreateAttribute(?,?,?,?)";
-        $stmt = mysqli_prepare($con, $q);
+        $stmt = $con->prepare($q);
         if ($stmt === false) {
-            die("Errore nella preparazione della query: " . mysqli_error($con));
+            die("Errore nella preparazione della query: " .  $con->error);
         }
-        mysqli_stmt_bind_param($stmt, 'issi', $tableId, $name, $type, $isPK );
-        if (!mysqli_stmt_execute($stmt)) {
-            die("Errore nell'esecuzione della query: " . mysqli_stmt_error($stmt));
+        $stmt->bind_param('issi', $tableId, $name, $type, $isPK );
+        if (!$stmt->execute()) {
+            die("Errore nell'esecuzione della query: " . $stmt->error);
         }
-        mysqli_stmt_close($stmt);
+        $stmt->close();
         logMongo('Attributo salvato: '.$name);
     }
     public static function getTableColumns($tableId)

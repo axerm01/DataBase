@@ -19,12 +19,11 @@ switch ($method) {
             switch ($endpoint) {
 
                 case 'get_tests': // GET di tutti i test di un certo professore la cui mail è nella sessione
-                    //$prof_email = filter_input(INPUT_GET, 'prof_email');
                     $prof_email = $_SESSION['email'];
                     $data = Test::getProfTests($prof_email);
                     break;
 
-                case 'get_test_content': // GET del contenuto di un test per poterlo modificare
+                case 'get_test_content': // GET del contenuto di un test
                     $testId = $_GET['testId'];
                     $data = Test::getTestContent($testId);
                     break;
@@ -35,7 +34,7 @@ switch ($method) {
                     $data = Test::checkIfTestNameExists($name, $prof_email);
                     break;
             }
-            echo json_encode($data);  // Converte l'array $data in JSON e lo invia
+            echo json_encode($data);
 
         } else {
             echo json_encode("no action");
@@ -46,7 +45,7 @@ switch ($method) {
         if (isset($_POST['action'])){
             $action = $_POST['action'];
             switch ($action) {
-                case 'test_query': //restituisce il risultato della query inserita dal docente per trovare la risposta di una code question
+                case 'test_query':
                     $query = filter_input(INPUT_POST, 'query');
                     $data = Test::testQuery($query);
                     echo json_encode($data);
@@ -91,7 +90,7 @@ switch ($method) {
         }
         break;*/
 
-    /*case 'DELETE':
+    case 'DELETE':
         if (isset($_GET['action'])) {
             $action = $_GET['action'];
 
@@ -127,12 +126,11 @@ switch ($method) {
         } else {
             echo json_encode("no action");
         }
-        break;*/
+        break;
 }
 
 function saveTest($data, $image) {
     try {
-        // Decodifica il JSON ricevuto
         $decodedData = json_decode($data, true);
         $testId = Test::saveTestData($decodedData['title'], $decodedData['viewAnswersPermission'], $_SESSION['email'], $image);
 
@@ -167,13 +165,16 @@ function saveTest($data, $image) {
     } catch (Exception $exc){
         $response = 'Some error occoured. Error log: ' .$exc;
     }
-
     return $response;
 }
 function updateTest($decodedData, $testId) {
     try {
+        if ($decodedData['viewAnswersPermission'] == true){
+            Test::updateVisualizzaRisposte($testId);
+        }
+
         //per ora non possibile da frontend
-        if (array_key_exists('title', $decodedData) && !empty($decodedData['title'])) {
+        /*if (array_key_exists('title', $decodedData) && !empty($decodedData['title'])) {
             Test::updateTestTitle($testId, $decodedData['title']);
         }
 
@@ -272,16 +273,11 @@ function updateTest($decodedData, $testId) {
                     }
                 }
             }
-        }
-
-        if ($decodedData['viewAnswersPermission'] == true){
-            Test::updateVisualizzaRisposte($testId);
-        }
+        }*/
 
         $response = 'Tutte le modifiche sono state salvate';
     } catch (Exception $exc){
         $response = 'Some error occoured. Error log: ' .$exc;
     }
-
     return $response;
 }

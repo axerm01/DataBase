@@ -114,7 +114,6 @@ class Table {
             $response = "Tutti i valori sono stati inseriti. ";
         } catch (Exception $e) {
             mysqli_rollback($con);
-            // Gestisci l'errore
             $response = "Errore: " . $e->getMessage();
         }
         logMongo('Righe aggiunte a tabella '.$name.' :'.json_encode($rows));
@@ -131,7 +130,7 @@ class Table {
         $placeholders = array_fill(0, count($columns), '?');
         $placeholdersString = '(' . implode(', ', $placeholders) . ')';
 
-        // Costruisci la parte VALUES della query SQL
+        // Costruisce la parte VALUES della query SQL
         $valuesArr = [];
         $insertValues = [];
         foreach ($rows as $row) {
@@ -140,26 +139,23 @@ class Table {
         }
         $query .= implode(', ', $valuesArr);
 
-        // Preparazione della query
+
         if ($stmt = $con->prepare($query)) {
             // Determina i tipi di dati per bind_param dinamicamente
             $types = '';
             foreach ($insertValues as $value) {
                 if (is_numeric($value) && intval($value) == $value) {
-                    $types .= 'i';  // Tipo intero
+                    $types .= 'i';
                 } else {
-                    $types .= 's';  // Tipo stringa
+                    $types .= 's';
                 }
             }
-
             // Associa i valori dinamicamente
             $stmt->bind_param($types, ...$insertValues);
 
-            // Esecuzione della query
             if (!$stmt->execute()) {
                 return "Errore nell'esecuzione della query: " . $stmt->error;
             }
-
             $stmt->close();
         } else {
             return "Errore nella preparazione della query: " . $con->error;
@@ -172,7 +168,7 @@ class Table {
     public static function deleteTable($tableId) {
         $name = Table::getTableName($tableId);
         $result = 'deleted ok';
-        global $con; // Assumi che $con sia la tua connessione al database
+        global $con;
         $tableQuery = $con->prepare("CALL DropTable(?,?)");
         if ($tableQuery === false) {
             $result = "Errore nella preparazione della query: " . $con->error;
@@ -195,7 +191,7 @@ class Table {
         return $result;
     }
 
-    public static function getAllTables($profEmail) //restituisce id tabella e nome
+    public static function getAllTables($profEmail)
     {
         global $con;
         $q = 'CALL ViewAllTables(?);';
@@ -217,15 +213,12 @@ class Table {
             ];
         }
         $stmt->close();
-
         return $content;
     }
 
     public static function getTableName($tableID)
     {
         global $con;
-
-        // Prima, ottieni il nome della tabella in base al suo ID
         $queryNomeTabella = "SELECT Nome FROM tabella WHERE ID = ?";
         $stmt1 = $con->prepare($queryNomeTabella);
         if ($stmt1 === false) {
@@ -264,25 +257,24 @@ class Table {
         $data = [];
 
         while ($row = $result->fetch_assoc()) {
-            $data[] = $row;  // Aggiunge ogni riga all'array $data
+            $data[] = $row;
         }
         $stmt->close();
 
         return $data;
     }
 
-    public static function getTableHeader($tableID) //restituisce i dati di Tabella
+    public static function getTableHeader($tableID)
     {
         global $con;
-        $response = "ok";
         $q = 'CALL ViewTabella(?);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            $response = "Errore nella preparazione della query: " . $con->error;
+            return "Errore nella preparazione della query: " . $con->error;
         }
         $stmt->bind_param('i', $tableID);
         if (!$stmt->execute()) {
-            $response = "Errore nell'esecuzione della query: " . $stmt->error;
+            return "Errore nell'esecuzione della query: " . $stmt->error;
         }
 
         $result = $stmt->get_result();
@@ -297,12 +289,11 @@ class Table {
             ];
         }
         $stmt->close();
-
         return $content;
     }
 
     public static function getTestTables($testId) {
-            global $con; // Assumi che $con sia la tua connessione al database
+            global $con;
 
             $tableQuery = $con->prepare("CALL ViewAllTT(?)");
             $tableQuery->bind_param('i', $testId);
@@ -320,30 +311,18 @@ class Table {
     }
 
     public static function checkIfNameExists($nome) {
-        global $con; // Assumi che $con sia la tua connessione al database (mysqli)
-
-        // Prepara la chiamata alla stored procedure
+        global $con;
         $stmt = $con->prepare("CALL CheckIfNameExists(?, @result)");
         if ($stmt === false) {
-            // Gestisci l'errore di preparazione della query
-            throw new Exception("Errore nella preparazione della query: " . $con->error);
+            return"Errore nella preparazione della query: " . $con->error;
         }
-
-        // Lega i parametri
         $stmt->bind_param('s', $nome);
-
-        // Esegui la stored procedure
         if (!$stmt->execute()) {
-            // Gestisci l'errore di esecuzione della query
-            throw new Exception("Errore nell'esecuzione della query: " . $stmt->error);
+            return "Errore nell'esecuzione della query: " . $stmt->error;
         }
 
-        // Recupera il risultato
         $result = $con->query("SELECT @result AS result")->fetch_assoc();
-
         $stmt->close();
-
-        // Restituisce il risultato booleano
         return (bool) $result['result'];
     }
 

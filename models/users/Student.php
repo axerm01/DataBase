@@ -13,7 +13,6 @@ class Student
         $stmt->bind_param("sssssss", $name,$surname, $email, $mat, $year, $phone, $pwd);
 
         if ($stmt->execute()) {
-            // Invece di restituire JSON, reindirizza a una pagina di successo
             header('Location: ../../views/login.html');
             exit;
         } else {

@@ -64,7 +64,7 @@ class StudentTest {
         $data = [];
 
         while ($row = $result->fetch_assoc()) {
-            $data[] = $row;  // Aggiunge ogni riga all'array $data
+            $data[] = $row;
         }
         $stmt->close();
 
@@ -76,7 +76,6 @@ class StudentTest {
 
         $questions = array_merge($codeQuestions, $mcQuestions);
 
-        // Ordina l'array combinato in base all'ID
         usort($questions, function($a, $b) {
             return $a['ID'] - $b['ID'];
         });
@@ -113,17 +112,14 @@ class StudentTest {
         $mcResponse = StudentAnswer::getTestMCAnswers($testId, $stdEmail);
 
         $questions = array_merge($codeQuestions, $mcQuestions);
-        // Ordina l'array combinato in base all'ID
         usort($questions, function($a, $b) {
             return $a['ID'] - $b['ID'];
         });
 
         $responses = array_merge($codeResponse, $mcResponse);
-        // Ordina l'array combinato in base all'ID
         usort($responses, function($a, $b) {
             return $a['IDDomanda'] - $b['IDDomanda'];
         });
-
 
         $TT = Table::getTestTables($testId);
         $tableIDs = [];
@@ -150,10 +146,9 @@ class StudentTest {
         return $test;
     }
     public static function close($testId, $stdEmail) {
-        global $con; // Assumi che $con sia la tua connessione al database
+        global $con;
         $currentTime = date('Y-m-d H:i:s'); // Ottieni il timestamp corrente
 
-            // Il record esiste, aggiorna DataUltimaRisposta
             $updateQuery = "UPDATE Svolgimento SET DataUltimaRisposta = ?, Stato = ? WHERE MailStudente = ? AND IDTest = ?";
             $updateStmt = $con->prepare($updateQuery);
             $status = self::CLOSE;
@@ -167,14 +162,12 @@ class StudentTest {
         $stmt = $con->prepare($q);
         $response = "save ok";
         if ($stmt === false) {
-            $response = $con->error;
-            //die("Errore nella preparazione della query: " . $con->error);
+            return "Errore nella preparazione della query: " . $con->error;
         }
         $stato = self::OPEN;
         $stmt->bind_param('ssi', $email, $stato, $testId);
         if (!$stmt->execute()) {
-            $response = $stmt->error;
-            //die("Errore nell'esecuzione della query: " . $stmt->error);
+            return "Errore nell'esecuzione della query: " . $stmt->error;
         }
 
         $stmt->close();

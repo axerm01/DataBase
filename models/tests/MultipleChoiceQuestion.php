@@ -4,9 +4,7 @@ include_once ('Answer.php');
 class MultipleChoiceQuestion {
 
     public static function getTestQuestions($testId) {
-        global $con; // Assumi che $con sia la tua connessione al database
-
-        // Prima, recupera tutte le domande a scelta multipla per un dato testId
+        global $con;
         $stmt = $con->prepare("CALL ViewAllSceltaMultipla(?)");
         $stmt->bind_param('i', $testId);
         $stmt->execute();
@@ -19,10 +17,8 @@ class MultipleChoiceQuestion {
         }
         $stmt->close();
 
-        // Ora, per ogni MCQ, richiama ViewAnswers e aggiungi le risposte agli MCQs
         foreach ($MCQs as $index => $mcq) {
-            $con->begin_transaction();  // Inizia una transazione
-
+            $con->begin_transaction();
             try {
                 $IDTest = $mcq['IDTest'];
                 $ID = $mcq['ID'];
@@ -31,19 +27,17 @@ class MultipleChoiceQuestion {
                 $stmt->execute();
                 $answersResult = $stmt->get_result();
 
-                // Aggiungi le risposte all'elemento MCQ corrispondente
                 while ($answerRow = $answersResult->fetch_assoc()) {
                     $MCQs[$index]['answers'][] = $answerRow;
                 }
-
                 $stmt->close();
-                $con->commit();  // Completa la transazione
+                $con->commit();
+
             } catch (mysqli_sql_exception $e) {
-                $con->rollback();  // Annulla la transazione in caso di errore
-                throw $e;  // Rilancia l'eccezione per gestirla ulteriormente
+                $con->rollback();
+                throw $e;
             }
         }
-
         return $MCQs;
     }
 
@@ -122,7 +116,6 @@ class MultipleChoiceQuestion {
         foreach ($answers as $answer) {
             Answer::updateMCAnswerData($answer['id'],$IDTest,$IDMC,$answer['text'],$answer['isCorrect'] );
         }
-
         return "Saved correctly";
     }
 

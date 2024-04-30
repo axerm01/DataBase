@@ -44,14 +44,13 @@ switch ($method) {
 
         }
 
-        echo json_encode($data);  // Converte l'array $data in JSON e lo invia
+        echo json_encode($data);
         break;
 
     case 'POST':
         if (isset($_POST['action']) && isset($_POST['testId'])){
             $action = $_POST['action'];
             $email = $_SESSION['email'];
-            //$email = $_POST['email'];
             $testId = $_POST['testId'];
 
             switch ($action) {
