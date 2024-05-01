@@ -353,7 +353,7 @@
                     console.log("Successo:", data);
                     // Agisci qui con i dati ricevuti
                     // Crea il menu a tendina con lo stesso stile di addConstraints
-                    var select = $("<select class='dropdown-table' name='tabelle'></select>"); // Usa 'dropdown-table' per il primo menu
+                    var select = $("<select class='dropdown-table' name='tabelle'></select>");
                     // Aggiungi un'opzione di placeholder disabilitata e selezionata di default
                     select.append("<option value='' disabled selected>Sel.Tabella</option>");
                     // Itera attraverso l'array ricevuto e aggiungi le opzioni al menu a tendina
@@ -409,10 +409,6 @@
                 $(this).remove(); // Assumendo che il bottone sia all'interno di un contenitore parent
                 
             });
-
-            // Qui dovresti aggiungere il bottone al DOM, ad esempio appenderlo
-            // al contenitore della tabella selezionata o in un altro posto appropriato
-            // Ad esempio, se mostri le tabelle selezionate in #selectedTablesContainer:
             $("#menuContainer").append(deleteButton);
         }
 
@@ -420,9 +416,9 @@
         function requestData(selectedID,selectedName) {
             // AJAX request to send data to the PHP file and receive table data
             $.ajax({
-                type: "GET", // Metodo HTTP utilizzato
-                url: "../controllers/table/TableController.php?action=get_full_table", // URL a cui viene fatta la richiesta
-                data: { tableId: selectedID }, // Dati inviati al server
+                type: "GET", 
+                url: "../controllers/table/TableController.php?action=get_full_table",
+                data: { tableId: selectedID }, 
                 success: function(response) {
                     console.log("Data received from the server: ", response);
 
@@ -438,18 +434,15 @@
                     updateMenuTable1();// Aggiorna il menu a tendina delle tabelle
                 });
                 
-                // Aggiungi il bottone di eliminazione al contenitore della tabella
                 tableContainer.append(selectedName, deleteButton);
                 tableContainer.append($("<br>"));
-                // Assuming the response is an array of objects, where each object represents a table row
                 // Create a table element
                     const col = response.length > 1 ? Object.keys(response[1]) : [];
                     //ultimo paramentro il nome è null perche preferisco inserirlo vicino al bottone
                     tableContainer.append(createTableMain(response.slice(1),col,null));
                 $("#menuContainer").append(tableContainer);
-                // Expecting response in JSON format
             },
-                dataType: "json" // Specifica il tipo di dati attesi in risposta
+                dataType: "json" 
             }).fail(function(jqxhr, textStatus, error) {
                 var err = textStatus + ", " + error;
                 console.log("Request Failed: " + err);
@@ -483,17 +476,17 @@
             arrow.id = uniqueId + '-arrow';
             arrow.style.display = 'none';
             arrow.classList.add('separator');
-            dropdownsDiv.appendChild(arrow);     // Assicurati che la freccia sia aggiunta al container
+            dropdownsDiv.appendChild(arrow);
 
             const menuTable2 = document.createElement('select');
             menuTable2.id = uniqueId + '-menuTable2';
             menuTable2.classList.add('dropdown-table');
-            dropdownsDiv.appendChild(menuTable2); // Aggiunto al DOM qui
+            dropdownsDiv.appendChild(menuTable2);
 
             const menuAttribute2 = document.createElement('select');
             menuAttribute2.id = uniqueId + '-menuAttribute2';
             menuAttribute2.classList.add('dropdown-attribute');
-            dropdownsDiv.appendChild(menuAttribute2); // Aggiunto al DOM qui
+            dropdownsDiv.appendChild(menuAttribute2); 
 
             // Gestore dell'evento onchange per menu1
             menuTable1.onchange = function() {
@@ -505,38 +498,34 @@
 
                 $.ajax({
                     type: "GET", // Imposta il metodo HTTP su GET
-                    url: "../controllers/table/TableController.php?action=get_table_columns", // URL a cui fare la richiesta
-                    data: { tableId: selectedTableId }, // Dati inviati al server come parte della richiesta
+                    url: "../controllers/table/TableController.php?action=get_table_columns",
+                    data: { tableId: selectedTableId },
                     success: function(columns) {
                         // Costruisci le opzioni del menu a tendina usando i dati ricevuti
                         menuAttribute1.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>` + columns.map(col => `<option value="${col.Nome}">${col.Nome}</option>`).join('');
-                        menuAttribute1.style.display = 'block'; // Mostra il menu a tendina
-                        arrow.style.display = 'inline-block'; // Mostra la freccia (assumendo che sia un elemento del tuo DOM)
+                        menuAttribute1.style.display = 'block';
+                        arrow.style.display = 'inline-block'; 
                     },
-                    dataType: "json" // Aspettati una risposta in formato JSON
+                    dataType: "json"
                 });
                 menuTable2.innerHTML = `<option value="" disabled selected>Sel.Tabella</option>` + otherTablesOptions;
                 menuTable2.style.display = 'block';
             };
-
-            // Ora, poiché menuTable2 è già parte del DOM, puoi aggiungere il gestore dell'evento onchange direttamente
             menuTable2.onchange = function() {
                 const selectedTableId = this.value;
 
                 $.ajax({
                     type: "GET", // Imposta il metodo HTTP su GET
-                    url: "../controllers/table/TableController.php?action=get_table_columns", // URL a cui fare la richiesta
+                    url: "../controllers/table/TableController.php?action=get_table_columns", 
                     data: {tableId: selectedTableId},
                     success: function(columns) {
                         menuAttribute2.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>` + columns.map(col => `<option value="${col.Nome}">${col.Nome}</option>`).join('');
                         menuAttribute2.style.display = 'block';
                     },
-                    dataType: "json" // Aspettati una risposta in formato JSON
+                    dataType: "json"
                 });
             };
-            // Aggiunta del bottone di eliminazione al DIV contenitore dei dropdown
             deleteConstraint(uniqueId, dropdownsDiv, container);
-            // Infine, aggiungi il div dei menu a tendina al container
             container.appendChild(dropdownsDiv);
         }
 
@@ -544,7 +533,7 @@
             // Trova il container del menu 1 e lo svuota
             const menuTable1 = document.getElementById('group-0-menuTable1');
             if (!menuTable1) return; // Se il menu 1 non esiste, esce dalla funzione
-            menuTable1.innerHTML = "<option value='' disabled selected>Sel.Tabella</option>"; // Reset
+            menuTable1.innerHTML = "<option value='' disabled selected>Sel.Tabella</option>";
 
             // Popola di nuovo il menu con le tabelle aggiornate
             tables.forEach(table => {
@@ -560,16 +549,10 @@
             deleteButton.textContent = 'Elimina Vincolo';
             deleteButton.className = 'delete-button';
             deleteButton.onclick = function() {
-                // Rimuovi la riga/menu dal DOM
                 container.removeChild(dropdownsDiv);
-                // Assumi che ogni vincolo corrisponda a una tabella e voglia rimuovere quella tabella dall'array tables
-                // Questo passaggio richiede che tu abbia una corrispondenza tra l'ID del gruppo di vincoli e l'ID della tabella
-                // Qui manca la logica per identificare la tabella corrispondente, quindi adattalo alle tue esigenze
-                // tables = tables.filter(t => t.id !== someId);
                 updateMenuTable1(); // Aggiorna il menu delle tabelle dopo la rimozione
             };
-
-            dropdownsDiv.appendChild(deleteButton); // Aggiunge il bottone di eliminazione al div dei dropdown
+            dropdownsDiv.appendChild(deleteButton);
         }
 
     </script>
@@ -647,7 +630,7 @@
                         this.style.backgroundColor = '#ff6961'; // Rosso
                         break;
                     default:
-                        this.style.backgroundColor = ''; // Resetta allo stile di default se necessario
+                        this.style.backgroundColor = ''; 
                 }
             });
             questionDiv.appendChild(difficultySelect);
@@ -690,7 +673,7 @@
 
             const questionDiv = document.createElement('div');
             questionDiv.classList.add('question');
-            questionDiv.setAttribute('data-question-type', 'code'); // Identifica il tipo di domanda
+            questionDiv.setAttribute('data-question-type', 'code');
 
             const questionLabel = document.createElement('label');
             //questionLabel.textContent = 'D.' + questionCodeCount + ' Code: ';
@@ -962,18 +945,15 @@
 
                 $.ajax({
                     type: 'GET', // Cambiato in GET
-                    url: '../controllers/test/TestController.php?action=check_name&name=' + name, // URL dello script PHP per la verifica del titolo
-                    data: {}, // Parametri inviati nella stringa di query URL
+                    url: '../controllers/test/TestController.php?action=check_name&name=' + name, 
+                    data: {}, 
                     success: function (data) {
                         if (data) {
                             alert("Il titolo inserito esiste già. Scegline un altro.");
                         } else {
                             var formData = new FormData();
-
-                            // Aggiunge i dati testuali al FormData
                             formData.append("data", JSON.stringify(sendDataTest));
-
-
+                            
                             // Aggiunge il file immagine al FormData
                             var imageFile = document.getElementById('testImage').files[0];
                             if (imageFile) {
@@ -983,13 +963,12 @@
                             // Aggiunge l'action al FormData
                             formData.append("action", "save_test");
 
-
                             // Invio dei dati al file PHP tramite AJAX
                             $.ajax({
                                 type: 'POST',
                                 url: '../controllers/test/TestController.php', //action è gia stata appesa
                                 data: formData,
-                                contentType: false, // Importante per il corretto invio di FormData
+                                contentType: false,
                                 processData: false,
                                 success: function (response) {
                                     let object = {};
@@ -997,8 +976,8 @@
                                         object[key] = value;
                                     });
                                     console.log(JSON.stringify(sendDataTest));
-                                    alert(response); //risposta del server
-                                    window.location.reload(); // ricarica pagina
+                                    alert(response); 
+                                    window.location.reload();
                                 },
                                 error: function (xhr, status, error) {
                                     // Registro l'errore nel console
@@ -1008,7 +987,6 @@
                                         xhrObject: xhr
                                     });
 
-                                    // Messaggio di errore dettagliato dalla risposta del server se disponibile
                                     var message = "Si è verificato un errore. ";
                                     if (xhr.responseJSON && xhr.responseJSON.message) {
                                         message += xhr.responseJSON.message;
