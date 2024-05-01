@@ -10,268 +10,257 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="check_session.js"></script>
+<style>
+    .question {
+        margin-top: 20px;
+        border: 1px solid #ccc; 
+        border-radius: 5px; 
+        padding: 15px; 
+        background-color: #f9f9f9; 
+        margin-right: 10px;
+    }
 
-    <style>
-        /* Styles for questions ..*/
-        .question {
-            /*width: 100vh;*/
-            margin-top: 20px;
-            border: 1px solid #ccc; /* Add border around the question */
-            border-radius: 5px; /* Add rounded corners for the question box */
-            padding: 15px; /* Add padding inside the question box */
-            background-color: #f9f9f9; /* Set background color for the question box */
-            margin-right: 10px;
-        }
-        /* Styles for question input */
-        .question-input {
-            /*width: 500px; /* Make the input field occupy the full width of its container */
-            padding: 10px; /* Add padding for better visual appeal */
-            margin-top: 15px; /* Add some spacing below the input */
-            border: 1px solid #ccc; /* Add a border for clarity */
-            border-radius: 5px; /* Add rounded corners for a softer look */
-            box-sizing: border-box; /* Include padding and border in the width calculation */
-            font-size: 16px; /* Increase font size for better readability */
-            background-color: #f9f9f9; /* Add a light background color */
-            color: #333; /* Set text color */
-        }
-        .question input[type="text"] {
-            width: 500px;
-        }
+    .question-input {
+        padding: 10px; 
+        margin-top: 15px; 
+        border: 1px solid #ccc; 
+        border-radius: 5px; 
+        box-sizing: border-box; 
+        font-size: 16px;
+        background-color: #f9f9f9; 
+        color: #333;
+    }
+    .question input[type="text"] {
+        width: 500px;
+    }
 
-        /* Styles for answers */
-        .answer {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
+    .answer {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
 
-        /* Styles for answer input */
-        .answer input[type="text"] {
-            flex: 1;
-            margin-right: 10px;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
+    .answer input[type="text"] {
+        flex: 1;
+        margin-right: 10px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
 
-        /* Styles for answer checkbox */
-        .answer input[type="checkbox"] {
-            margin-right: 5px;
-            transform: scale(1.5); 
-            margin-left: 10px;
-        }
+    .answer input[type="checkbox"] {
+        margin-right: 5px;
+        transform: scale(1.5); 
+        margin-left: 10px;
+    }
 
-        /* Styles for add answer button */
-        .add-answer-button {
-            background-color: #007bff;
-            cursor: pointer;
-            font-size: 12px;
-            color: #fff;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        /*Styles for check botton*/
-        .add-check-button {
-            background-color: #15c11e;
-            cursor: pointer; 
-            font-size: 12px;
-            color: #fff;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        /* Styles for "Elimina Quesito" button */
-        .delete-question-button {
-            background-color: #de1515;
-            cursor: pointer;
-            font-size: 12px;
-            width: 80px;
-            color: #fff;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        .delete-button {
-            background-color: #de1515;
-            cursor: pointer; /*modifica il cursore del mouse quando va sopra*/
-            font-size: 10px;
-            width: 70px;
-            padding: 5px;
-            color: #fff;
-            border: white;
-            padding: 8px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-            margin-left: 10px;
-        }
+    .add-answer-button {
+        background-color: #007bff;
+        cursor: pointer;
+        font-size: 12px;
+        color: #fff;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
 
-        /* Styles for delete answer button */
-        .delete-answer-button {
-            background-color: #de1515;
-            color: #fff;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        /* Styles for MySQL code textarea */
-        .code-textarea {
-            width: 100%; /* Make the textarea occupy the full width of its container */
-            height: 100px; /* Set the height as needed */
-            padding: 10px; /* Add padding for better visual appeal */
-            margin-top: 15px; /* Add some spacing above the textarea */
-            border: 1px solid #ccc; /* Add a border for clarity */
-            border-radius: 5px; /* Add rounded corners for a softer look */
-            box-sizing: border-box; /* Include padding and border in the width calculation */
-            font-size: 16px; /* Set font size */
-            background-color: #f9f9f9; /* Add a light background color */
-            color: #333; /* Set text color */
-        }
-        /* Styles for inizial checkbox */
-        input[type="checkbox"] {
-            border-radius: 25%;
-            transform: scale(1.5); 
-        }
+    .add-check-button {
+        background-color: #15c11e;
+        cursor: pointer; 
+        font-size: 12px;
+        color: #fff;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
 
-        .table-container {
-            display: inline-block;
-            flex-wrap: nowrap;
-            margin: 10px 5px 0px 5px;
-            font-size: small;
-            justify-content: center;
-            font-weight: bold;
-        }
-        table {
-            display: inline-table; /* Mantiene le tabelle in linea */
-            border-collapse: collapse; /* Per una migliore visualizzazione delle tabelle */
-        }
+    .delete-question-button {
+        background-color: #de1515;
+        cursor: pointer;
+        font-size: 12px;
+        width: 80px;
+        color: #fff;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
 
-        th, td {
-            border: 1px solid #ddd; /* Stile dei bordi */
-            padding: 5px; /* Padding delle celle */
-        }
-        td {
-            font-weight:lighter;
-        }
+    .delete-button {
+        background-color: #de1515;
+        cursor: pointer;
+        font-size: 10px;
+        width: 70px;
+        padding: 5px;
+        color: #fff;
+        border: white;
+        padding: 8px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+        margin-left: 10px;
+    }
 
-        th {
-            background-color: #f2f2f2; /* Colore di sfondo delle celle dell'intestazione */
-        }
-        .difficulty-select {
-            margin-top: 6px;
-            width: 100px; /* Aggiungi larghezza */
-            padding: 8px; /* Aggiungi padding */
-            border: 2px solid #ccc; /* Aggiungi bordo */
-            border-radius: 5px; /* Aggiungi bordi arrotondati */
-            margin-right: 5px;
-            margin-left: 5px;
-        }
-        
-        
-        /* Stile del modale */
-        .modal {
-            display: none; /* Nascosto di default */
-            position: fixed; /* Rimane fermo in posizione */
-            z-index: 1; /* Sopra tutto */
-            left: 0;
-            top: 0;
-            width: 100%; /* Larghezza */
-            height: 100%; /* Altezza piena */
-            overflow: auto; /* Abilita lo scroll se necessario */
-            background-color: rgb(0,0,0); /* Colore di sfondo */
-            background-color: rgba(0,0,0,0.4); /* Colore di sfondo con opacità */
-        }
+    .delete-answer-button {
+        background-color: #de1515;
+        color: #fff;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 12px;
+    }
 
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto; /* 15% dal top e centrato orizzontalmente */
-            padding: 20px;
-            border: 1px solid #888;
-            width: fit-content; /* Puoi regolare questa larghezza come preferisci */
-        }
+    .code-textarea {
+        width: 100%;
+        height: 100px; 
+        padding: 10px; 
+        margin-top: 15px; 
+        border: 1px solid #ccc; 
+        border-radius: 5px;
+        box-sizing: border-box;
+        font-size: 16px; 
+        background-color: #f9f9f9; 
+        color: #333;
+    }
 
-        .close-button {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
+    input[type="checkbox"] {
+        border-radius: 25%;
+        transform: scale(1.5); 
+    }
 
-        .close-button:hover,
-        .close-button:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
+    .table-container {
+        display: inline-block;
+        flex-wrap: nowrap;
+        margin: 10px 5px 0px 5px;
+        font-size: small;
+        justify-content: center;
+        font-weight: bold;
+    }
+    table {
+        display: inline-table;
+        border-collapse: collapse;
+    }
 
+    th, td {
+        border: 1px solid #ddd; 
+        padding: 5px; 
+    }
 
-        /* Stile per l'area di caricamento dell'immagine */
-        .image-container {
-            background-color: #f3f3f3;  /* Un grigio leggermente più chiaro rispetto al corpo per differenziarlo */
-            border: 2px dashed #d3d3d3; /* Una bordatura tratteggiata che sembra leggera e meno invadente */
-            padding: 10px;
-            margin: 0px 0px 10px 20px;
-            width: 70%;
-            text-align: center;
-            justify-content: center; /* Allinea orizzontalmente al centro */
-            align-items: center; /* Allinea verticalmente al centro */
-        }
-        .file-input {
-            opacity: 0;
-            position: absolute;
-            width: 0;
-            height: 0;
-            z-index: -1;  /* lo manda dietro gli altri elementi, rendendolo non cliccabile */
-        }
-        /* Stile per l'etichetta del file input */
-        .file-input-label {
-            background-color: #3a8e3d; /* Un verde vivace per attirare l'attenzione all'azione */
-            color: white;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            display: inline-block;
-            font-size: 14px;
-            font-family: Arial, sans-serif; /* Coerenza con il font della pagina */
-            transition: background-color 0.3s;
-        }
+    td {
+        font-weight: lighter;
+    }
 
-        .file-input-label:hover {
-            background-color: #367c39; /* Un verde più scuro al passaggio del mouse */
-        }
+    th {
+        background-color: #f2f2f2; 
+    }
 
-        /* Stile per il nome del file caricato */
-        .file-name {
-            display: block;
-            color: #555; /* Colore scuro per un buon contrasto su sfondo chiaro */
-            font-size: 14px;
-            margin-top: 10px;
-        }
+    .difficulty-select {
+        margin-top: 6px;
+        width: 100px;
+        padding: 8px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        margin-right: 5px;
+        margin-left: 5px;
+    }
 
-        /* Stile per l'anteprima dell'immagine */
-        .image-preview {
-            max-width: 250px;
-            height: auto;
-            margin-top: 10px;
-            margin-left: auto;
-            margin-right: auto;
-            border-radius: 5px; /* Bordi leggermente arrotondati per un aspetto morbido */
-            display: none;
-            border: 2px solid #ccc; 
-            border-radius: 5px;  
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
-        }
-        .main-content{
-            display: flex;
-            align-items: center; /* Allinea verticalmente al centro */
-        }
-        
-    </style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: fit-content;
+    }
+
+    .close-button {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close-button:hover,
+    .close-button:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .image-container {
+        background-color: #f3f3f3; 
+        border: 2px dashed #d3d3d3; 
+        padding: 10px;
+        margin: 0px 0px 10px 20px;
+        width: 70%;
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .file-input {
+        opacity: 0;
+        position: absolute;
+        width: 0;
+        height: 0;
+        z-index: -1;
+    }
+
+    .file-input-label {
+        background-color: #3a8e3d; 
+        color: white;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 14px;
+        font-family: Arial, sans-serif;
+        transition: background-color 0.3s;
+    }
+
+    .file-input-label:hover {
+        background-color: #367c39;
+    }
+
+    .file-name {
+        display: block;
+        color: #555;
+        font-size: 14px;
+        margin-top: 10px;
+    }
+
+    .image-preview {
+        max-width: 250px;
+        height: auto;
+        margin-top: 10px;
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 5px;
+        display: none;
+        border: 2px solid #ccc; 
+        border-radius: 5px;  
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+    }
+
+    .main-content {
+        display: flex;
+        align-items: center; 
+    }
+</style>
 </head>
 
 <body>
