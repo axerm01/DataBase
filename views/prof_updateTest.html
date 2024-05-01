@@ -10,319 +10,283 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="check_session.js"></script>
+    <style>        
+    .question {
+        margin-top: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 15px;
+        background-color: #f9f9f9;
+        margin-right: 10px;
+    }
+    .question-test-code, .question-test-mc {
+        width: 90%;
+        margin-top: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px 20px 10px 20px;
+        background-color: #f9f9f9;
+    }
+    .question-test-code, .question-test-mc {
+        text-align: left;
+        padding-left: 20px;
+    }
+    .question-test-mc span, .question-test-code p {
+        float: inline-end;
+        color: #868686;
+        font-weight: bold;
+    }
+    .question-test-mc p {
+        padding-left: 70px;
+    }
+    .correct-answer {
+        color: green;
+        font-weight: bold;
+    }
+    .question-input {
+        padding: 10px;
+        margin-top: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        font-size: 16px;
+        background-color: #f9f9f9;
+        color: #333;
+    }
+    .question input[type="text"] {
+        width: 500px;
+    }
+    .answer {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .answer input[type="text"] {
+        flex: 1;
+        margin-right: 10px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    .answer input[type="checkbox"] {
+        margin-right: 5px;
+        transform: scale(1.5);
+        margin-left: 10px;
+    }
+    .add-answer-button {
+        background-color: #007bff;
+        cursor: pointer;
+        font-size: 12px;
+        color: #fff;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+    .add-check-button {
+        background-color: #15c11e;
+        cursor: pointer;
+        font-size: 12px;
+        color: #fff;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+    .delete-question-button {
+        background-color: #de1515;
+        cursor: pointer;
+        font-size: 12px;
+        width: 80px;
+        color: #fff;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+    .delete-button {
+        background-color: #de1515;
+        cursor: pointer;
+        font-size: 10px;
+        width: fit-content;
+        padding: 5px;
+        color: #fff;
+        border: white;
+        padding: 8px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+        margin-left: 10px;
+    }
+    .delete-answer-button {
+        background-color: #de1515;
+        color: #fff;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 12px;
+    }
+    .code-textarea {
+        width: 100%;
+        height: 100px;
+        padding: 10px;
+        margin-top: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        font-size: 16px;
+        background-color: #f9f9f9;
+        color: #333;
+    }
+    input[type="checkbox"] {
+        border-radius: 25%;
+        transform: scale(1.5);
+    }
+    .table-container {
+        display: inline-block;
+        flex-wrap: nowrap;
+        margin: 10px 5px 0px 5px;
+        font-size: small;
+        justify-content: center;
+        font-weight: bold;
+    }
+    table {
+        display: inline-table;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 5px;
+    }
+    td {
+        font-weight: normal;
+        background-color: #fff;
+    }
+    th {
+        background-color: #868686;
+    }
+    .title-row th {
+        border: none;
+        background-color: #c2c2c2;
+        font-weight: bold;
+        text-align: center;
+    }
+    .difficulty-select {
+        margin-top: 6px;
+        width: 100px;
+        padding: 8px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        margin-right: 5px;
+        margin-left: 5px;
+    }
+    .image-preview {
+        max-width: 200px;
+        max-height: 200px;
+        margin-top: 20px;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0,0.4);
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: fit-content;
+    }
+    .close-button {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+    .close-button:hover,
+    .close-button:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    .update-container {
+        height: 100%;
+        width: 90%;
+        padding: 20px;
+        background-color: #fff;
+        display: block;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: flex-start;
+    }
+    .title {
+        font-size: 28px;
+        font-weight: bold;
+        color: rgb(0, 0, 0);
+        text-shadow: 2px 2px 4px rgba(76, 76, 76, 0.5);
+    }
+    #testContainer {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        width: 90%;
+        padding: 20px;
+        margin: auto;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        align-items: flex-start;
+        justify-content: flex-start;
+    }
+    .tableContainer-test {
+        background-color: #cdcdcdad;
+        margin: 10px;
+        width: auto;
+    }
+    .refContainer-test {
+        background-color: #00000069;
+        color: #ffffff;
+        font-weight: bold;
+        border-radius: 30%;
+        margin: 5px;
+        padding: 0px 10px 0px 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        width: auto;
+    }
+    .caption-table {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    .main-content {
+        display: flex;
+        align-items: center;
+        margin-left: 3%;
+    }
+    .image-container {
+        border: 2px dashed #d3d3d3;
+        padding: 0px;
+        margin: 0px;
+        width: fit-content;
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+        margin-left: 10%;
+    }
+    .image-container img {
+        max-width: 150px;
+        height: auto;
+    }
+</style>
 
-    <style>
-        /* Styles for questions ..*/
-        .question {
-            /*width: 100vh;*/
-            margin-top: 20px;
-            border: 1px solid #ccc; /* Add border around the question */
-            border-radius: 5px; /* Add rounded corners for the question box */
-            padding: 15px; /* Add padding inside the question box */
-            background-color: #f9f9f9; /* Set background color for the question box */
-            margin-right: 10px;
-        }
-        .question-test-code, .question-test-mc {
-            width: 90%;
-            margin-top: 10px;
-            border: 1px solid #ccc; /* Add border around the question */
-            border-radius: 5px; /* Add rounded corners for the question box */
-            padding: 10px 20px 10px 20px; /* Add padding inside the question box */
-            background-color: #f9f9f9; /* Set background color for the question box */
-        }
-        .question-test-code, .question-test-mc {
-            text-align: left;
-            padding-left: 20px;
-        }
-        /*stile per difficolta*/
-        .question-test-mc span,.question-test-code p{
-            float:inline-end;
-            color: #868686;
-            font-weight: bold;
-        }
-        /*Stile per le risposte*/
-        .question-test-mc p{
-            padding-left: 70px;
-        }
-
-        .correct-answer {
-            color: green;
-            font-weight: bold;
-        }
-
-
-        /* Styles for question input */
-        .question-input {
-            /*width: 500px; /* Make the input field occupy the full width of its container */
-            padding: 10px; /* Add padding for better visual appeal */
-            margin-top: 15px; /* Add some spacing below the input */
-            border: 1px solid #ccc; /* Add a border for clarity */
-            border-radius: 5px; /* Add rounded corners for a softer look */
-            box-sizing: border-box; /* Include padding and border in the width calculation */
-            font-size: 16px; /* Increase font size for better readability */
-            background-color: #f9f9f9; /* Add a light background color */
-            color: #333; /* Set text color */
-        }
-        .question input[type="text"] {
-            width: 500px;
-        }
-
-        /* Styles for answers */
-        .answer {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        /* Styles for answer input */
-        .answer input[type="text"] {
-            flex: 1;
-            margin-right: 10px;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        /* Styles for answer checkbox */
-        .answer input[type="checkbox"] {
-            margin-right: 5px;
-            transform: scale(1.5); 
-            margin-left: 10px;
-        }
-
-        /* Styles for add answer button */
-        .add-answer-button {
-            background-color: #007bff;
-            cursor: pointer;
-            font-size: 12px;
-            color: #fff;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        /*Styles for check botton*/
-        .add-check-button {
-            background-color: #15c11e;
-            cursor: pointer; 
-            font-size: 12px;
-            color: #fff;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        /* Styles for "Elimina Quesito" button */
-        .delete-question-button {
-            background-color: #de1515;
-            cursor: pointer;
-            font-size: 12px;
-            width: 80px;
-            color: #fff;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        .delete-button {
-            background-color: #de1515;
-            cursor: pointer; /*modifica il cursore del mouse quando va sopra*/
-            font-size: 10px;
-            width: fit-content;
-            padding: 5px;
-            color: #fff;
-            border: white;
-            padding: 8px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-            margin-left: 10px;
-        }
-
-        /* Styles for delete answer button */
-        .delete-answer-button {
-            background-color: #de1515;
-            color: #fff;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        /* Styles for MySQL code textarea */
-        .code-textarea {
-            width: 100%; /* Make the textarea occupy the full width of its container */
-            height: 100px; /* Set the height as needed */
-            padding: 10px; /* Add padding for better visual appeal */
-            margin-top: 15px; /* Add some spacing above the textarea */
-            border: 1px solid #ccc; /* Add a border for clarity */
-            border-radius: 5px; /* Add rounded corners for a softer look */
-            box-sizing: border-box; /* Include padding and border in the width calculation */
-            font-size: 16px; /* Set font size */
-            background-color: #f9f9f9; /* Add a light background color */
-            color: #333; /* Set text color */
-        }
-        /* Styles for inizial checkbox */
-        input[type="checkbox"] {
-            border-radius: 25%;
-            transform: scale(1.5); 
-        }
-
-        .table-container {
-            display: inline-block;
-            flex-wrap: nowrap;
-            margin: 10px 5px 0px 5px;
-            font-size: small;
-            justify-content: center;
-            font-weight: bold;
-
-        }
-        table {
-            display: inline-table; /* Mantiene le tabelle in linea */
-            border-collapse: collapse; /* Per una migliore visualizzazione delle tabelle */
-        }
-
-        th, td {
-            border: 1px solid #ddd; /* Stile dei bordi */
-            padding: 5px; /* Padding delle celle */
-        }
-        td{
-            font-weight: normal;
-            background-color: #fff; /* Colore di sfondo delle celle dell'intestazione */
-        }
-        th{
-            background-color: #868686; /* Colore di sfondo delle celle dell'intestazione */
-        }
-        .title-row th {
-            border: none; /* Rimuove i bordi dalle celle nella riga del titolo */
-            background-color: #c2c2c2; /* Colore di sfondo per la riga del titolo */
-            font-weight: bold;
-            text-align: center; /* Centra il testo nella cella del titolo */
-        }
-
-        .difficulty-select {
-            margin-top: 6px;
-            width: 100px; /* Aggiungi larghezza */
-            padding: 8px; /* Aggiungi padding */
-            border: 2px solid #ccc; /* Aggiungi bordo */
-            border-radius: 5px; /* Aggiungi bordi arrotondati */
-            margin-right: 5px;
-            margin-left: 5px;
-        }
-        .image-preview {
-            max-width: 200px;
-            max-height: 200px;
-            margin-top: 20px;
-            border: 2px solid #ccc; /* Bordo simile a quello usato per i dropdown */
-            border-radius: 5px; /* Bordi arrotondati come i menu a tendina */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Ombra per dare profondità, simile al container */
-        }
-        /* Stile del modale */
-        .modal {
-            display: none; /* Nascosto di default */
-            position: fixed; /* Rimane fermo in posizione */
-            z-index: 1; /* Sopra tutto */
-            left: 0;
-            top: 0;
-            width: 100%; /* Larghezza */
-            height: 100%; /* Altezza piena */
-            overflow: auto; /* Abilita lo scroll se necessario */
-            background-color: rgb(0,0,0); /* Colore di sfondo */
-            background-color: rgba(0,0,0,0.4); /* Colore di sfondo con opacità */
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto; /* 15% dal top e centrato orizzontalmente */
-            padding: 20px;
-            border: 1px solid #888;
-            width: fit-content; /* Puoi regolare questa larghezza come preferisci */
-        }
-
-        .close-button {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close-button:hover,
-        .close-button:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .update-container { 
-            height: 100%;
-            width: 90%;
-            padding: 20px;
-            background-color: #fff;
-            display: block;
-            flex-wrap: wrap;
-            justify-content: center; /* Centra i contenitori delle tabelle orizzontalmente */
-            align-items: flex-start; /* Opzionale, allinea i contenitori delle tabelle in alto */
-        }
-        .title{
-            font-size: 28px; 
-            font-weight: bold;
-            color: rgb(0, 0, 0);
-            text-shadow: 2px 2px 4px rgba(76, 76, 76, 0.5);
-        }
-        #testContainer {
-            display: flex;
-            flex-direction: row; /* Imposta le tabelle in orizzontale */
-            flex-wrap: wrap; /* Permette agli elementi di andare a capo quando necessario */
-            width: 90%;
-            padding: 20px;
-            margin: auto;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            align-items: flex-start; /* Allinea le tabelle all'inizio del contenitore in verticale */
-            justify-content: flex-start; /* Allinea le tabelle all'inizio del contenitore in orizzontale */
-        }
-
-
-        .tableContainer-test {
-            background-color: #cdcdcdad;
-            margin: 10px; /* Aggiunge un margine tra le tabelle */
-            width: auto; /* Imposta la larghezza automaticamente in base al contenuto interno */
-        }
-
-        .refContainer-test {
-            background-color: #00000069;
-            color: #ffffff;
-            font-weight: bold;
-            border-radius: 30%;
-            margin: 5px; /* Aggiunge un margine tra le tabelle */
-            padding: 0px 10px 0px 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Opzionale: aggiunge un'ombra per un effetto sollevato */
-            width: auto; /* Imposta la larghezza automaticamente in base al contenuto interno */
-        }
-        .caption-table{
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .main-content{
-            display: flex;
-            align-items: center; /* Allinea verticalmente al centro */
-            margin-left: 3%;
-        }
-        .image-container {
-            border: 2px dashed #d3d3d3; /* Una bordatura tratteggiata che sembra leggera e meno invadente */
-            padding: 0px;
-            margin: 0px;
-            width: fit-content;
-            text-align: center;
-            justify-content: center; /* Allinea orizzontalmente al centro */
-            align-items: center; /* Allinea verticalmente al centro */
-            margin-left: 10%;
-        }
-        .image-container img {
-            max-width: 150px;
-            height: auto;
-        }
-    </style>
-        
 </head>
 
 <body>
@@ -351,7 +315,6 @@
                 <!-- Posto in cui inserire immagine -->
             </div>
         </div>
-        <!--il permesso di visualizzazione deve essere fuori da qui. (anche) quando vedo l'elenco dei test gia creati-->
         <p style="font-size: 18px; font-weight: bold; color: #484141b8;"> 
             <input type="checkbox" id="viewAnswersPermission" class="styled-checkbox">
             <span class="checkmark">Permesso visualizzione risposte</span>
