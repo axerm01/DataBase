@@ -10,86 +10,84 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="check_session.js"></script>
-
     <style>
-        /*Contenitori che organizzano i test */
-        .test-list {
-            width: 80%;
-            padding: 20px;
-            margin: auto;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            display: flex;
-            flex-direction: column; /* Organizza i contenitori dei test in colonna */
-        }
-        
-        .test-header {
-            display: flex;
-            width: 100%;
-            justify-content: space-between;
-            padding: 0 10px;
-        }
+    .test-list {
+        width: 80%;
+        padding: 20px;
+        margin: auto;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .test-header {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        padding: 0 10px;
+    }
 
-        .test-header-60, .test-header-40 {
-            display: flex;
-            justify-content: space-between;
-            flex: 1;
-        }
+    .test-header-60, .test-header-40 {
+        display: flex;
+        justify-content: space-between;
+        flex: 1;
+    }
 
-        .test-header-60 h4 {
-            flex: 1;
-            text-align: center;
-            margin: 0;
-        }
+    .test-header-60 h4 {
+        flex: 1;
+        text-align: center;
+        margin: 0;
+    }
 
-        .test-header-40 {
-            flex: 0 1 40%; 
-            justify-content: flex-end; 
-        }
+    .test-header-40 {
+        flex: 0 1 40%; 
+        justify-content: flex-end; 
+    }
 
-        .test-header-40 h4 {
-            width: 100%;
-            text-align: center;
-            margin: 0;
-        }
+    .test-header-40 h4 {
+        width: 100%;
+        text-align: center;
+        margin: 0;
+    }
 
-        .test-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: #f9f9f9;
-            border-radius: 5px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-        }
-        /*titoletti */
-        .test-details {
-            display: flex;
-            flex: 1;
-            justify-content: space-between;
-            align-items: center;
-            width: 60%;
-        }
-        .test-details p {
-            flex: 1; /* Permette titoli di espandersi equamente */
-            text-align: center;
-            margin: 0;
-        }
-        /*Bottoni*/
-        .button-container {
-            flex: 0 1 40%; 
-            display: flex;
-            flex-wrap: wrap; /* Permette ai bottoni di andare a capo*/
-            justify-content: flex-end;
-            gap: 10px;
-        }
+    .test-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
 
-        .button-container button {
-            padding: 10px;
-            white-space: nowrap; 
-        }
-    </style>
+    .test-details {
+        display: flex;
+        flex: 1;
+        justify-content: space-between;
+        align-items: center;
+        width: 60%;
+    }
+    .test-details p {
+        flex: 1;
+        text-align: center;
+        margin: 0;
+    }
+
+    .button-container {
+        flex: 0 1 40%; 
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .button-container button {
+        padding: 10px;
+        white-space: nowrap; 
+    }
+</style>
 </head>
 
 <body>
