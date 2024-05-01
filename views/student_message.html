@@ -10,129 +10,109 @@
     <link rel="stylesheet" href="styleBACK.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="check_session.js"></script>
-
     <style>        
-        .attributes_student_message {
-            width: 90%;
-            margin-right: auto;
-            /* Spingi il contenitore verso sinistra */
-            margin-left: auto;
-            /* Spingi il contenitore verso destra */
-            background-color: #fff;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-between;
-            /* Centra gli elementi interni e crea spazio tra di essi */
-        }
+    .attributes_student_message {
+        width: 90%;
+        margin-right: auto;
+        margin-left: auto;
+        background-color: #fff;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+    }
 
-        .attributes_student_message h4 {
-            flex: 1;
-            /* Fai in modo che i paragrafi occupino spazi uguali all'interno del contenitore */
-            text-align: center;
-            /* Centra il testo all'interno dei paragrafi */
-        }
+    .attributes_student_message h4 {
+        flex: 1;
+        text-align: center;
+    }
 
-        .button_student_message {
-            flex-grow: 0;
-            width: 79%;
-            display: flex;
-            float: right;
-            flex-direction: row;
-            /* Modifica da column a row */
-            justify-content: flex-end;
-            /* Aggiunto per centrare i bottoni orizzontalmente */
-            flex-wrap: nowrap;
-            /* Aggiunto per permettere ai bottoni di andare a capo se non c'è abbastanza spazio */
-        }
+    .button_student_message {
+        flex-grow: 0;
+        width: 79%;
+        display: flex;
+        float: right;
+        flex-direction: row;
+        justify-content: flex-end;
+        flex-wrap: nowrap;
+    }
 
-        .Test_List {
-            width: 83%;
-            display: flex;
-            margin-right: 265px;
-            margin-left: 265px;
-            background-color: #fff;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-        }
+    .Test_List {
+        width: 83%;
+        display: flex;
+        margin-right: 265px;
+        margin-left: 265px;
+        background-color: #fff;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+    }
 
-        .messages {
-            width: 90%;
-            padding: 0px 10px 5px 10px;
-            display: flex;
-            border-radius: 5px;
-        }
+    .messages {
+        width: 90%;
+        padding: 0px 10px 5px 10px;
+        display: flex;
+        border-radius: 5px;
+    }
 
-        .square {
-            width: 60%;
-            height: 430px;
-            background-color: white;
-            border: 2px solid black;
-            border-radius: 5px;
-            display: inline-block;
-            position: relative;
-            overflow-y: auto;
-        }
+    .square {
+        width: 60%;
+        height: 430px;
+        background-color: white;
+        border: 2px solid black;
+        border-radius: 5px;
+        display: inline-block;
+        position: relative;
+        overflow-y: auto;
+    }
 
-        #testMessages {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            overflow-y: auto;
-            padding: 10px;
-        }
+    #testMessages {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        overflow-y: auto;
+        padding: 10px;
+    }
 
+    .square #messaggio {
+        width: 90%;
+        height: 70%;
+        padding: 10px;
+        resize: none;
+        border: none;
+        outline: none;
+        font-size: inherit;
+    }
 
-        .square #messaggio {
-            width: 90%;
-            /* Larghezza del textarea rispetto al quadrato */
-            height: 70%;
-            /* Altezza del textarea rispetto al quadrato */
-            padding: 10px;
-            /* Spaziatura interna per una migliore leggibilità */
-            resize: none;
-            /* Disabilita il ridimensionamento del textarea */
-            border: none;
-            /* Rimuove il bordo predefinito del textarea */
-            outline: none;
-            /* Rimuove l'outline del textarea */
-            font-size: inherit;
-            /* Utilizza la dimensione del carattere ereditata dal genitore */
-        }
-
-        .square #Titolo {
-            width: 90%;
-            /* Larghezza del textarea uguale alla larghezza della square */
-            height: 20px;
-            /* Altezza fissa del textarea */
-            padding: 10px;
-            resize: none;
-            /* Disabilita il ridimensionamento del textarea */
-            border: none;
-            outline: none;
-            font-size: inherit;
-        }
-        .message-container{
-            text-align: center;
-            justify-content: center;
-            font-family: Georgia, 'Times New Roman', Times, serif;
-        }
-        .message-container p{
-            margin: 0px;
-        }
-        .message-title {
-            text-align: center; /* Centra il titolo */
-        }
-        .message-text {
-            font-size: 1.2em; /* Più grande e leggibile */
-            font-weight: bold;
-        }
-        .message-info {
-            color: #999; /* Colore più chiaro per data, ID test, e mail */
-        }
-    </style>
+    .square #Titolo {
+        width: 90%;
+        height: 20px;
+        padding: 10px;
+        resize: none;
+        border: none;
+        outline: none;
+        font-size: inherit;
+    }
+    .message-container{
+        text-align: center;
+        justify-content: center;
+        font-family: Georgia, 'Times New Roman', Times, serif;
+    }
+    .message-container p{
+        margin: 0px;
+    }
+    .message-title {
+        text-align: center;
+    }
+    .message-text {
+        font-size: 1.2em;
+        font-weight: bold;
+    }
+    .message-info {
+        color: #999;
+    }
+</style>
 </head>
 
 <body>
