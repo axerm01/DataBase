@@ -373,7 +373,7 @@
                     test.ID +'&resume=' + resume +
                     '&titolo=' + encodeURIComponent(test.Titolo) +'\'">Avvia test</button>');
                 messageButton = $('<button class="black-button" onclick="window.location.href=\'student_message.html?id=' +
-                    test.IDTest +'&titolo=' + encodeURIComponent(test.Titolo) + '\'">Messaggi</button>');
+                    test.ID +'&titolo=' + encodeURIComponent(test.Titolo) + '\'">Messaggi</button>');
             } else if(classe == 'test-close'){
                 allTests.forEach(element => {
                     //console.log(element.ID, test.IDTest);
