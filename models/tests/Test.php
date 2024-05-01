@@ -22,10 +22,10 @@ class Test {
 
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            return "Errore nella preparazione della query: " . $con->error;
+            throw new Exception( "Errore nella preparazione della query: " . $con->error);
         }
         if (!$stmt->execute()) {
-            return  "Errore nell'esecuzione della query: " . $stmt->error;
+            throw new Exception  ("Errore nell'esecuzione della query: " . $stmt->error);
         }
 
         $result = $stmt->get_result();
@@ -43,11 +43,11 @@ class Test {
         $q = 'CALL CreateTest(?,?,?,@lastID);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('sis', $title, $showAnswers, $professorEmail);
         if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
+            throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
         }
 
         $result = $con->query("SELECT @lastID as lastID");
@@ -58,16 +58,15 @@ class Test {
         if($image != null) {
             if (getimagesize($image['tmp_name'])) {
                 $imageBlob = file_get_contents($image['tmp_name']);
-                $stmt = $con->prepare("CALL AddToGalleria(?, ?)");
+                $stmt = $con->prepare("CALL AddToGallery(?, ?)");
                 if ($stmt === false) {
-                    die("Errore nella preparazione della query: " . $con->error);
+                    throw new Exception ("Errore nella preparazione della query: " . $con->error);
                 }
-
                 $null = null;
                 $stmt->bind_param('ib', $id, $null);
                 $stmt->send_long_data(1, $imageBlob); // invia i dati BLOB
                 if (!$stmt->execute()) {
-                    die("Errore nell'esecuzione della query: " . $stmt->error);
+                    throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
                 }
                 $stmt->close();
             }
@@ -79,11 +78,11 @@ class Test {
     public static function linkTablesToTest($list, $testId){
         global $con;
         if ($con->connect_error) {
-            die("Connessione fallita: " . $con->connect_error);
+            throw new Exception ("Connessione fallita: " . $con->connect_error);
         }
         try {
             $con->begin_transaction();
-            $stmt = $con->prepare("INSERT INTO TEST_TABELLA (IDTabella, IDTest) VALUES (?, ?)");
+            $stmt = $con->prepare("CALL CreateTT(?, ?)");
             foreach ($list as $tableId) {
                 $stmt->bind_param("ii", $tableId, $testId);
                 $stmt->execute();
@@ -99,13 +98,13 @@ class Test {
 
     public static function getAllTests(){
         global $con;
-        $q = 'SELECT * FROM TEST';
+        $q = 'CALL ViewAllDBTests()';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
         }
         if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
+            throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
         }
 
         $result = $stmt->get_result();
@@ -120,14 +119,14 @@ class Test {
 
     public static function getProfTests($prof_email){
         global $con;
-        $q = 'CALL ViewAllTest(?);';
+        $q = 'CALL ViewAllTests(?);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('s', $prof_email );
         if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
+            throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
         }
 
         $result = $stmt->get_result();
@@ -147,14 +146,14 @@ class Test {
 
     public static function getTestImage($testId){
         global $con;
-        $q = 'CALL ViewFoto(?);';
+        $q = 'CALL ViewPhoto(?);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            return ("Errore nella preparazione della query: " . $con->error);
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('i', $testId );
         if (!$stmt->execute()) {
-            return ("Errore nell'esecuzione della query: " . $stmt->error);
+            throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
         }
 
         $result = $stmt->get_result();
@@ -169,34 +168,16 @@ class Test {
         return $data;
     }
 
-    public static function updateTestTitle($testId, $title) {
-        global $con;
-
-        $stmt = $con->prepare("CALL UpdateTestTitle(?,?)");
-        if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
-        }
-        $stmt->bind_param('si', $testId,$title);
-
-        if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
-        }
-
-        $stmt->close();
-        logMongo('Titolo Test '.$testId.' aggiornato a '.$title);
-        return "Aggiornamento del titolo completato con successo.";
-    }
-
     public static function updateVisualizzaRisposte($testId) {
         global $con;
 
-        $stmt = $con->prepare("CALL UpdateVisualizzaRisposteTest(?)");
+        $stmt = $con->prepare("CALL ShowTestAnswers(?)");
         if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('i', $testId);
         if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
+            throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
         return "Aggiornato Visualizza Risoste a True";
@@ -206,17 +187,18 @@ class Test {
         global $con;
         try {
             $con->begin_transaction();
-            $stmt = $con->prepare("DELETE FROM TABELLE_TEST WHERE IDTest = ? AND IDTabella = ?");
+            $stmt = $con->prepare("CALL RemoveAllTT(?,?)");
             foreach ($list as $tableId) {
-                $stmt->bind_param("ii", $testId, $tableId);
+                $stmt->bind_param("ii",$tableId, $testId);
                 $stmt->execute();
             }
             $con->commit();
         } catch (Exception $e) {
             $con->rollback();
-            echo "Errore: " . $e->getMessage();
+            throw $e;
         }
         $stmt->close();
+        return "deleteTableTestLink Ok";
     }
 
     public static function checkIfTestNameExists($nome, $email) {
@@ -234,6 +216,25 @@ class Test {
 
         $stmt->close();
         return (bool) $result['result'];
+    }
+
+    // Non usato
+    public static function updateTestTitle($testId, $title) {
+        global $con;
+
+        $stmt = $con->prepare("CALL UpdateTestTitle(?,?)");
+        if ($stmt === false) {
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('si', $testId,$title);
+
+        if (!$stmt->execute()) {
+            throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+
+        $stmt->close();
+        logMongo('Titolo Test '.$testId.' aggiornato a '.$title);
+        return "Aggiornamento del titolo completato con successo.";
     }
 
 

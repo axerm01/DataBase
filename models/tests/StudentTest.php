@@ -15,25 +15,25 @@ class StudentTest {
     {
         global $con;
         if($filter == 'All'){
-            $q = "CALL ViewAllSvolgimento(?);";
+            $q = "CALL ViewAllStudentTest(?);";
             $stmt = $con->prepare($q);
             if ($stmt === false) {
-                die("Errore nella preparazione della query: " . $con->error);
+                throw new Exception ("Errore nella preparazione della query: " . $con->error);
             }
             $stmt->bind_param('s', $stdEmail);
             if (!$stmt->execute()) {
-                die("Errore nell'esecuzione della query: " . $stmt->error);
+                throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
             }
         }
         else{
-            $q = "CALL ViewSvolgimentoByStatus(?,?);";
+            $q = "CALL ViewStudentTestByStatus(?,?);";
             $stmt = $con->prepare($q);
             if ($stmt === false) {
-                die("Errore nella preparazione della query: " . $con->error);
+                throw new Exception ("Errore nella preparazione della query: " . $con->error);
             }
             $stmt->bind_param('ss', $filter,$stdEmail);
             if (!$stmt->execute()) {
-                die("Errore nell'esecuzione della query: " . $stmt->error);
+                throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
             }
         }
 
@@ -50,16 +50,15 @@ class StudentTest {
     public static function getSingleTest($idTest, $stdEmail)
     {
         global $con;
-        $q = "CALL ViewSvolgimento(?,?);";
+        $q = "CALL ViewStudentTest(?,?);";
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('is', $idTest, $stdEmail);
         if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
+            throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
         }
-
         $result = $stmt->get_result();
         $data = [];
 
@@ -67,7 +66,6 @@ class StudentTest {
             $data[] = $row;
         }
         $stmt->close();
-
         return $data;
     }
     public static function start($testId) {
@@ -145,29 +143,18 @@ class StudentTest {
 
         return $test;
     }
-    public static function close($testId, $stdEmail) {
-        global $con;
-        $currentTime = date('Y-m-d H:i:s'); // Ottieni il timestamp corrente
-
-            $updateQuery = "UPDATE Svolgimento SET DataUltimaRisposta = ?, Stato = ? WHERE MailStudente = ? AND IDTest = ?";
-            $updateStmt = $con->prepare($updateQuery);
-            $status = self::CLOSE;
-            $updateStmt->bind_param('sssi', $currentTime,$status, $stdEmail, $testId);
-            $updateStmt->execute();
-            return 'closed correctly';
-    }
     public static function saveStudentTestData($testId, $email) {
         global $con;
-        $q = 'CALL CreateSvolgimento(?,?,?);';
+        $q = 'CALL CreateStudentTest(?,?,?);';
         $stmt = $con->prepare($q);
         $response = "save ok";
         if ($stmt === false) {
-            return "Errore nella preparazione della query: " . $con->error;
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
         }
         $stato = self::OPEN;
         $stmt->bind_param('ssi', $email, $stato, $testId);
         if (!$stmt->execute()) {
-            return "Errore nell'esecuzione della query: " . $stmt->error;
+            throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
         }
 
         $stmt->close();
@@ -177,14 +164,14 @@ class StudentTest {
 
     public static function setFirstResponseDate($testId, $email, $date) {
         global $con;
-        $q = 'CALL UpdateInizioSvolgimento(?,?,?);';
+        $q = 'CALL UpdateStudentTestStart(?,?,?);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('iss', $testId, $email, $date);
         if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
+            throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
         logMongo('Inserimento data prima risposta per Test '.$testId.' da '.$email);
@@ -193,14 +180,14 @@ class StudentTest {
 
     public static function setLastResponseDate($testId, $email, $date) {
         global $con;
-        $q = 'CALL UpdateFineSvolgimento(?,?,?);';
+        $q = 'CALL UpdateStudentTestEnd(?,?,?);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('iss', $testId, $email, $date);
         if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
+            throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
         logMongo('Inserimento data ultima risposta per Test '.$testId.' da '.$email);

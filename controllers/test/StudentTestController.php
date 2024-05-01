@@ -13,37 +13,40 @@ switch ($method) {
     case 'GET':
         $endpoint = $_GET['action'];
         $data = null;
-        switch ($endpoint) {
+        try {
+            switch ($endpoint) {
 
-            case 'get_all_tests': // GET di tutti i test presenti a sistema
-                $data = Test::getAllTests();
-                break;
+                case 'get_all_tests': // GET di tutti i test presenti a sistema
+                    $data = Test::getAllTests();
+                    break;
 
-            case 'get_filtered_tests': // GET dei test aperti, in progress e chiusi di uno studente
-                $stdEmail = $_SESSION['email'];
-                $filter = filter_input(INPUT_GET, 'filter');
-                $data = StudentTest::getTests($stdEmail, $filter); //Filter può essere Open, InProgress, Close, All
-                break;
+                case 'get_filtered_tests': // GET dei test aperti, in progress e chiusi di uno studente
+                    $stdEmail = $_SESSION['email'];
+                    $filter = filter_input(INPUT_GET, 'filter');
+                    $data = StudentTest::getTests($stdEmail, $filter); //Filter può essere Open, InProgress, Close, All
+                    break;
 
-            case 'get_single_test': // GET del singolo test di uno studente
-                $testId = filter_input(INPUT_GET, 'testId');
-                $stdEmail = $_SESSION['email'];
-                $data = StudentTest::getSingleTest($testId, $stdEmail);
-                break;
+                case 'get_single_test': // GET del singolo test di uno studente
+                    $testId = filter_input(INPUT_GET, 'testId');
+                    $stdEmail = $_SESSION['email'];
+                    $data = StudentTest::getSingleTest($testId, $stdEmail);
+                    break;
 
-            case 'start_new_test':
-                $testId = filter_input(INPUT_GET, 'testId');
-                $data = StudentTest::start($testId);
-                break;
+                case 'start_new_test':
+                    $testId = filter_input(INPUT_GET, 'testId');
+                    $data = StudentTest::start($testId);
+                    break;
 
-            case 'resume_test':
-                $testId = filter_input(INPUT_GET, 'testId');
-                $stdEmail = $_SESSION['email'];
-                $data = StudentTest::resume($testId, $stdEmail);
-                break;
-
+                case 'resume_test':
+                    $testId = filter_input(INPUT_GET, 'testId');
+                    $stdEmail = $_SESSION['email'];
+                    $data = StudentTest::resume($testId, $stdEmail);
+                    break;
+            }
         }
-
+        catch (Exception $e){
+            $data = "Errore: ".$e->getMessage();
+        }
         echo json_encode($data);
         break;
 
@@ -52,29 +55,32 @@ switch ($method) {
             $action = $_POST['action'];
             $email = $_SESSION['email'];
             $testId = $_POST['testId'];
+            try {
+                switch ($action) {
+                    case 'create_student_test':
+                        $response = StudentTest::saveStudentTestData($testId, $email);
+                        break;
 
-            switch ($action) {
-                case 'create_student_test':
-                    $response = StudentTest::saveStudentTestData($testId, $email);
-                    echo json_encode($response);
-                    break;
+                    case 'save_response':
+                        if (isset($_POST['first_response_date']) && !empty($_POST['first_response_date'])){
+                            $date = $_POST['first_response_date'];
+                            StudentTest::setFirstResponseDate($testId, $email, $date);
+                        }
+                        if (isset($_POST['last_response_date']) && !empty($_POST['last_response_date'])){
+                            $date = $_POST['last_response_date'];
+                            StudentTest::setLastResponseDate($testId, $email, $date);
+                        }
 
-                case 'save_response':
-                    if (isset($_POST['first_response_date']) && !empty($_POST['first_response_date'])){
-                        $date = $_POST['first_response_date'];
-                        StudentTest::setFirstResponseDate($testId, $email, $date);
-                    }
-                    if (isset($_POST['last_response_date']) && !empty($_POST['last_response_date'])){
-                        $date = $_POST['last_response_date'];
-                        StudentTest::setLastResponseDate($testId, $email, $date);
-                    }
-
-                    $stringAnswers = json_decode($_POST['student_answers'], true);
-                    $answers = $stringAnswers['answers'];
-                    $response = StudentAnswer::saveStudentAnswers($answers, $testId, $email);
-                    echo json_encode($response);
-                    break;
+                        $stringAnswers = json_decode($_POST['student_answers'], true);
+                        $answers = $stringAnswers['answers'];
+                        $response = StudentAnswer::saveStudentAnswers($answers, $testId, $email);
+                        break;
+                }
             }
+            catch (Exception $e){
+                $response = "Erroere: ".$e->getMessage();
+            }
+            echo json_encode($response);
         } else {
             echo json_encode("no action");
         }
@@ -84,35 +90,37 @@ switch ($method) {
         if (isset($_GET['action'])){
             $action = $_GET['action'];
             $email = $_SESSION['email'];
-
-            switch ($action) {
-                case 'update_response':
-                    if (isset($_GET['testId'])) {
-                        $testId = $_GET['testId'];
-                        $rawData = file_get_contents('php://input');
-                        $data = json_decode($rawData, true);
-                        if (isset($data['last_response_date']) && isset($data['student_answers'])) {
-                            $responseDate = StudentTest::setLastResponseDate($testId, $email, $data['last_response_date']);
-                            $answers = $data['student_answers'];
-                            $oldResponseAnswers = "";
-                            $newResponseAnswers = "";
-                            if(isset($answers['old_answers']) && !empty($answers['old_answers'])){
-                                $oldResponseAnswers = StudentAnswer::updateStudentAnswers($answers['old_answers'], $testId, $email);
+            try {
+                switch ($action) {
+                    case 'update_response':
+                        if (isset($_GET['testId'])) {
+                            $testId = $_GET['testId'];
+                            $rawData = file_get_contents('php://input');
+                            $data = json_decode($rawData, true);
+                            if (isset($data['last_response_date']) && isset($data['student_answers'])) {
+                                $responseDate = StudentTest::setLastResponseDate($testId, $email, $data['last_response_date']);
+                                $answers = $data['student_answers'];
+                                $oldResponseAnswers = "";
+                                $newResponseAnswers = "";
+                                if(isset($answers['old_answers']) && !empty($answers['old_answers'])){
+                                    $oldResponseAnswers = StudentAnswer::updateStudentAnswers($answers['old_answers'], $testId, $email);
+                                }
+                                if(isset($answers['new_answers']) && !empty($answers['new_answers'])){
+                                    $newResponseAnswers = StudentAnswer::saveStudentAnswers($answers['new_answers'], $testId, $email);
+                                }
+                                $response = ['dateResponse' => $responseDate, 'answersResponseOld' => $oldResponseAnswers, 'answersResponseNew' => $newResponseAnswers];
+                            } else {
+                                echo json_encode(['error' => 'Missing data for update']);
                             }
-                            if(isset($answers['new_answers']) && !empty($answers['new_answers'])){
-                                $newResponseAnswers = StudentAnswer::saveStudentAnswers($answers['new_answers'], $testId, $email);
-                            }
-
-                            $response = ['dateResponse' => $responseDate, 'answersResponseOld' => $oldResponseAnswers, 'answersResponseNew' => $newResponseAnswers];
-                            echo json_encode($response);
                         } else {
-                            echo json_encode(['error' => 'Missing data for update']);
+                            echo json_encode(['error' => 'Test ID not provided']);
                         }
-                    } else {
-                        echo json_encode(['error' => 'Test ID not provided']);
-                    }
-                    break;
+                        break;
+                }
+            } catch (Exception $e){
+                $response = "Errore: ".$e->getMessage();
             }
+            echo json_encode($response);
         }
         else {
             echo json_encode("no action");

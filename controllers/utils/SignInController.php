@@ -28,10 +28,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Cripta la password
     $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
-    if($_POST['role'] == 'student'){
-        Student::signin($_POST['name'], $_POST['surname'], $email, $_POST['matricola'], $_POST['registration_year'], $_POST['phone'], $password_hash);
-    }
-    else if ($_POST['role'] == 'professor') {
-        Professor::signin($_POST['name'], $_POST['surname'], $email, $_POST['course'], $_POST['department'], $_POST['phone'], $password_hash);
+    try {
+        if($_POST['role'] == 'student'){
+            Student::signin($_POST['name'], $_POST['surname'], $email, $_POST['matricola'], $_POST['registration_year'], $_POST['phone'], $password_hash);
+        }
+        else if ($_POST['role'] == 'professor') {
+            Professor::signin($_POST['name'], $_POST['surname'], $email, $_POST['course'], $_POST['department'], $_POST['phone'], $password_hash);
+        }
+    } catch (Exception $e){
+        echo "Errore nella registrazione: ".$e->getMessage();
     }
 }

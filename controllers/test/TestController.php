@@ -16,23 +16,28 @@ switch ($method) {
     case 'GET':
         if (isset($_GET['action'])){
             $endpoint = $_GET['action'];
-            switch ($endpoint) {
+            try {
+                switch ($endpoint) {
 
-                case 'get_tests': // GET di tutti i test di un certo professore la cui mail è nella sessione
-                    $prof_email = $_SESSION['email'];
-                    $data = Test::getProfTests($prof_email);
-                    break;
+                    case 'get_tests': // GET di tutti i test di un certo professore la cui mail è nella sessione
+                        $prof_email = $_SESSION['email'];
+                        $data = Test::getProfTests($prof_email);
+                        break;
 
-                case 'get_test_content': // GET del contenuto di un test
-                    $testId = $_GET['testId'];
-                    $data = Test::getTestContent($testId);
-                    break;
+                    case 'get_test_content': // GET del contenuto di un test
+                        $testId = $_GET['testId'];
+                        $data = Test::getTestContent($testId);
+                        break;
 
-                case 'check_name':
-                    $name = filter_input(INPUT_GET, 'name');
-                    $prof_email = $_SESSION['email'];
-                    $data = Test::checkIfTestNameExists($name, $prof_email);
-                    break;
+                    case 'check_name':
+                        $name = filter_input(INPUT_GET, 'name');
+                        $prof_email = $_SESSION['email'];
+                        $data = Test::checkIfTestNameExists($name, $prof_email);
+                        break;
+                }
+            }
+            catch (Exception $e){
+                $data = "Errore: ".$e->getMessage();
             }
             echo json_encode($data);
 
@@ -44,32 +49,35 @@ switch ($method) {
     case 'POST':
         if (isset($_POST['action'])){
             $action = $_POST['action'];
-            switch ($action) {
-                case 'test_query':
-                    $query = filter_input(INPUT_POST, 'query');
-                    $data = Test::testQuery($query);
-                    echo json_encode($data);
-                    break;
+            try {
+                switch ($action) {
+                    case 'test_query':
+                        $query = filter_input(INPUT_POST, 'query');
+                        $response = Test::testQuery($query);
+                        break;
 
-                case 'save_test':
-                    $data = $_POST['data'];
-                    if (isset($_FILES['testImage'])) {
-                        $imageFile = $_FILES['testImage'];
-                        $response = saveTest($data, $imageFile);
-                    } else {
-                        $response = saveTest($data, null);
-                    }
-                    echo json_encode($response);
-                    break;
+                    case 'save_test':
+                        $data = $_POST['data'];
+                        if (isset($_FILES['testImage'])) {
+                            $imageFile = $_FILES['testImage'];
+                            $response = saveTest($data, $imageFile);
+                        } else {
+                            $response = saveTest($data, null);
+                        }
+                        break;
 
-                case 'update_test':
-                    $jsondata = $_POST['data'];
-                    $data = json_decode($jsondata, true);
-                    $testId = $data['testId'];
-                    $response = updateTest($data, $testId);
-                    echo json_encode($response);
-                    break;
+                    case 'update_test':
+                        $jsondata = $_POST['data'];
+                        $data = json_decode($jsondata, true);
+                        $testId = $data['testId'];
+                        $response = updateTest($data, $testId);
+                        break;
+                }
+            } catch (Exception $e){
+                $response = "Errore: ".$e->getMessage();
             }
+            echo json_encode($response);
+
         } else {
             echo json_encode("no action");
         }
@@ -93,36 +101,40 @@ switch ($method) {
     case 'DELETE':
         if (isset($_GET['action'])) {
             $action = $_GET['action'];
-
-            switch ($action) {
-                case 'delete_TT':
-                    if(isset($_GET['tableId']) && isset($_GET['testId'])){
-                        $testId = $_GET['testId'];
-                        $tableId = $_GET['tableId'];
-                        $response = Test::deleteTableTestLink($testId, $tableId);
-                    }
-                    break;
-
-                case 'delete_reference':
-                    if(isset($_GET['tab1']) && isset($_GET['tab2']) && isset($_GET['att1']) && isset($_GET['att2'])){
-                        Reference::deleteReferenceData($_GET['tab1'], $_GET['tab2'], $_GET['att1'], $_GET['att1']);
-                    }
-                    break;
-
-                case 'delete_question':
-                    if(isset($_GET['questionId']) && isset($_GET['testId']) && isset($_GET['type'])){
-                        $testId = $_GET['testId'];
-                        $questionId = $_GET['questionId'];
-                        $type = $_GET['type'];
-                        if($type == 'code'){
-                            CodeQuestion::deleteCodeQuestion($testId, $questionId);
+            try {
+                switch ($action) {
+                    case 'delete_TT':
+                        if(isset($_GET['tableId']) && isset($_GET['testId'])){
+                            $testId = $_GET['testId'];
+                            $tableId = $_GET['tableId'];
+                            $response = Test::deleteTableTestLink($testId, $tableId);
                         }
-                        else if ($type == 'mc') {
-                            MultipleChoiceQuestion::deleteMCData($testId, $questionId);
+                        break;
+
+                    case 'delete_reference':
+                        if(isset($_GET['tab1']) && isset($_GET['tab2']) && isset($_GET['att1']) && isset($_GET['att2'])){
+                            $response = Reference::deleteReferenceData($_GET['tab1'], $_GET['tab2'], $_GET['att1'], $_GET['att1']);
                         }
-                    }
-                    break;
+                        break;
+
+                    case 'delete_question':
+                        if(isset($_GET['questionId']) && isset($_GET['testId']) && isset($_GET['type'])){
+                            $testId = $_GET['testId'];
+                            $questionId = $_GET['questionId'];
+                            $type = $_GET['type'];
+                            if($type == 'code'){
+                                $response = CodeQuestion::deleteCodeQuestion($testId, $questionId);
+                            }
+                            else if ($type == 'mc') {
+                                $response = MultipleChoiceQuestion::deleteMCData($testId, $questionId);
+                            }
+                        }
+                        break;
+                }
+            }catch (Exception $e){
+                $response = ("Errore: ".$e->getMessage());
             }
+            echo json_encode($response);
         } else {
             echo json_encode("no action");
         }
@@ -163,7 +175,7 @@ function saveTest($data, $image) {
 
         $response = 'Test salvato correttamente';
     } catch (Exception $exc){
-        $response = 'Some error occoured. Error log: ' .$exc;
+        $response = 'Errore: ' .$exc->getMessage();
     }
     return $response;
 }
@@ -277,7 +289,7 @@ function updateTest($decodedData, $testId) {
 
         $response = 'Tutte le modifiche sono state salvate';
     } catch (Exception $exc){
-        $response = 'Some error occoured. Error log: ' .$exc;
+        $response = 'Errore: ' .$exc->getMessage();
     }
     return $response;
 }

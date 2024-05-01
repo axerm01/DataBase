@@ -9,10 +9,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
     $role = $_POST['role'];
 
-    if ($role == 'professor') {
-        $login = Professor::login($email, $password);
-    } else if ($role == 'student') {
-        $login = Student::login($email, $password);
+    try {
+        if ($role == 'professor') {
+            $login = Professor::login($email, $password);
+        } else if ($role == 'student') {
+            $login = Student::login($email, $password);
+        }
+    } catch (Exception $e){
+        echo "Login Error: ".$e->getMessage();
     }
 
     if ($login) {

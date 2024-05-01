@@ -7,31 +7,33 @@ class Student
         global $con;
 
         if ($con->connect_error) {
-            die("Connessione fallita: " . $con->connect_error);
+            throw new Exception ("Connessione fallita: " . $con->connect_error);
         }
-        $stmt = $con->prepare("CALL CreateStudente (?,?,?,?,?,?,?)");
+        $stmt = $con->prepare("CALL CreateStudent (?,?,?,?,?,?,?)");
+        if ($stmt === false) {
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
+        }
         $stmt->bind_param("sssssss", $name,$surname, $email, $mat, $year, $phone, $pwd);
 
         if ($stmt->execute()) {
+            $con->close();
+            logMongo('Registrazione di un nuovo studente: '.$email);
             header('Location: ../../views/login.html');
             exit;
         } else {
-            $messaggio = "Si è verificato un errore durante la registrazione.";
+            throw new Exception("Errore nell'esecuzione della query: " . $stmt->error);
         }
-        $con->close();
-        logMongo('Registrazione di un nuovo studente: '.$email);
-        return json_encode(["message" => $messaggio]);
     }
 
     public static function login($email, $password) {
         global $con;
         $stmt = $con->prepare("CALL GetStudentPassword(?)");
         if ($stmt === false) {
-            return "Errore nella preparazione della query: " . $con->error;
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('s', $email);
         if (!$stmt->execute()) {
-            return  "Errore nell'esecuzione della query: " . $stmt->error;
+            throw new Exception  ("Errore nell'esecuzione della query: " . $stmt->error);
         }
 
         $result = $stmt->get_result();

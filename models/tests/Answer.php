@@ -9,11 +9,11 @@ class Answer {
         $q = 'CALL CreateAnswer(?,?,?,?,?);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            return("Errore nella preparazione della query: " . $con->error);
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('iiisi', $ID, $IDTest, $IDMC, $text, $isCorrect);
         if (!$stmt->execute()) {
-            return("Errore nell'esecuzione della query: " . $stmt->error);
+            throw new Exception("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
         logMongo('Salvataggio opzione '.$text.' della domanda a scelta multipla '.$IDMC);
@@ -26,11 +26,11 @@ class Answer {
         $q = 'CALL UpdateAnswer(?,?,?,?,?);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            return("Errore nella preparazione della query: " . $con->error);
+            throw new Exception("Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('iiisi', $ID, $IDTest, $IDMC, $text, $isCorrect);
         if (!$stmt->execute()) {
-            return("Errore nell'esecuzione della query: " . $stmt->error);
+            throw new Exception("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
         logMongo('Aggiornamento opzione '.$text.' della domanda a scelta multipla '.$IDMC);
@@ -44,26 +44,27 @@ class Answer {
         $q = 'CALL DropAnswers(?,?);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('ii',$IDTest, $IDMC);
         if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
+            throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
     }
 
+    // non usata
     public static function deleteMCSingleAnswer($IDTest, $IDMC, $ID)
     {
         global $con;
         $q = 'CALL DropSingleAnswer(?,?,?);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('iii',$IDTest, $IDMC, $ID);
         if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
+            throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
     }

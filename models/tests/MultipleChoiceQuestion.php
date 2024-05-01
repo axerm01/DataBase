@@ -5,9 +5,14 @@ class MultipleChoiceQuestion {
 
     public static function getTestQuestions($testId) {
         global $con;
-        $stmt = $con->prepare("CALL ViewAllSceltaMultipla(?)");
+        $stmt = $con->prepare("CALL ViewAllMC(?)");
+        if ($stmt === false) {
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
+        }
         $stmt->bind_param('i', $testId);
-        $stmt->execute();
+        if (!$stmt->execute()) {
+            throw new Exception("Errore nell'esecuzione della query: " . $stmt->error);
+        }
         $result = $stmt->get_result();
         $MCQs = [];
 
@@ -44,14 +49,14 @@ class MultipleChoiceQuestion {
     public static function saveMCData($IDTest,$ID, $description, $numAnswers, $difficulty, $answers)
     {
         global $con;
-        $q = 'CALL CreateSceltaMultipla(?,?,?,?,?);';
+        $q = 'CALL CreateMC(?,?,?,?,?);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            return("Errore nella preparazione della query: " . $con->error);
+            throw new Exception("Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('iisis',$IDTest,$ID, $description, $numAnswers, $difficulty);
         if (!$stmt->execute()) {
-            return("Errore nell'esecuzione della query: " . $stmt->error);
+            throw new Exception("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
 
@@ -65,14 +70,14 @@ class MultipleChoiceQuestion {
     public static function updateMCText($IDTest,$ID, $description)
     {
         global $con;
-        $q = 'CALL UpdateSceltaMultiplaDescrizione(?,?,?);';
+        $q = 'CALL UpdateMCDescription(?,?,?);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            return("Errore nella preparazione della query: " . $con->error);
+            throw new Exception("Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('iis',$IDTest,$ID, $description);
         if (!$stmt->execute()) {
-            return("Errore nell'esecuzione della query: " . $stmt->error);
+            throw new Exception("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
         logMongo('Aggiornamento testo della domanda a scelta multipla: '.$description);
@@ -82,14 +87,14 @@ class MultipleChoiceQuestion {
     public static function updateMCDiff($IDTest,$ID, $diff)
     {
         global $con;
-        $q = 'CALL UpdateSceltaMultiplaDifficolta(?,?,?);';
+        $q = 'CALL UpdateMCDifficulty(?,?,?);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            return("Errore nella preparazione della query: " . $con->error);
+            throw new Exception("Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('iis',$IDTest,$ID, $diff);
         if (!$stmt->execute()) {
-            return("Errore nell'esecuzione della query: " . $stmt->error);
+            throw new Exception("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
         logMongo('Aggiornamento difficoltà della domanda a scelta multipla '.$ID.' a '.$diff);
@@ -98,14 +103,14 @@ class MultipleChoiceQuestion {
     public static function updateMCNumAnswers($IDTest,$ID, $numAnswDifferential)
     {
         global $con;
-        $q = 'CALL UpdateSceltaMultiplaNumeroRisposte(?,?,?);';
+        $q = 'CALL UpdateNumMCAnswers(?,?,?);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            return("Errore nella preparazione della query: " . $con->error);
+            throw new Exception("Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('iii',$IDTest,$ID, $numAnswDifferential);
         if (!$stmt->execute()) {
-            return("Errore nell'esecuzione della query: " . $stmt->error);
+            throw new Exception("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
         logMongo('Aggiornamento numero risposte della domanda a scelta multipla '.$ID);
@@ -122,14 +127,14 @@ class MultipleChoiceQuestion {
     public static function deleteMCData($IDTest,$IDMC)
     {
         global $con;
-        $q = 'CALL DropSceltaMultipla(?,?);';
+        $q = 'CALL DropMC(?,?);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('ii',$IDTest, $IDMC);
         if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
+            throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
         Answer::deleteMCAnswersData($IDTest,$IDMC);

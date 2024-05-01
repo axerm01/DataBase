@@ -7,11 +7,11 @@ class Column {
         $q = "CALL CreateAttribute(?,?,?,?)";
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            die("Errore nella preparazione della query: " .  $con->error);
+            throw new Exception ("Errore nella preparazione della query: " .  $con->error);
         }
         $stmt->bind_param('issi', $tableId, $name, $type, $isPK );
         if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
+            throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
         logMongo('Attributo salvato: '.$name);
@@ -22,11 +22,11 @@ class Column {
         $q = 'CALL ViewAllAttributes(?);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('s', $tableId );
         if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
+            throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
         }
 
         $result = $stmt->get_result();
@@ -42,9 +42,6 @@ class Column {
             ];
         }
         $stmt->close();
-
         return $data;
-
     }
-
 }

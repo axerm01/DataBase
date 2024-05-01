@@ -7,8 +7,13 @@ class StudentAnswer
         global $con;
 
         $codiceQuery = $con->prepare("CALL ViewStudentCodeAnswers(?,?)");
+        if ($codiceQuery === false) {
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
+        }
         $codiceQuery->bind_param('is', $testId, $stdEmail);
-        $codiceQuery->execute();
+        if (!$codiceQuery->execute()) {
+            throw new Exception("Errore nell'esecuzione della query: " . $codiceQuery->error);
+        }
         $result = $codiceQuery->get_result();
         $codiceData = $result->fetch_all(MYSQLI_ASSOC);
         $codiceQuery->close();
@@ -20,8 +25,13 @@ class StudentAnswer
         global $con;
 
         $mcQuery = $con->prepare("CALL ViewStudentMCAnswers(?,?)");
+        if ($mcQuery === false) {
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
+        }
         $mcQuery->bind_param('is', $testId, $stdEmail);
-        $mcQuery->execute();
+        if (!$mcQuery->execute()) {
+            throw new Exception("Errore nell'esecuzione della query: " . $mcQuery->error);
+        }
         $result = $mcQuery->get_result();
         $mcData = $result->fetch_all(MYSQLI_ASSOC);
         $mcQuery->close();
@@ -38,16 +48,15 @@ class StudentAnswer
         }
 
         mysqli_begin_transaction($con);
-
         try {
             foreach ($answers as $id => $answer) {
                 $id++;
                 if ($answer['type'] === 'mc') {
-                    $stmt = $con->prepare("CALL CreateRispostaStudente(?, ?, ?, ?, ?)");
+                    $stmt = $con->prepare("CALL CreateStudentMCAnswer(?, ?, ?, ?, ?)");
                     $stmt->bind_param('siiii', $email, $testId, $answer['id'], $answer['answerId'], $esiti[$id]);
                     $response = 'updated mc, ';
                 } elseif ($answer['type'] === 'code') {
-                    $stmt = $con->prepare("CALL CreateCodiceStudente(?, ?, ?, ?, ?)");
+                    $stmt = $con->prepare("CALL CreateStudentCodeAnswer(?, ?, ?, ?, ?)");
                     $stmt->bind_param('siisi', $email, $testId, $answer['id'], $answer['sqlCode'], $esiti[$id]);
                     $response .= 'updated code, ';
                 }
@@ -61,7 +70,7 @@ class StudentAnswer
 
         } catch (Exception $e) {
             mysqli_rollback($con);
-            $response =  "Errore1: " . $e->getMessage();
+            throw $e;
         }
         logMongo('Salvataggio risposte dello svolgimento del Test '.$testId.' da '.$email);
         return $response;
@@ -76,16 +85,15 @@ class StudentAnswer
 
         mysqli_begin_transaction($con);
         $response = '';
-
         try {
             foreach ($answers as $id => $answer) {
                 $id++;
                 if ($answer['type'] === 'mc') {
-                    $stmt = $con->prepare("CALL UpdateRispostaStudente(?, ?, ?, ?, ?)");
+                    $stmt = $con->prepare("CALL UpdateStudentMCAnswer(?, ?, ?, ?, ?)");
                     $stmt->bind_param('siiii', $email, $answer['id'], $testId, $answer['answerId'], $esiti[$id]);
                     $response .= 'updated mc, ';
                 } elseif ($answer['type'] === 'code') {
-                    $stmt = $con->prepare("CALL UpdateCodiceStudente(?, ?, ?, ?, ?)");
+                    $stmt = $con->prepare("CALL UpdateStudentCodeAnswer(?, ?, ?, ?, ?)");
                     $stmt->bind_param('siisi', $email,  $answer['id'], $testId, $answer['sqlCode'], $esiti[$id]);
                     $response .= 'updated code, ';
                 }
@@ -102,7 +110,7 @@ class StudentAnswer
             mysqli_commit($con);
         } catch (Exception $e) {
             mysqli_rollback($con);
-            $response =  "Errore2: " . $e->getMessage();
+            throw $e;
         }
         logMongo('Aggiornamento risposte dello svolgimento del Test '.$testId.' da '.$email);
         return $response;
@@ -132,8 +140,13 @@ class StudentAnswer
 
     private static function getCorrectMCAnswers($testId, $con) {
         $stmt = $con->prepare("CALL getCorrectAnswers(?)");
+        if ($stmt === false) {
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
+        }
         $stmt->bind_param("i", $testId);
-        $stmt->execute();
+        if (!$stmt->execute()) {
+            throw new Exception("Errore nell'esecuzione della query: " . $stmt->error);
+        }
         $result = $stmt->get_result();
         $correctAnswers = [];
         while ($row = $result->fetch_assoc()) {
@@ -144,9 +157,14 @@ class StudentAnswer
     }
 
     private static function getCorrectCodeAnswers($testId, $con) {
-        $stmt = $con->prepare("CALL ViewSqlCodice(?)");
+        $stmt = $con->prepare("CALL ViewSqlCode(?)");
+        if ($stmt === false) {
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
+        }
         $stmt->bind_param("i", $testId);
-        $stmt->execute();
+        if (!$stmt->execute()) {
+            throw new Exception("Errore nell'esecuzione della query: " . $stmt->error);
+        }
         $result = $stmt->get_result();
         $correctAnswers = [];
         while ($row = $result->fetch_assoc()) {
@@ -180,5 +198,4 @@ class StudentAnswer
         }
         return $data;
     }
-
 }

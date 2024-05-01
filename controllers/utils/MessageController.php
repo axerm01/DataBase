@@ -21,18 +21,21 @@ switch ($method) {
         if (isset($_GET['action'])) {
             $endpoint = $_GET['action'];
             $data = "no data";
-            switch ($endpoint) {
-                case 'get_messages': // GET di tutti i messaggi destinati a un utente
-                    $testId = $_GET['testId'];
-                    if ($role == 'student') {
-                        $data = Message::getProfMessages($testId);
-                    }
-                    if ($role == 'professor') {
-                        $data = Message::getStudentMessages($testId);
-                    }
-                    break;
+            try {
+                switch ($endpoint) {
+                    case 'get_messages': // GET di tutti i messaggi destinati a un utente
+                        $testId = $_GET['testId'];
+                        if ($role == 'student') {
+                            $data = Message::getProfMessages($testId);
+                        }
+                        if ($role == 'professor') {
+                            $data = Message::getStudentMessages($testId);
+                        }
+                        break;
+                }
+            } catch (Exception $e){
+                $data = "Errore messaggi: ".$e->getMessage();
             }
-
             echo json_encode($data);
 
         } else {
@@ -43,25 +46,28 @@ switch ($method) {
     case 'POST':
         if (isset($_POST['action'])) {
             $action = $_POST['action'];
-            switch ($action) {
-                case 'send_prof_message':
-                    if ($role == 'professor') {
-                        $message = json_decode($_POST['message'], true);
-                        $dateTime = date('Y-m-d H:i:s');
-                        $response = Message::sendProfMessage($message['testId'], $email, $message['titolo'], $message['testo'], $dateTime);
-                        echo json_encode($response);
-                    }
-                    break;
+            try {
+                switch ($action) {
+                    case 'send_prof_message':
+                        if ($role == 'professor') {
+                            $message = json_decode($_POST['message'], true);
+                            $dateTime = date('Y-m-d H:i:s');
+                            $response = Message::sendProfMessage($message['testId'], $email, $message['titolo'], $message['testo'], $dateTime);
+                        }
+                        break;
 
-                case 'send_student_message':
-                    if ($role == 'student') {
-                        $message = json_decode($_POST['message'], true);
-                        $dateTime = date('Y-m-d H:i:s');
-                        $response = Message::sendStudentMessage($message['testId'], $email, $message['titolo'], $message['testo'], $dateTime);
-                        echo json_encode($response);
-                    }
-                    break;
+                    case 'send_student_message':
+                        if ($role == 'student') {
+                            $message = json_decode($_POST['message'], true);
+                            $dateTime = date('Y-m-d H:i:s');
+                            $response = Message::sendStudentMessage($message['testId'], $email, $message['titolo'], $message['testo'], $dateTime);
+                        }
+                        break;
+                }
+            } catch (Exception $e){
+                $response = "Errore salvataggio messaggio: ".$e->getMessage();
             }
+            echo json_encode($response);
         } else {
             echo json_encode("no action");
         }

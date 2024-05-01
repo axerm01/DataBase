@@ -13,30 +13,36 @@ switch ($method){
         if (isset($_GET['action'])){
             $endpoint = $_GET['action'];
             $data = [];
-            switch ($endpoint) {
-                case 'get_tables': // GET delle tabelle create da un docente, restituisce id tabella e nome
-                    $data = Table::getAllTables($_SESSION['email']);
-                    break;
+            try {
+                switch ($endpoint) {
+                    case 'get_tables': // GET delle tabelle create da un docente, restituisce id tabella e nome
+                        $data = Table::getAllTables($_SESSION['email']);
+                        break;
 
-                case 'get_table_columns': // GET delle colonne di una tabella indicata
-                    $id = filter_input(INPUT_GET, 'tableId');
-                    $data = Column::getTableColumns($id);
-                    break;
+                    case 'get_table_columns': // GET delle colonne di una tabella indicata
+                        $id = filter_input(INPUT_GET, 'tableId');
+                        $data = Column::getTableColumns($id);
+                        break;
 
-                case 'get_full_table': // GET del contenuto della tabella
-                    $id = filter_input(INPUT_GET, 'tableId');
-                    $columns = Column::getTableColumns($id);
-                    $content = Table::getTableContent($id);
+                    case 'get_full_table': // GET del contenuto della tabella
+                        $id = filter_input(INPUT_GET, 'tableId');
+                        $columns = Column::getTableColumns($id);
+                        $content = Table::getTableContent($id);
 
-                    $data = array_merge(array($columns), $content);
-                    break;
+                        $data = array_merge(array($columns), $content);
+                        break;
 
-                case 'check_name':
-                    $name = filter_input(INPUT_GET, 'name');
-                    $data = Table::checkIfNameExists($name);
-                    break;
+                    case 'check_name':
+                        $name = filter_input(INPUT_GET, 'name');
+                        $data = Table::checkIfNameExists($name);
+                        break;
+                }
+            }
+            catch (Exception $e){
+                $data = "Errore: ".$e->getMessage();
             }
             echo json_encode($data);
+
         } else {
             echo json_encode("no action");
         }
@@ -77,7 +83,12 @@ switch ($method){
     case 'DELETE': //Delete di una tabella dato il suo ID
         if (isset($_GET['tableId'])){
             $tableId = $_GET['tableId'];
-            $response = Table::deleteTable($tableId);
+            try {
+                $response = Table::deleteTable($tableId);
+            }
+            catch (Exception $e){
+                $response = "Errore durante l'eliminazione della tabella: " . $e->getMessage();
+            }
             echo json_encode($response);
         }
         break;
@@ -88,10 +99,15 @@ function saveTable($data) {
     $response = "ID Tabella: ";
 
     $creationDate = date('Y-m-d H:i:s');
-    $tableId = Table::saveTableData($_SESSION['email'], $decodedData['title'], $creationDate, $decodedData['attributes']);
-    $response .= $tableId.' - ';
-    $response .= Table::createNewTable($decodedData['title'], $decodedData['attributes']);
-    $response .= Table::fillTableRows($decodedData['rows'], $decodedData['attributes'], $decodedData['title']);
+    try {
+        $tableId = Table::saveTableData($_SESSION['email'], $decodedData['title'], $creationDate, $decodedData['attributes']);
+        $response .= $tableId.' - ';
+        $response .= Table::createNewTable($decodedData['title'], $decodedData['attributes']);
+        $response .= Table::fillTableRows($decodedData['rows'], $decodedData['attributes'], $decodedData['title']);
+    } catch (Exception $e) {
+        $response = "Errore durante il salvataggio dell'attributo: " . $e->getMessage();
+    }
+
 
     return $response;
 }
@@ -101,6 +117,11 @@ function updateTable($data, $title) {
     $rows = array_map(function($item) {
         return array_values($item);
     }, $data);
-    return Table::updateTableRows($rows, $attributes, $title);
+    try {
+        $response = Table::updateTableRows($rows, $attributes, $title);
+    } catch (Exception $e) {
+        $response = "Errore durante l'update della tabella: " . $e->getMessage();
+    }
+    return $response;
 }
 

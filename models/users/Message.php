@@ -4,9 +4,14 @@ class Message {
 
     public static function getProfMessages($testId) {
         global $con;
-        $stmt = $con->prepare("CALL ViewMessaggiDocente(?)");
+        $stmt = $con->prepare("CALL ViewProfessorMessages(?)");
+        if ($stmt === false) {
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
+        }
         $stmt->bind_param('i', $testId);
-        $stmt->execute();
+        if (!$stmt->execute()) {
+            throw new Exception("Errore nell'esecuzione della query: " . $stmt->error);
+        }
 
         $result = $stmt->get_result();
         $messages = [];
@@ -19,9 +24,14 @@ class Message {
 
     public static function getStudentMessages($testId) {
         global $con;
-        $stmt = $con->prepare("CALL ViewMessaggiStudente(?)");
+        $stmt = $con->prepare("CALL ViewStudentMessages(?)");
+        if ($stmt === false) {
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
+        }
         $stmt->bind_param('i', $testId);
-        $stmt->execute();
+        if (!$stmt->execute()) {
+            throw new Exception("Errore nell'esecuzione della query: " . $stmt->error);
+        }
 
         $result = $stmt->get_result();
         $messages = [];
@@ -35,7 +45,7 @@ class Message {
     public static function sendStudentMessage($testId, $student_email, $titolo, $testo, $data) {
         global $con;
         $response = "All ok";
-        $stmt = $con->prepare("CALL CreateMessaggioStudente(?, ?, ?, ?, ?)");
+        $stmt = $con->prepare("CALL CreateStudentMessage(?, ?, ?, ?, ?)");
         if ($stmt === false) {
             $response = "Errore nella preparazione della query: " . $con->error;
         }
@@ -52,7 +62,7 @@ class Message {
         global $con;
         $response = "All ok";
 
-        $stmt = $con->prepare("CALL CreateMessaggioDocente(?, ?, ?, ?, ?)");
+        $stmt = $con->prepare("CALL CreateProfessorMessage(?, ?, ?, ?, ?)");
         if ($stmt === false) {
             $response = "Errore nella preparazione della query: " . $con->error;
         }

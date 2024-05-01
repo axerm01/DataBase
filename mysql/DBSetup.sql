@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS ESQL;
-CREATE DATABASE IF NOT EXISTS ESQL;
-USE ESQL;
+DROP DATABASE IF EXISTS ESQLDB;
+CREATE DATABASE IF NOT EXISTS ESQLDB;
+USE ESQLDB;
 
 CREATE TABLE IF NOT EXISTS `STUDENTE` (
     `Nome` VARCHAR(45) NOT NULL,
@@ -25,8 +25,8 @@ CREATE TABLE IF NOT EXISTS `DOCENTE` (
     ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `TABELLA` (
-                                         `ID` INT AUTO_INCREMENT NOT NULL,
-                                         `MailProfessore` VARCHAR(45) NOT NULL,
+    `ID` INT AUTO_INCREMENT NOT NULL,
+    `MailProfessore` VARCHAR(45) NOT NULL,
     `Nome` VARCHAR(45) NOT NULL,
     `DataCreazione` DATETIME NOT NULL,
     `NumRighe` SMALLINT DEFAULT 0,
@@ -39,8 +39,8 @@ CREATE TABLE IF NOT EXISTS `TABELLA` (
     ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `TEST` (
-                                      `ID` INT NOT NULL AUTO_INCREMENT,
-                                      `Titolo` VARCHAR(45) NOT NULL,
+    `ID` INT NOT NULL AUTO_INCREMENT,
+    `Titolo` VARCHAR(45) NOT NULL,
     `DataCreazione` DATETIME,
     `VisualizzaRisposte` VARCHAR(45) DEFAULT 'FALSE',
     `MailDocente` VARCHAR(45) NOT NULL,
@@ -53,9 +53,9 @@ CREATE TABLE IF NOT EXISTS `TEST` (
     ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `TEST_TABELLA` (
-                                              `IDTabella` INT NOT NULL,
-                                              `IDTest` INT NOT NULL,
-                                              PRIMARY KEY (`IDTabella`, `IDTest`),
+    `IDTabella` INT NOT NULL,
+    `IDTest` INT NOT NULL,
+    PRIMARY KEY (`IDTabella`, `IDTest`),
     CONSTRAINT `FK_TT_IDTabella`
     FOREIGN KEY (`IDTabella`)
     REFERENCES `TABELLA` (`ID`)
@@ -69,8 +69,8 @@ CREATE TABLE IF NOT EXISTS `TEST_TABELLA` (
     ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `ATTRIBUTO` (
-                                           `IDTabella` INT NOT NULL,
-                                           `Nome` VARCHAR(45) NOT NULL,
+    `IDTabella` INT NOT NULL,
+    `Nome` VARCHAR(45) NOT NULL,
     `Tipo` VARCHAR(45) NOT NULL,
     `IsPK` BOOLEAN DEFAULT 0,
     PRIMARY KEY (`IDTabella`, `Nome`),
@@ -82,8 +82,8 @@ CREATE TABLE IF NOT EXISTS `ATTRIBUTO` (
     ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `CODICE` (
-                                        `ID` INT NOT NULL,
-                                        `Output` VARCHAR(255) DEFAULT NULL,
+     `ID` INT NOT NULL,
+     `Output` VARCHAR(255) DEFAULT NULL,
     `Descrizione` VARCHAR(255) DEFAULT NULL,
     `IDTest` INT NOT NULL,
     `Difficolta` ENUM('Basso','Medio','Alto') NOT NULL,
@@ -96,9 +96,9 @@ CREATE TABLE IF NOT EXISTS `CODICE` (
     ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `GALLERIA` (
-                                          `IDTest` INT NOT NULL,
-                                          `Foto` LONGBLOB DEFAULT NULL,
-                                          PRIMARY KEY (`IDTest`),
+    `IDTest` INT NOT NULL,
+    `Foto` LONGBLOB DEFAULT NULL,
+    PRIMARY KEY (`IDTest`),
     CONSTRAINT `FK_Galleria_IDTest`
     FOREIGN KEY (`IDTest`)
     REFERENCES `TEST` (`ID`)
@@ -107,7 +107,7 @@ CREATE TABLE IF NOT EXISTS `GALLERIA` (
     ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `MESSAGGIO_DOCENTE` (
-                                                   `Titolo` VARCHAR(45) NOT NULL,
+    `Titolo` VARCHAR(45) NOT NULL,
     `Testo` VARCHAR(255) NOT NULL,
     `Data` DATETIME NOT NULL,
     `IDTest` INT NOT NULL,
@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS `MESSAGGIO_DOCENTE` (
     ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `MESSAGGIO_STUDENTE` (
-                                                    `Titolo` VARCHAR(45) NOT NULL,
+     `Titolo` VARCHAR(45) NOT NULL,
     `Testo` VARCHAR(255) NOT NULL,
     `Data` DATETIME NOT NULL,
     `IDTest` INT NOT NULL,
@@ -145,8 +145,8 @@ CREATE TABLE IF NOT EXISTS `MESSAGGIO_STUDENTE` (
     ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `REFERENZE` (
-                                           `IDT1` INT NOT NULL,
-                                           `NomeAttributo1` VARCHAR(45) NOT NULL,
+     `IDT1` INT NOT NULL,
+     `NomeAttributo1` VARCHAR(45) NOT NULL,
     `IDT2` INT NOT NULL,
     `NomeAttributo2` VARCHAR(45) NOT NULL,
     PRIMARY KEY (`IDT1`, `NomeAttributo1`, `IDT2`, `NomeAttributo2`),
@@ -163,8 +163,8 @@ CREATE TABLE IF NOT EXISTS `REFERENZE` (
     ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `SCELTA_MULTIPLA` (
-                                                 `ID` INT NOT NULL,
-                                                 `Descrizione` VARCHAR(255) NOT NULL,
+    `ID` INT NOT NULL,
+    `Descrizione` VARCHAR(255) NOT NULL,
     `Difficolta` ENUM('Basso','Medio','Alto') NOT NULL,
     `NumRisposte` INT NOT NULL DEFAULT 0,
     `IDTest` INT NOT NULL,
@@ -177,8 +177,8 @@ CREATE TABLE IF NOT EXISTS `SCELTA_MULTIPLA` (
     ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `SCELTA` (
-                                        `ID` INT NOT NULL,
-                                        `Testo` VARCHAR(45) NULL,
+     `ID` INT NOT NULL,
+     `Testo` VARCHAR(255) NULL,
     `IDTest` INT NOT NULL,
     `IDScMult` INT NOT NULL,
     `IsCorretta` INT default 0,
@@ -196,25 +196,15 @@ CREATE TABLE IF NOT EXISTS `SCELTA` (
     ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `RISPOSTA_SCELTA` (
-                                                 `Studente` varchar(45) not null,
+     `Studente` varchar(45) not null,
     `IDDomanda` INT NOT NULL,
-    `IDRisposta` int,
+    `IDRisposta` int not null,
     `IDTest` INT NOT NULL,
     `Esito` Boolean default 0,
     PRIMARY KEY (`Studente`, `IDDomanda`,`IDTest`),
     CONSTRAINT `FK_RispostaScelta_IDTest`
     FOREIGN KEY (`IDTest`)
     REFERENCES `TEST` (`ID`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-    CONSTRAINT `FK_RispostaScelta_IDRisposta`
-    FOREIGN KEY (`IDRisposta`)
-    REFERENCES `SCELTA` (`ID`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-    CONSTRAINT `FK_RispostaScelta_IDDomanda`
-    FOREIGN KEY (`IDDomanda`)
-    REFERENCES `SCELTA_MULTIPLA` (`ID`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
     CONSTRAINT `FK_RispostaScelta_Studente`
@@ -226,7 +216,7 @@ CREATE TABLE IF NOT EXISTS `RISPOSTA_SCELTA` (
     ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `RISPOSTA_CODICE` (
-                                                 `Studente` varchar(45) not null,
+     `Studente` varchar(45) not null,
     `IDDomanda` INT NOT NULL,
     `CodiceRisposta` varchar(500),
     `IDTest` INT NOT NULL,
@@ -235,11 +225,6 @@ CREATE TABLE IF NOT EXISTS `RISPOSTA_CODICE` (
     CONSTRAINT `FK_RispostaCodice_IDTest`
     FOREIGN KEY (`IDTest`)
     REFERENCES `TEST` (`ID`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-    CONSTRAINT `FK_RispostaCodice_IDDomanda`
-    FOREIGN KEY (`IDDomanda`)
-    REFERENCES `CODICE` (`ID`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
     CONSTRAINT `FK_RispostaCodice_Studente`
@@ -251,7 +236,7 @@ CREATE TABLE IF NOT EXISTS `RISPOSTA_CODICE` (
     ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `SVOLGIMENTO` (
-                                             `MailStudente` VARCHAR(45) NOT NULL,
+    `MailStudente` VARCHAR(45) NOT NULL,
     `Stato` ENUM('Aperto','InCompletamento','Concluso') DEFAULT NULL,
     `DataPrimaRisposta` DATETIME DEFAULT NULL,
     `DataUltimaRisposta` DATETIME DEFAULT Null,
@@ -485,24 +470,6 @@ DELETE FROM test_tabella
 WHERE IDTabella = IDTabellaAtt and IDTest = IDTestAtt;
 END //
 
-CREATE PROCEDURE RemoveTT(
-    in IDTestAtt int
-)
-BEGIN
-DELETE FROM test_tabella
-WHERE IDTest = IDTestAtt;
-END //
-
-CREATE PROCEDURE ViewTT(
-    in IDTabellaAtt int,
-    in IDTestAtt int
-)
-BEGIN
-SELECT *
-FROM  test_tabella
-where IDTabella = IDTabellaAtt and IDTest = IDTestAtt;
-END //
-
 CREATE PROCEDURE ViewAllTT(
     in IDTestAtt int
 )
@@ -511,7 +478,6 @@ SELECT *
 FROM  test_tabella
 where IDTest = IDTestAtt;
 END //
-
 
 CREATE PROCEDURE `CreateAttribute`(
     in IDTabellaAtt int,
@@ -524,15 +490,6 @@ INSERT INTO attributo (IDTabella,Nome,Tipo,IsPK)
 VALUES (IDTabellaAtt,NomeAtt,TipoAtt,IsPKAtt);
 END //
 
-CREATE PROCEDURE `DropAttributo`(
-    in IDTabellaAtt int,
-    in NomeAtt varchar(45)
-)
-BEGIN
-DELETE FROM attributo
-WHERE IDTabella = IDTabellaAtt and Nome = NomeAtt;
-END //
-
 CREATE PROCEDURE `ViewAllAttributes`(in IDTabellaAtt int)
 BEGIN
 SELECT*
@@ -540,15 +497,7 @@ FROM attributo
 WHERE IDTabella = IDTabellaAtt;
 END //
 
-CREATE PROCEDURE `ViewAttributo`(in IDTabellaAtt int,
-                                 in NomeAtt varchar(45))
-BEGIN
-SELECT *
-FROM attributo
-WHERE IDTabella = IDTabellaAtt and Nome = NomeAtt;
-END //
-
-CREATE PROCEDURE `CreateCodice`(
+CREATE PROCEDURE `CreateCodeQuestion`(
     in IDTestAtt int,
     in IDAtt int,
     in TextAtt varchar(45),
@@ -560,7 +509,7 @@ INSERT INTO Codice (IDTest,ID, Descrizione, Output, Difficolta)
 VALUES (IDTestAtt,IDAtt,TextAtt,OutputAtt,DiffAtt);
 END //
 
-CREATE PROCEDURE `DropCodice`(
+CREATE PROCEDURE `DropCodeQuestion`(
     in IDAtt int,
     in IDTestAtt int
 )
@@ -569,29 +518,22 @@ DELETE FROM Codice
 WHERE ID = IDAtt and IDTest = IDTestAtt;
 END //
 
-CREATE PROCEDURE `ViewAllCodice`(in IDTestAtt int)
+CREATE PROCEDURE `ViewAllCodeQuestions`(in IDTestAtt int)
 BEGIN
 SELECT*
 FROM codice
 WHERE IDTest = IDTestAtt;
 END //
 
-CREATE PROCEDURE `ViewSqlCodice`(in IDTestAtt int)
+CREATE PROCEDURE `ViewSqlCode`(in IDTestAtt int)
 BEGIN
 SELECT codice.ID, codice.Output
 FROM codice
 WHERE IDTest = IDTestAtt;
 END //
 
-CREATE PROCEDURE `ViewCodice`(in IDAtt int)
-BEGIN
-SELECT*
-FROM codice
-WHERE ID = IDAtt;
-END //
 
-
-CREATE PROCEDURE `CreateDocente`(
+CREATE PROCEDURE `CreateProfessor`(
     in NomeAtt varchar(45),
     in CognomeAtt varchar(45),
     in MailAtt varchar(45),
@@ -615,24 +557,8 @@ BEGIN
 SELECT password FROM Docente WHERE mail = input_email;
 END //
 
-CREATE PROCEDURE `CheckDocente` (
-    IN MailAtt VARCHAR(45),
-    IN PasswordAtt VARCHAR(16),
-    OUT Risultato BOOLEAN
-)
-BEGIN
-    SET Risultato = FALSE;
-    IF EXISTS (
-        SELECT *
-        FROM Docente
-        WHERE Mail = MailAtt AND password = PasswordAtt
-    ) THEN
-        SET Risultato = TRUE;
-END IF;
-END//
 
-
-CREATE PROCEDURE `AddToGalleria`(
+CREATE PROCEDURE `AddToGallery`(
     in IDTestAtt int,
     in FotoAtt LONGBLOB
 )
@@ -641,7 +567,7 @@ INSERT INTO Galleria(IDTest,Foto)
 VALUES (IDTestAtt, FotoAtt);
 END //
 
-CREATE PROCEDURE `ViewFoto`(
+CREATE PROCEDURE `ViewPhoto`(
     in IDTestAtt int
 )
 BEGIN
@@ -650,9 +576,7 @@ FROM Galleria
 WHERE IDTest = IDTestAtt;
 END //
 
-
-
-CREATE PROCEDURE `CreateMessaggioDocente`(
+CREATE PROCEDURE `CreateProfessorMessage`(
     in TitoloAtt varchar(45),
     in TestoAtt varchar(500),
     in DataAtt DATETIME,
@@ -664,32 +588,7 @@ INSERT INTO messaggio_docente (Titolo, Testo, Data, IDTest, MailDocente)
 VALUES (TitoloAtt,TestoAtt,DataAtt,IDTestAtt,MailDocenteAtt);
 END //
 
-CREATE PROCEDURE `DropMessaggioDocente`(
-    in DataAtt DATETIME,
-    in IDTestAtt int
-)
-BEGIN
-DELETE FROM messaggio_docente
-WHERE
-    (Data = DataAtt and
-     IDTest = IDTestAtt)
-;
-END //
-
-CREATE PROCEDURE `ViewMessaggioDocente`(
-    in DataAtt DATETIME,
-    in IDTestAtt int
-)
-BEGIN
-SELECT *
-FROM messaggio_docente
-WHERE (
-          Data = DataAtt and
-          IDTest = IDTestAtt
-          );
-END //
-
-CREATE PROCEDURE `ViewMessaggiDocente`(
+CREATE PROCEDURE `ViewProfessorMessages`(
     in IDTestAtt int
 )
 BEGIN
@@ -700,7 +599,7 @@ WHERE
 END //
 
 
-CREATE PROCEDURE `CreateMessaggioStudente`(
+CREATE PROCEDURE `CreateStudentMessage`(
     in TitoloAtt varchar(45),
     in TestoAtt varchar(500),
     in DataAtt DATETIME,
@@ -712,32 +611,7 @@ INSERT INTO messaggio_Studente (Titolo, Testo, Data, IDTest, MailStudente)
 VALUES (TitoloAtt,TestoAtt,DataAtt,IDTestAtt,MailStudenteAtt);
 END //
 
-CREATE PROCEDURE `DropMessaggioStudente`(
-    in DataAtt DATETIME,
-    in IDTestAtt int
-)
-BEGIN
-DELETE FROM messaggio_Studente
-WHERE
-    (Data = DataAtt and
-     IDTest = IDTestAtt)
-;
-END //
-
-CREATE PROCEDURE `ViewMessaggioStudente`(
-    in DataAtt DATETIME,
-    in IDTestAtt int
-)
-BEGIN
-SELECT *
-FROM messaggio_Studente
-WHERE (
-          Data = DataAtt and
-          IDTest = IDTestAtt
-          );
-END //
-
-CREATE PROCEDURE `ViewMessaggiStudente`(
+CREATE PROCEDURE `ViewStudentMessages`(
     in IDTestAtt int
 )
 BEGIN
@@ -775,30 +649,12 @@ WHERE
         );
 END //
 
-CREATE PROCEDURE `ViewReferenze`(
-    in IDT1Att int,
-    in IDT2Att int,
-    in NomeAttributo1Att varchar(45),
-    in NomeAttributo2Att varchar(45)
-)
-BEGIN
-SELECT *
-FROM Referenze
-WHERE
-    (
-        IDT1 = IDT1Att and
-        IDT2 = IDT2Att and
-        NomeAttributo1 = NomeAttributo1Att and
-        NomeAttributo2 = NomeAttributo2Att
-        );
-END //
-
 
 CREATE PROCEDURE `CreateAnswer`(
     in IDAtt int,
     in IDTestAtt int,
     in IDScMulAtt int,
-    in TestoAtt varchar(45),
+    in TestoAtt varchar(255),
     in ISCorrectAtt int
 )
 BEGIN
@@ -824,7 +680,7 @@ WHERE IDTest = IDTestAtt and IDScMult = IDScMultAtt;
 END //
 
 
-CREATE PROCEDURE `CreateSceltaMultipla`(
+CREATE PROCEDURE `CreateMC`(
     in IDTestAtt int,
     in IDAtt int,
     in DescrizioneAtt varchar(255),
@@ -836,7 +692,7 @@ INSERT INTO Scelta_Multipla (IDTest,ID,Descrizione,NumRisposte,Difficolta)
 VALUES (IDTestAtt,IDAtt,DescrizioneAtt,NumRisposteAtt,DifficoltaAtt);
 END //
 
-CREATE PROCEDURE `DropSceltaMultipla`(
+CREATE PROCEDURE `DropMC`(
     in IDTestAtt int,
     in IDAtt varchar(45)
 )
@@ -845,15 +701,7 @@ DELETE FROM Scelta_Multipla
 WHERE IDTest = IDTestAtt and ID = IDAtt;
 END //
 
-CREATE PROCEDURE `ViewSceltaMultipla`(in IDTestAtt int,
-                                      in DescrizioneAtt varchar(255))
-BEGIN
-SELECT*
-FROM Scelta_Multipla
-WHERE IDTest = IDTestAtt and Descrizione = DescrizioneAtt;
-END //
-
-CREATE PROCEDURE `ViewAllSceltaMultipla`(in IDTestAtt int)
+CREATE PROCEDURE `ViewAllMC`(in IDTestAtt int)
 BEGIN
 SELECT *
 FROM Scelta_Multipla
@@ -861,7 +709,7 @@ WHERE IDTest = IDTestAtt;
 END //
 
 
-CREATE PROCEDURE `CreateStudente`(
+CREATE PROCEDURE `CreateStudent`(
     in NomeAtt varchar(45),
     in CognomeAtt varchar(45),
     in MailAtt varchar(45),
@@ -875,72 +723,7 @@ INSERT INTO Studente (Nome, Cognome ,Mail ,Matricola, AnnoImm, Telefono,Password
 VALUES (NomeAtt, CognomeAtt ,MailAtt ,MatricolaAtt, AnnoImmAtt, TelefonoAtt,PasswordAtt);
 END //
 
-CREATE PROCEDURE `DropStudente`(
-    in MailParam text
-)
-BEGIN
-DELETE FROM Studente
-WHERE Mail = MailParam;
-END //
-
-CREATE PROCEDURE `UpdateStudente`(
-    in NomeAtt text,
-    in CognomeAtt text,
-    in MailAtt text,
-    in MatricolaAtt varchar(16),
-    in AnnoImmAtt text,
-    in TelefonoAtt int)
-BEGIN
-UPDATE Studente
-SET
-    Nome = NomeAtt,
-    Cognome = CognomeAtt,
-    AnnoImm = AnnoImmAtt,
-    Matricola = MatricolaAtt,
-    Telefono = TelefonoAtt
-WHERE Mail = MailAtt;
-END //
-
-CREATE PROCEDURE `CheckStudente` (
-    IN MailAtt VARCHAR(45),
-    IN PasswordAtt VARCHAR(16),
-    OUT Risultato BOOLEAN
-)
-BEGIN
-    SET Risultato = FALSE;
-    IF EXISTS (
-        SELECT *
-        FROM studente
-        WHERE Mail = MailAtt AND password = PasswordAtt
-    ) THEN
-        SET Risultato = TRUE;
-END IF;
-END//
-
-
-CREATE PROCEDURE `UpdateStudenteTel`(
-    in MailAtt text,
-    in Tel int)
-BEGIN
-UPDATE Studente
-SET Telefono = Tel
-WHERE Mail = MailAtt;
-END //
-
-CREATE PROCEDURE `ViewAllStudenti`()
-BEGIN
-SELECT*
-FROM Studente;
-END //
-
-CREATE PROCEDURE `ViewStudente`(in Mail text)
-BEGIN
-SELECT *
-FROM Studente
-WHERE Studente.Mail = Mail;
-END //
-
-CREATE PROCEDURE `CreateSvolgimento`(
+CREATE PROCEDURE `CreateStudentTest`(
     in MailStudenteAtt varchar(45),
     in StatoAtt varchar(45),
     in IDTestAtt int
@@ -950,16 +733,7 @@ INSERT INTO Svolgimento (MailStudente,Stato,DataPrimaRisposta,DataUltimaRisposta
 VALUES (MailStudenteAtt,StatoAtt,null,null,IDTestAtt);
 END //
 
-CREATE PROCEDURE `DropSvolgimento`(
-    in IDTestAtt int,
-    in MailStudenteAtt varchar(45)
-)
-BEGIN
-DELETE FROM Svolgimento
-WHERE IDTest = IDTestAtt and MailStudente = MailStudenteAtt;
-END //
-
-CREATE PROCEDURE `ViewSvolgimento`(in IDTestAtt int,
+CREATE PROCEDURE `ViewStudentTest`(in IDTestAtt int,
                                    in MailStudenteAtt varchar(45))
 BEGIN
 SELECT*
@@ -967,14 +741,14 @@ FROM Svolgimento
 WHERE IDTest = IDTestAtt and MailStudente = MailStudenteAtt;
 END //
 
-CREATE PROCEDURE `ViewAllSvolgimento`(in MailStudenteAtt varchar(45))
+CREATE PROCEDURE `ViewAllStudentTest`(in MailStudenteAtt varchar(45))
 BEGIN
 SELECT*
 FROM Svolgimento
 WHERE MailStudente = MailStudenteAtt;
 END //
 
-CREATE PROCEDURE `ViewSvolgimentoByStatus`(in StatoAtt varchar(45),
+CREATE PROCEDURE `ViewStudentTestByStatus`(in StatoAtt varchar(45),
                                            in MailStudenteAtt varchar(45))
 BEGIN
 SELECT*
@@ -982,7 +756,7 @@ FROM Svolgimento
 WHERE Stato = StatoAtt and MailStudente = MailStudenteAtt;
 END //
 
-CREATE PROCEDURE `UpdateInizioSvolgimento`(
+CREATE PROCEDURE `UpdateStudentTestStart`(
     in IDTestAtt int,
     in MailStudenteAtt varchar(45),
     in DataPrimaRispostaAtt datetime)
@@ -992,7 +766,7 @@ SET DataPrimaRisposta = DataPrimaRispostaAtt
 WHERE IDTest = IDTestAtt and MailStudente = MailStudenteAtt;
 END //
 
-CREATE PROCEDURE `UpdateFineSvolgimento`(
+CREATE PROCEDURE `UpdateStudentTestEnd`(
     in IDTestAtt int,
     in MailStudenteAtt varchar(45),
     in DataUltimaRispostaAtt datetime)
@@ -1001,17 +775,6 @@ UPDATE svolgimento
 SET DataUltimaRisposta = DataUltimaRispostaAtt
 WHERE IDTest = IDTestAtt and MailStudente = MailStudenteAtt;
 END //
-
-CREATE PROCEDURE `UpdateStatoSvolgimento`(
-    in IDTestAtt int,
-    in MailStudenteAtt varchar(45), in StatoAtt varchar(45))
-
-BEGIN
-UPDATE svolgimento
-SET Stato = StatoAtt
-WHERE IDTest = IDTestAtt and MailStudente = MailStudenteAtt;
-END //
-
 
 CREATE PROCEDURE `CreateTable`(
     in MailAtt varchar(45),
@@ -1042,9 +805,17 @@ WHERE
     MailProfessore = mail;
 END//
 
-CREATE PROCEDURE `ViewTabella`(in ID int)
+CREATE PROCEDURE `ViewTable`(in ID int)
 BEGIN
 SELECT *
+FROM tabella
+WHERE
+    tabella.ID = ID ;
+END//
+
+CREATE PROCEDURE `ViewTableName`(in ID int)
+BEGIN
+SELECT Nome
 FROM tabella
 WHERE
     tabella.ID = ID ;
@@ -1065,7 +836,7 @@ VALUES (TitoloAtt,orario,VisualizzaRisposteAtt,MailDocenteAtt);
 SET IDAtt = LAST_INSERT_ID();
 END //
 
-CREATE PROCEDURE `UpdateVisualizzaRisposteTest`(
+CREATE PROCEDURE `ShowTestAnswers`(
     IN IDAtt INT
 )
 BEGIN
@@ -1074,46 +845,6 @@ SET VisualizzaRisposte = true
 WHERE ID = IDAtt;
 END //
 
-CREATE PROCEDURE `ViewTest`(
-    in IDAtt int
-)
-BEGIN
-SELECT *
-FROM Test
-WHERE ID = IDAtt;
-END //
-
-CREATE PROCEDURE `DropTest`(
-    in IDAtt int
-)
-BEGIN
-DELETE FROM Test
-WHERE ID = IDAtt;
-END //
-
-CREATE PROCEDURE  `DropAllTest`()
-BEGIN
-DELETE FROM Test
-where id NOT LIKE -1;
-END//
-
-CREATE PROCEDURE `ViewRispostaStudente`(
-    in StudenteAtt varchar(45), IDDomandaAtt int ,IDTestAtt int
-)
-BEGIN
-SELECT IDRisposta
-FROM RISPOSTA_SCELTA
-WHERE Studente = StudenteAtt and IDDomanda = IDDomandaAtt and IDTest = IDTestAtt;
-END //
-
-CREATE PROCEDURE `ViewCodiceStudente`(
-    in StudenteAtt varchar(45), IDDomandaAtt int ,IDTestAtt int
-)
-BEGIN
-SELECT CodiceRisposta
-FROM RISPOSTA_CODICE
-WHERE Studente = StudenteAtt and IDDomanda = IDDomandaAtt and IDTest = IDTestAtt;
-END //
 
 CREATE PROCEDURE `ViewStudentCodeAnswers`(
     in  IDTestAtt int,in StudenteAtt varchar(45)
@@ -1133,7 +864,7 @@ FROM RISPOSTA_SCELTA
 WHERE Studente = StudenteAtt and IDTest = IDTestAtt;
 END //
 
-CREATE PROCEDURE `UpdateRispostaStudente`(
+CREATE PROCEDURE `UpdateStudentMCAnswer`(
     in StudenteAtt varchar(45), in IDDomandaAtt int, in IDTestAtt int, in IDRispostaAtt int, in EsitoAtt boolean
 )
 BEGIN
@@ -1142,7 +873,7 @@ SET IDRisposta = IDRispostaAtt, Esito = EsitoAtt
 WHERE Studente = StudenteAtt and IDDomanda = IDDomandaAtt and IDTest = IDTestAtt;
 END //
 
-CREATE PROCEDURE `UpdateCodiceStudente`(
+CREATE PROCEDURE `UpdateStudentCodeAnswer`(
     in StudenteAtt varchar(45),in IDDomandaAtt int, in IDTestAtt int, in RispostaAtt varchar(500), in EsitoAtt boolean
 )
 BEGIN
@@ -1152,13 +883,19 @@ WHERE Studente = StudenteAtt and IDDomanda = IDDomandaAtt and IDTest = IDTestAtt
 END //
 
 
-CREATE PROCEDURE `ViewAllTest`(
+CREATE PROCEDURE `ViewAllTests`(
     in MailDocenteAtt varchar(45)
 )
 BEGIN
 SELECT *
 FROM Test
 WHERE MailDocente = MailDocenteAtt;
+END //
+
+CREATE PROCEDURE `ViewAllDBTests`()
+BEGIN
+SELECT *
+FROM Test;
 END //
 
 CREATE PROCEDURE `UpdateTestTitle`(
@@ -1171,7 +908,7 @@ SET Titolo = TitleAtt
 WHERE ID = IDAtt;
 END //
 
-CREATE PROCEDURE `CreateRispostaStudente`(
+CREATE PROCEDURE `CreateStudentMCAnswer`(
     in StudenteAtt varchar(45), in IDTestAtt int , in IDDomandaAtt int ,in IDRispostaAtt int, in EsitoAtt boolean
 )
 BEGIN
@@ -1179,7 +916,7 @@ INSERT INTO RISPOSTA_SCELTA(Studente,IDDomanda,IDRisposta,IDTest,Esito)
 VALUES (StudenteAtt,IDDomandaAtt,IDRispostaAtt,IDTestAtt,EsitoAtt);
 END//
 
-CREATE PROCEDURE `CreateCodiceStudente`(
+CREATE PROCEDURE `CreateStudentCodeAnswer`(
     in StudenteAtt varchar(45),in IDTestAtt int ,in IDDomandaAtt int , in CodiceRispostaAtt varchar(500), in EsitoAtt boolean
 )
 BEGIN
@@ -1225,42 +962,28 @@ SET CODICE.Output = OutputAtt
 WHERE ID = IdCodice and  IDTest = testId;
 END //
 
-CREATE PROCEDURE UpdateDescrizioneCodice(IN IdCodice int, in testId int, IN DescrizioneAtt varchar(255))
-BEGIN
-UPDATE CODICE
-SET Descrizione = DescrizioneAtt
-WHERE ID = IdCodice and  IDTest = testId;
-END //
-
-CREATE PROCEDURE UpdateDifficoltaCodice(IN IdCodice int, in testId int, IN DifficoltaAtt int)
-BEGIN
-UPDATE CODICE
-SET Difficolta = DifficoltaAtt
-WHERE ID = IdCodice and  IDTest = testId;
-END //
-
-CREATE PROCEDURE UpdateAnswer(IN IdAtt int, in testId int, IN IDScMultAtt int, in testoAtt varchar(45),in IsCorrettaAtt int)
+CREATE PROCEDURE UpdateAnswer(IN IdAtt int, in testId int, IN IDScMultAtt int, in testoAtt varchar(255),in IsCorrettaAtt int)
 BEGIN
 UPDATE SCELTA
 SET Testo = testoAtt AND IsCorretta = IsCorrettaAtt
 WHERE ID = IdAtt and  IDTest = testId and IDScMult = IDScMultAtt;
 END //
 
-CREATE PROCEDURE UpdateSceltaMultiplaNumeroRisposte(IN IdAtt int, in testId int,in Numero int)
+CREATE PROCEDURE UpdateNumMCAnswers(IN IdAtt int, in testId int,in Numero int)
 BEGIN
 UPDATE SCELTA_MULTIPLA
 SET NumRisposte = NumRisposte + numero
 WHERE ID = IdAtt and  IDTest = testId;
 END //
 
-CREATE PROCEDURE UpdateSceltaMultiplaDifficolta(IN IdAtt int, in testId int,in DifficoltaAtt varchar(45))
+CREATE PROCEDURE UpdateMCDifficulty(IN IdAtt int, in testId int,in DifficoltaAtt varchar(45))
 BEGIN
 UPDATE SCELTA_MULTIPLA
 SET Difficolta = DifficoltaAtt
 WHERE ID = IdAtt and  IDTest = testId;
 END //
 
-CREATE PROCEDURE UpdateSceltaMultiplaDescrizione(IN IdAtt int, in testId int,in DescrizioneAtt varchar(255))
+CREATE PROCEDURE UpdateMCDescription(IN IdAtt int, in testId int,in DescrizioneAtt varchar(255))
 BEGIN
 UPDATE SCELTA_MULTIPLA
 SET Descrizione = DesrizioneAtt

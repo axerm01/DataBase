@@ -10,11 +10,11 @@ class Table {
         $q = 'CALL CreateTable(?,?,?,@lastID);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('sss',  $professorEmail, $name, $creationDate);
         if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
+            throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
         }
 
         $result = $con->query("SELECT @lastID as lastID");
@@ -34,7 +34,7 @@ class Table {
         global $con;
 
         if (empty($columns)) {
-            return"La lista delle colonne è vuota.";
+            throw new Exception ( "La lista delle colonne è vuota.");
         }
 
         $columnDefinitions = [];
@@ -57,10 +57,10 @@ class Table {
 
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            return "Errore nella preparazione della query: " . $con->error;
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
         }
         if (!$stmt->execute()) {
-            return "Errore nell'esecuzione della query: " . $stmt->error;
+            throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
 
@@ -154,11 +154,11 @@ class Table {
             $stmt->bind_param($types, ...$insertValues);
 
             if (!$stmt->execute()) {
-                return "Errore nell'esecuzione della query: " . $stmt->error;
+                throw new Exception ( "Errore nell'esecuzione della query: " . $stmt->error);
             }
             $stmt->close();
         } else {
-            return "Errore nella preparazione della query: " . $con->error;
+            throw new Exception ( "Errore nella preparazione della query: " . $con->error);
         }
         $con->close();
         logMongo("Righe aggiunte alla tabella ".$title);
@@ -171,20 +171,20 @@ class Table {
         global $con;
         $tableQuery = $con->prepare("CALL DropTable(?,?)");
         if ($tableQuery === false) {
-            $result = "Errore nella preparazione della query: " . $con->error;
+            throw new Exception ( "Errore nella preparazione della query: " . $con->error);
         }
         $tableQuery->bind_param('is', $tableId, $name);
         if (!$tableQuery->execute()) {
-            $result = "Errore nell'esecuzione della query: " . $tableQuery->error;
+            throw new Exception ("Errore nell'esecuzione della query: " . $tableQuery->error);
         }
         $tableQuery->close();
 
         $tableQuery = $con->prepare("DROP TABLE IF EXISTS ".$name);
         if ($tableQuery === false) {
-            $result = "Errore nella preparazione della query 2: " . $con->error;
+            throw new Exception ( "Errore nella preparazione della query 2: " . $con->error);
         }
         if (!$tableQuery->execute()) {
-            $result = "Errore nell'esecuzione della query 2: " . $tableQuery->error;
+            throw new Exception ( "Errore nell'esecuzione della query 2: " . $tableQuery->error);
         }
         $tableQuery->close();
 
@@ -197,11 +197,11 @@ class Table {
         $q = 'CALL ViewAllTables(?);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('s', $profEmail);
         if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
+            throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
         }
 
         $result = $stmt->get_result();
@@ -219,22 +219,21 @@ class Table {
     public static function getTableName($tableID)
     {
         global $con;
-        $queryNomeTabella = "SELECT Nome FROM tabella WHERE ID = ?";
+        $queryNomeTabella = "CALL ViewTableName(?)";
         $stmt1 = $con->prepare($queryNomeTabella);
         if ($stmt1 === false) {
-            die("Errore nella preparazione della query: " . $con->error);
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
         }
-
         $stmt1->bind_param('i', $tableID);
         if (!$stmt1->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt1->error);
+            throw new Exception ("Errore nell'esecuzione della query: " . $stmt1->error);
         }
 
         $resultNomeTabella = $stmt1->get_result();
         if ($row = $resultNomeTabella->fetch_assoc()) {
             $tableName = $row['Nome'];
         } else {
-            die("Nessuna tabella trovata con l'ID specificato");
+            throw new Exception ("Nessuna tabella trovata con l'ID specificato");
         }
         $stmt1->close();
         return $tableName;
@@ -247,10 +246,10 @@ class Table {
         $q = "SELECT * FROM ".$tableName;
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            die("Errore nella preparazione della query: " . $con->error);
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
         }
         if (!$stmt->execute()) {
-            die("Errore nell'esecuzione della query: " . $stmt->error);
+            throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
         }
 
         $result = $stmt->get_result();
@@ -260,21 +259,20 @@ class Table {
             $data[] = $row;
         }
         $stmt->close();
-
         return $data;
     }
 
     public static function getTableHeader($tableID)
     {
         global $con;
-        $q = 'CALL ViewTabella(?);';
+        $q = 'CALL ViewTable(?);';
         $stmt = $con->prepare($q);
         if ($stmt === false) {
-            return "Errore nella preparazione della query: " . $con->error;
+            throw new Exception( "Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('i', $tableID);
         if (!$stmt->execute()) {
-            return "Errore nell'esecuzione della query: " . $stmt->error;
+            throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
         }
 
         $result = $stmt->get_result();
@@ -294,10 +292,14 @@ class Table {
 
     public static function getTestTables($testId) {
             global $con;
-
             $tableQuery = $con->prepare("CALL ViewAllTT(?)");
+            if ($tableQuery === false) {
+                throw new Exception( "Errore nella preparazione della query: " . $con->error);
+            }
             $tableQuery->bind_param('i', $testId);
-            $tableQuery->execute();
+            if (!$tableQuery->execute()) {
+                throw new Exception ("Errore nell'esecuzione della query: " . $tableQuery->error);
+            }
             $result = $tableQuery->get_result();
             $content = [];
             while ($row = $result->fetch_assoc()) {
@@ -314,19 +316,15 @@ class Table {
         global $con;
         $stmt = $con->prepare("CALL CheckIfNameExists(?, @result)");
         if ($stmt === false) {
-            return"Errore nella preparazione della query: " . $con->error;
+            throw new Exception("Errore nella preparazione della query: " . $con->error);
         }
         $stmt->bind_param('s', $nome);
         if (!$stmt->execute()) {
-            return "Errore nell'esecuzione della query: " . $stmt->error;
+            throw new Exception( "Errore nell'esecuzione della query: " . $stmt->error);
         }
 
         $result = $con->query("SELECT @result AS result")->fetch_assoc();
         $stmt->close();
         return (bool) $result['result'];
     }
-
-
-
-
 }
