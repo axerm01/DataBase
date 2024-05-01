@@ -621,76 +621,18 @@
     <script>
         function pickupData() {
             var sendDataTest = {
-                testId: testID, // VOLENDO POSSO PASSARE ANCHE L'ID
-                questions: [], // Questo sarà riempito con le domande
-                tables: excludeElements(tables, elements), // Assumo che 'tables' sia già un array di oggetti come mostrato
-                constraints: [], // Questo dovrà essere riempito con i vincoli definiti
+                testId: testID,
                 viewAnswersPermission: $('#viewAnswersPermission').is(':checked') // Raccoglie il valore del checkbox
             };
-            // Raccoglie tutte le domande
-            let questionId = QID + 1;
-            $('#questionsContainer .question').each(function() {
-                const questionType = $(this).data('question-type'); // Legge il tipo di domanda
-                const questionText = $(this).find('.question-input').val();
-                const difficultyLevel = $(this).find('.difficulty-select').val(); // Raccoglie il livello di difficoltà selezionato
-
-                if (questionType === 'mc') {
-                    var answers = [];
-                    let answerId = 1;
-                    $(this).find('.answer').each(function() {
-                        var answerText = $(this).find('.answer-input').val();
-                        var isCorrect = $(this).find('.correct-checkbox').is(':checked');
-                        answers.push({ id: answerId, text: answerText, isCorrect: isCorrect });
-                        answerId++;
-                    });
-                    sendDataTest.questions.push({ type: "mc", id: questionId, questionText: questionText, answers: answers, difficulty: difficultyLevel });
-                } else if (questionType === 'code') {
-                    var sqlCode = $(this).find('.code-textarea').val();
-                    sendDataTest.questions.push({ type: "code", id: questionId, questionText: questionText, sqlCode: sqlCode, difficulty: difficultyLevel });
-                }
-                questionId++;
-            });
-            // Raccogliere dati dei vincoli  
-            $('.flex-container').each(function(index) {
-                // Utilizzo l'index per costruire l'ID unico, basandomi sul tuo schema di naming
-                var uniqueId = 'group-' + index; // Assicurati che questo corrisponda a come hai generato l'ID
-                var table1Id = $('#' + uniqueId + '-menuTable1').val();
-                var attribute1Id = $('#' + uniqueId + '-menuAttribute1').val();
-                var table2Id = $('#' + uniqueId + '-menuTable2').val();
-                var attribute2Id = $('#' + uniqueId + '-menuAttribute2').val();
-
-                var constraintData = {
-                    tab1: table1Id,
-                    att1: attribute1Id,
-                    tab2: table2Id,
-                    att2: attribute2Id
-                };
-                sendDataTest.constraints.push(constraintData);
-                //console.log(sendDataTest.constraints);
-            });
             console.log(sendDataTest);
             return sendDataTest;
         }
-        // Funzione per filtrare 'tables' escludendo gli oggetti presenti in 'elements'.
-function excludeElements(tables, elements) {
-    return tables.filter(table => !elements.some(element => element.id === table.id));
-}
 
         function submitFormTest() {
             var sendDataTest = pickupData();
             var formData = new FormData();
-
-            // Aggiunge i dati testuali al FormData
             formData.append("data", JSON.stringify(sendDataTest));
 
-
-            // Aggiunge il file immagine al FormData
-            /*var imageFile = document.getElementById('testImage').files[0];
-            if (imageFile) {
-                formData.append("testImage", imageFile);
-            }*/
-
-            // Aggiunge l'action al FormData
             formData.append("action" , "update_test");
             // Invio dei dati al file PHP tramite AJAX
             $.ajax({
@@ -700,14 +642,8 @@ function excludeElements(tables, elements) {
                 contentType: false, // Importante per il corretto invio di FormData
                 processData: false,
                 success: function(response) {
-                    let object = {};
-                    formData.forEach(function(value, key){
-                        object[key] = value;
-                    });
-                    console.log(JSON.stringify(sendDataTest));
-                    //console.log(JSON.stringify(object, null, 2));
                     alert(response); //risposta del server
-                    //window.location.reload(); // ricarica pagina
+                    window.history.back();
                 },
                 error: function(xhr, status, error) {
                     console.error("Errore durante l'invio dei dati:", status, error);
