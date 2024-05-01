@@ -10,301 +10,96 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="check_session.js"></script>
-
     <style>
-        
-        .question {
-            width: 90%;
-            margin-top: 10px;
-            border: 1px solid #ccc; 
-            border-radius: 5px; 
-            padding: 10px 20px 10px 20px;
-            background-color: #f9f9f9; 
-            text-align: left;
-            padding-left: 20px;
-        }
-        /*stile per difficolta*/
-        .question span,.question p{
-            float:inline-end;
-            color: #868686;
-            font-weight: bold;
-        }
-        /*Stile per le risposte*/
-        .question p{
-            padding-left: 70px;
-        }
+    .question {
+        width: 90%;
+        margin-top: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px 20px 10px 20px;
+        background-color: #f9f9f9;
+        text-align: left;
+        padding-left: 20px;
+    }
 
-        /* Styles for question input */
-        .question-input {
-            padding: 10px;
-            margin-top: 15px; 
-            border: 1px solid #ccc; 
-            border-radius: 5px; 
-            box-sizing: border-box; 
-            font-size: 16px; 
-            background-color: #f9f9f9; 
-            color: #333; 
-        }
-        .question input[type="text"] {
-            width: 500px;
-        }
+    .question span,
+    .question p {
+        float: inline-end;
+        color: #868686;
+        font-weight: bold;
+    }
 
-        /*Styles for check botton*/
-        .add-check-button {
-            background-color: #15c11e;
-            cursor: pointer; 
-            font-size: 12px;
-            color: #fff;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        /* Styles for "Elimina Quesito" button */
-        .delete-question-button {
-            background-color: #de1515;
-            cursor: pointer;
-            font-size: 12px;
-            width: 80px;
-            color: #fff;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        .delete-button {
-            background-color: #de1515;
-            cursor: pointer; 
-            font-size: 10px;
-            width: fit-content;
-            padding: 5px;
-            color: #fff;
-            border: white;
-            padding: 8px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-            margin-left: 10px;
-        }
+    .question p {
+        padding-left: 70px;
+    }
 
-        /* Styles for delete answer button */
-        .delete-answer-button {
-            background-color: #de1515;
-            color: #fff;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        /* Styles for inizial checkbox */
-        input[type="checkbox"] {
-            border-radius: 25%;
-            transform: scale(1.5); 
-        }
+    .question-input {
+        padding: 10px;
+        margin-top: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        font-size: 16px;
+        background-color: #f9f9f9;
+        color: #333;
+    }
 
-        .table-container {
-            display: inline-block;
-            flex-wrap: nowrap;
-            margin: 10px 5px 0px 5px;
-            font-size: small;
-            justify-content: center;
-            font-weight: bold;
+    .question input[type="text"] {
+        width: 500px;
+    }
 
-        }
-        table {
-            display: inline-table; 
-            border-collapse: collapse;
-        }
+    .add-check-button {
+        background-color: #15c11e;
+        cursor: pointer;
+        font-size: 12px;
+        color: #fff;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
 
-        th, td {
-            border: 1px solid #ddd;
-            padding: 5px; 
-        }
-        td{
-            font-weight: normal;
-            background-color: #fff; 
-        }
-        th{
-            background-color: #868686; 
-        }
-        .title-row th {
-            border: none; 
-            background-color: #c2c2c2; 
-            font-weight: bold;
-            text-align: center; 
-        }
+    .delete-question-button {
+        background-color: #de1515;
+        cursor: pointer;
+        font-size: 12px;
+        width: 80px;
+        color: #fff;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
 
-        .difficulty-select {
-            margin-top: 6px;
-            width: 100px; 
-            padding: 8px; 
-            border: 2px solid #ccc; 
-            border-radius: 5px; 
-            margin-right: 5px;
-            margin-left: 5px;
-        }
-        .image-preview {
-            max-width: 200px;
-            max-height: 200px;
-            margin-top: 20px;
-            border: 2px solid #ccc; 
-            border-radius: 5px; 
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        /* Stile del modale */
-        .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 1; /* Sopra tutto */
-            left: 0;
-            top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; /* Abilita lo scroll se necessario */
-            background-color: rgba(0,0,0,0.4);
-        }
+    .delete-button {
+        background-color: #de1515;
+        cursor: pointer;
+        font-size: 10px;
+        width: fit-content;
+        padding: 5px;
+        color: #fff;
+        border: white;
+        padding: 8px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+        margin-left: 10px;
+    }
 
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto; 
-            padding: 20px;
-            border: 1px solid #888;
-            width: fit-content;
-        }
+    .delete-answer-button {
+        background-color: #de1515;
+        color: #fff;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 12px;
+    }
 
-        .close-button {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close-button:hover,
-        .close-button:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .update-container { 
-            height: 100%;
-            width: 90%;
-            padding: 20px;
-            background-color: #fff;
-            display: block;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: flex-start; 
-        }
-        .title{
-            font-size: 28px; 
-            font-weight: bold;
-            color: rgb(0, 0, 0);
-            text-shadow: 2px 2px 4px rgba(76, 76, 76, 0.5);
-        }
-        #test{
-            display: flex;
-            width: 94%;
-            padding: 0px;
-            margin: 0px;
-            height: 100%;
-        }
-        #test-date {
-            display: flex;
-            flex-direction: row; 
-            flex-wrap: wrap;
-            width: 90%;
-            padding: 20px;
-            margin: 0px;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            align-items: flex-start;
-            justify-content: flex-start; 
-        }
-        #testContainer, #testContainer-prof {
-            flex: 1;
-            display: flex;
-            flex-direction: column; 
-            flex-wrap: wrap;
-            width: 100%;
-            height: 100%;
-            padding: 20px;
-            margin: 0px;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            align-items: flex-start;
-            justify-content: flex-start; 
-        }
-        #testContainer{
-            margin-right: 20px;
-        }
-        
-
-
-
-        .tableContainer-test {
-            background-color: #cdcdcdad;
-            margin: 10px; 
-            width: auto;
-        }
-
-        .refContainer-test {
-            background-color: #00000069;
-            color: #ffffff;
-            font-weight: bold;
-            border-radius: 30%;
-            margin: 5px; 
-            padding: 0px 10px 0px 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
-            width: auto;
-        }
-        .main-content{
-            display: flex;
-            align-items: center;
-            margin-left: 3%;
-        }
-        .image-container {
-            border: 2px dashed #d3d3d3; 
-            padding: 0px;
-            margin: 0px;
-            width: fit-content;
-            text-align: center;
-            justify-content: center; 
-            align-items: center; 
-            margin-left: 10%;
-        }
-        .image-container img {
-            max-width: 150px;
-            height: auto;
-        }
-        .question-test-code, .question-test-mc {
-            width: 90%;
-            margin-top: 10px;
-            border: 1px solid #ccc; /* Add border around the question */
-            border-radius: 5px; /* Add rounded corners for the question box */
-            padding: 10px 20px 10px 20px; /* Add padding inside the question box */
-            background-color: #f9f9f9; /* Set background color for the question box */
-        }
-        .question-test-code, .question-test-mc {
-            text-align: left;
-            padding-left: 20px;
-        }
-        /*stile per difficolta*/
-        .question-test-mc span,.question-test-code p{
-            float:inline-end;
-            color: #868686;
-            font-weight: bold;
-        }
-        /*Stile per le risposte*/
-        .question-test-mc p{
-            padding-left: 70px;
-        }
-        .correct-answer {
-            color: green;
-            font-weight: bold;
-        }
-    </style>
-        
+    input[type="checkbox"] {
+        border-radius: 25%;
+        transform: scale(1.5);
+    }
+</style>
 </head>
 
 <body>
