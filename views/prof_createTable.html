@@ -10,67 +10,63 @@
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="check_session.js"></script>
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 20px;
+        table-layout: fixed;
+    }
 
-    <style>
-        /* Stile per la tabella */
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 20px; /* Aggiunge spazio tra il titolo della tabella e la tabella stessa */
-            table-layout: fixed; /* Fissa la larghezza delle celle */
-        }
+    table td {
+        border: none;
+        padding: 5px;
+        text-align: left;
+    }
 
-        /* Stile per le celle della tabella */
-        table td {
-            border: none; /* Rimuove il bordo delle celle */
-            padding: 5px; /* Riduce lo spazio tra le celle di riga in riga */
-            text-align: left;
-        }
+    input[type="title"] {
+        border: 2px solid #333;
+        padding: 5px;
+        width: 50%;
+    }
+    input[type="text_attr"] {
+        border: 2px solid #333;
+        padding: 5px;
+        width: 80%;
+    }
+    input[type="text"] {
+        border: 2px solid #333;
+        padding: 5px;
+        width: 50%;
+        margin-left: 20px;
+    }
+    select {
+        border: 2px solid #333;
+        padding: 5px;
+        width: 50%;
+        margin-left: 20px;
+        margin-top: 5px;
+    }
 
-        /* Stile per i campi di input */
-        input[type="title"] {
-            border: 2px solid #333; /* Ingrossa il bordo dei campi di input */
-            padding: 5px;
-            width: 50%; /* Allinea il bordo destro di tutte le celle */
-        }
-        input[type="text_attr"] {
-            border: 2px solid #333; /* Ingrossa il bordo dei campi di input */
-            padding: 5px;
-            width: 80%; /* Allinea il bordo destro di tutte le celle */
-        }
-        input[type="text"] {
-            border: 2px solid #333; /* Ingrossa il bordo dei campi di input */
-            padding: 5px;
-            width: 50%;
-            margin-left: 20px;
-        }
-        select {
-            border: 2px solid #333; /* Ingrossa il bordo del menu a discesa */
-            padding: 5px;
-            width: 50%; /* Allinea il bordo destro di tutte le celle */
-            margin-left: 20px;
-            margin-top: 5px;
-        }
-        /* Aggiungi stile per la casella di spunta "PK" */
-        input[type="checkbox"] {
-            margin-right: 5px; /* Aggiungi un margine a destra per separare la casella di spunta dal testo */
-            transform: scale(1.5); /* Aumenta leggermente le dimensioni della casella di spunta */
-            margin-left: 15px;
-        }
-        .checkbox-label {
-            font-size: 14px;
-        }
-        .deleteButton{
-            color: white;
-            background-color: #be2525;
-            border: none;
-            cursor: pointer;
-            padding: 5px 10px;
-            border-radius: 80%;
-            margin-left: 5px;
-            transform: scale(0.8);
-        }
-    </style>
+    input[type="checkbox"] {
+        margin-right: 5px;
+        transform: scale(1.5);
+        margin-left: 15px;
+    }
+    .checkbox-label {
+        font-size: 14px;
+    }
+    .deleteButton{
+        color: white;
+        background-color: #be2525;
+        border: none;
+        cursor: pointer;
+        padding: 5px 10px;
+        border-radius: 80%;
+        margin-left: 5px;
+        transform: scale(0.8);
+    }
+</style>
 </head>
 
 <body>
@@ -299,8 +295,6 @@
             }
 
         }
-
     </script>
-    
 </body>
 </html>
