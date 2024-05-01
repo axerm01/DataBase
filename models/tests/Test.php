@@ -168,19 +168,42 @@ class Test {
         return $data;
     }
 
-    public static function updateVisualizzaRisposte($testId) {
+    public static function getTestViewResponses($testId) {
         global $con;
-
-        $stmt = $con->prepare("CALL ShowTestAnswers(?)");
+        $q = 'CALL CanViewResponses(?);';
+        $stmt = $con->prepare($q);
         if ($stmt === false) {
             throw new Exception ("Errore nella preparazione della query: " . $con->error);
         }
-        $stmt->bind_param('i', $testId);
+        $stmt->bind_param('i', $testId );
+        if (!$stmt->execute()) {
+            throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
+        }
+
+        $result = $stmt->get_result();
+        $data = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;
+        }
+
+        $stmt->close();
+        return $data;
+    }
+
+    public static function updateVisualizzaRisposte($testId, $condition) {
+        global $con;
+
+        $stmt = $con->prepare("CALL ShowTestAnswers(?,?)");
+        if ($stmt === false) {
+            throw new Exception ("Errore nella preparazione della query: " . $con->error);
+        }
+        $stmt->bind_param('ii', $testId, $condition);
         if (!$stmt->execute()) {
             throw new Exception ("Errore nell'esecuzione della query: " . $stmt->error);
         }
         $stmt->close();
-        return "Aggiornato Visualizza Risoste a True";
+        return "Aggiornato Visualizza Risoste";
     }
 
     public static function deleteTableTestLink($list, $testId){
@@ -201,14 +224,14 @@ class Test {
         return "deleteTableTestLink Ok";
     }
 
-    public static function checkIfTestNameExists($nome, $email) {
+    public static function checkIfTestNameExists($nome) {
         global $con;
 
-        $stmt = $con->prepare("CALL CheckIfTestNameExists(?,?, @result)");
+        $stmt = $con->prepare("CALL CheckIfTestNameExists(?, @result)");
         if ($stmt === false) {
             throw new Exception("Errore nella preparazione della query: " . $con->error);
         }
-        $stmt->bind_param('ss', $nome, $email);
+        $stmt->bind_param('s', $nome);
         if (!$stmt->execute()) {
             throw new Exception("Errore nell'esecuzione della query: " . $stmt->error);
         }

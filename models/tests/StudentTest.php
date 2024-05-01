@@ -92,12 +92,14 @@ class StudentTest {
 
         $references = Reference::getReferencesByTableIds($tableIDs);
         $image = Test::getTestImage($testId);
+        $visualizzaRisposte = Test::getTestViewResponses($testId);
 
         $test = [];
         $test['image'] = $image;
         $test['questions'] = $questions;
         $test['tables'] = $tables;
         $test['references'] = $references;
+        $test['canViewResponses'] = $visualizzaRisposte;
 
         return $test;
     }

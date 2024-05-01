@@ -308,12 +308,18 @@ ORDER BY
 
 
 DELIMITER //
+
 CREATE TRIGGER ViewAnswersConclusion AFTER UPDATE ON test
-    FOR EACH ROW BEGIN
+    FOR EACH ROW
+BEGIN
     IF NEW.VisualizzaRisposte = TRUE THEN
     UPDATE Svolgimento
-    SET svolgimento.Stato = 'Concluso'
-    WHERE svolgimento.IDTest = NEW.ID;
+    SET Stato = 'Concluso'
+    WHERE IDTest = NEW.ID;
+    ELSEIF NEW.VisualizzaRisposte = FALSE THEN
+    UPDATE Svolgimento
+    SET Stato = 'InCompletamento'
+    WHERE IDTest = NEW.ID;
 END IF;
 END//
 
@@ -837,11 +843,12 @@ SET IDAtt = LAST_INSERT_ID();
 END //
 
 CREATE PROCEDURE `ShowTestAnswers`(
-    IN IDAtt INT
+    IN IDAtt INT,
+    IN myCondition BOOLEAN
 )
 BEGIN
 UPDATE test
-SET VisualizzaRisposte = true
+SET VisualizzaRisposte = myCondition
 WHERE ID = IDAtt;
 END //
 
@@ -882,6 +889,14 @@ SET CodiceRisposta = RispostaAtt, Esito = EsitoAtt
 WHERE Studente = StudenteAtt and IDDomanda = IDDomandaAtt and IDTest = IDTestAtt;
 END //
 
+CREATE PROCEDURE `CanViewResponses`(
+    in IDAtt int
+)
+BEGIN
+SELECT VisualizzaRisposte
+FROM Test
+WHERE ID = IDAtt;
+END //
 
 CREATE PROCEDURE `ViewAllTests`(
     in MailDocenteAtt varchar(45)
@@ -940,13 +955,13 @@ ELSE
 END IF;
 END //
 
-CREATE PROCEDURE CheckIfTestNameExists(IN nomeInput VARCHAR(45), IN mail VARCHAR(45), OUT result BOOLEAN)
+CREATE PROCEDURE CheckIfTestNameExists(IN nomeInput VARCHAR(45), OUT result BOOLEAN)
 BEGIN
     DECLARE countName INT;
 
 SELECT COUNT(*) INTO countName
 FROM Test
-WHERE Titolo = nomeInput AND MailDocente = mail;
+WHERE Titolo = nomeInput;
 
 IF countName > 0 THEN
         SET result = TRUE;

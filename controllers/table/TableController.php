@@ -105,10 +105,8 @@ function saveTable($data) {
         $response .= Table::createNewTable($decodedData['title'], $decodedData['attributes']);
         $response .= Table::fillTableRows($decodedData['rows'], $decodedData['attributes'], $decodedData['title']);
     } catch (Exception $e) {
-        $response = "Errore durante il salvataggio dell'attributo: " . $e->getMessage();
+        $response = "Errore durante il salvataggio della tabella: " . $e->getMessage();
     }
-
-
     return $response;
 }
 function updateTable($data, $title) {

@@ -1,6 +1,6 @@
 <?php
 //Connessione a MySql
-    $con = mysqli_connect("localhost","root","Impeto02@","esql");
+    $con = mysqli_connect("localhost","root","Password","esqldb");
     if(!$con)
     {
         die("cannot connect to server");

@@ -11,307 +11,316 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="check_session.js"></script>
 
-<style>
-    .question {
-        margin-top: 20px;
-        border: 1px solid #ccc; 
-        border-radius: 5px; 
-        padding: 15px;
-        background-color: #f9f9f9; 
-        margin-right: 10px;
-    }
-    .question-test-code, .question-test-mc {
-        width: 90%;
-        margin-top: 10px;
-        border: 1px solid #ccc; 
-        border-radius: 5px; 
-        padding: 10px 20px 10px 20px; 
-        background-color: #f9f9f9;
-    }
-    .question-test-code, .question-test-mc {
-        text-align: left;
-        padding-left: 20px;
-    }
-    .question-test-mc span,.question-test-code p{
-        float:inline-end;
-        color: #868686;
-        font-weight: bold;
-    }
-    .question-test-mc p{
-        padding-left: 70px;
-    }
+    <style>
+        /* Styles for questions ..*/
+        .question {
+            /*width: 100vh;*/
+            margin-top: 20px;
+            border: 1px solid #ccc; /* Add border around the question */
+            border-radius: 5px; /* Add rounded corners for the question box */
+            padding: 15px; /* Add padding inside the question box */
+            background-color: #f9f9f9; /* Set background color for the question box */
+            margin-right: 10px;
+        }
+        .question-test-code, .question-test-mc {
+            width: 90%;
+            margin-top: 10px;
+            border: 1px solid #ccc; /* Add border around the question */
+            border-radius: 5px; /* Add rounded corners for the question box */
+            padding: 10px 20px 10px 20px; /* Add padding inside the question box */
+            background-color: #f9f9f9; /* Set background color for the question box */
+        }
+        .question-test-code, .question-test-mc {
+            text-align: left;
+            padding-left: 20px;
+        }
+        /*stile per difficolta*/
+        .question-test-mc span,.question-test-code p{
+            color: #868686;
+            font-weight: bold;
+        }
+        /*Stile per le risposte*/
+        .question-test-mc p{
+            padding-left: 70px;
+        }
 
-    .correct-answer {
-        color: green;
-        font-weight: bold;
-    }
+        .correct-answer {
+            color: green;
+            font-weight: bold;
+        }
 
-    .question-input {
+
+        /* Styles for question input */
+        .question-input {
+            /*width: 500px; /* Make the input field occupy the full width of its container */
+            padding: 10px; /* Add padding for better visual appeal */
+            margin-top: 15px; /* Add some spacing below the input */
+            border: 1px solid #ccc; /* Add a border for clarity */
+            border-radius: 5px; /* Add rounded corners for a softer look */
+            box-sizing: border-box; /* Include padding and border in the width calculation */
+            font-size: 16px; /* Increase font size for better readability */
+            background-color: #f9f9f9; /* Add a light background color */
+            color: #333; /* Set text color */
+        }
         .question input[type="text"] {
             width: 500px;
         }
 
-    .answer {
-        display: flex;
-        align-items: center;
-        margin-bottom: 10px;
-    }
+        /* Styles for answers */
+        .answer {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
 
-    .answer input[type="text"] {
-        flex: 1;
-        margin-right: 10px;
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
+        /* Styles for answer input */
+        .answer input[type="text"] {
+            flex: 1;
+            margin-right: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
 
-    .answer input[type="checkbox"] {
-        margin-right: 5px;
-        transform: scale(1.5); 
-        margin-left: 10px;
-    }
+        /* Styles for answer checkbox */
+        .answer input[type="checkbox"] {
+            margin-right: 5px;
+            transform: scale(1.5); 
+            margin-left: 10px;
+        }
 
-    .add-answer-button {
-        background-color: #007bff;
-        cursor: pointer;
-        font-size: 12px;
-        color: #fff;
-        border: none;
-        padding: 8px 20px;
-        border-radius: 5px;
-        transition: background-color 0.3s;
-    }
+        /* Styles for add answer button */
+        .add-answer-button {
+            background-color: #007bff;
+            cursor: pointer;
+            font-size: 12px;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        /*Styles for check botton*/
+        .add-check-button {
+            background-color: #15c11e;
+            cursor: pointer; 
+            font-size: 12px;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        /* Styles for "Elimina Quesito" button */
+        .delete-question-button {
+            background-color: #de1515;
+            cursor: pointer;
+            font-size: 12px;
+            width: 80px;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .delete-button {
+            background-color: #de1515;
+            cursor: pointer; /*modifica il cursore del mouse quando va sopra*/
+            font-size: 10px;
+            width: fit-content;
+            padding: 5px;
+            color: #fff;
+            border: white;
+            padding: 8px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            margin-left: 10px;
+        }
 
-    .add-check-button {
-        background-color: #15c11e;
-        cursor: pointer; 
-        font-size: 12px;
-        color: #fff;
-        border: none;
-        padding: 8px 20px;
-        border-radius: 5px;
-        transition: background-color 0.3s;
-    }
+        /* Styles for delete answer button */
+        .delete-answer-button {
+            background-color: #de1515;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        /* Styles for MySQL code textarea */
+        .code-textarea {
+            width: 100%; /* Make the textarea occupy the full width of its container */
+            height: 100px; /* Set the height as needed */
+            padding: 10px; /* Add padding for better visual appeal */
+            margin-top: 15px; /* Add some spacing above the textarea */
+            border: 1px solid #ccc; /* Add a border for clarity */
+            border-radius: 5px; /* Add rounded corners for a softer look */
+            box-sizing: border-box; /* Include padding and border in the width calculation */
+            font-size: 16px; /* Set font size */
+            background-color: #f9f9f9; /* Add a light background color */
+            color: #333; /* Set text color */
+        }
+        /* Styles for inizial checkbox */
+        input[type="checkbox"] {
+            border-radius: 25%;
+            transform: scale(1.5); 
+        }
 
-    .delete-question-button {
-        background-color: #de1515;
-        cursor: pointer;
-        font-size: 12px;
-        width: 80px;
-        color: #fff;
-        border: none;
-        padding: 8px 20px;
-        border-radius: 5px;
-        transition: background-color 0.3s;
-    }
+        .table-container {
+            display: inline-block;
+            flex-wrap: nowrap;
+            margin: 10px 5px 0px 5px;
+            font-size: small;
+            justify-content: center;
+            font-weight: bold;
 
-    .delete-button {
-        background-color: #de1515;
-        cursor: pointer;
-        font-size: 10px;
-        width: fit-content;
-        padding: 5px;
-        color: #fff;
-        border: white;
-        padding: 8px 20px;
-        border-radius: 5px;
-        transition: background-color 0.3s;
-        margin-left: 10px;
-    }
+        }
+        table {
+            display: inline-table; /* Mantiene le tabelle in linea */
+            border-collapse: collapse; /* Per una migliore visualizzazione delle tabelle */
+        }
 
-    .delete-answer-button {
-        background-color: #de1515;
-        color: #fff;
-        border: none;
-        padding: 8px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 12px;
-    }
+        th, td {
+            border: 1px solid #ddd; /* Stile dei bordi */
+            padding: 5px; /* Padding delle celle */
+        }
+        td{
+            font-weight: normal;
+            background-color: #fff; /* Colore di sfondo delle celle dell'intestazione */
+        }
+        th{
+            background-color: #868686; /* Colore di sfondo delle celle dell'intestazione */
+        }
+        .title-row th {
+            border: none; /* Rimuove i bordi dalle celle nella riga del titolo */
+            background-color: #c2c2c2; /* Colore di sfondo per la riga del titolo */
+            font-weight: bold;
+            text-align: center; /* Centra il testo nella cella del titolo */
+        }
 
-    .code-textarea {
-        width: 100%;
-        height: 100px; 
-        padding: 10px; 
-        margin-top: 15px; 
-        border: 1px solid #ccc; 
-        border-radius: 5px;
-        box-sizing: border-box;
-        font-size: 16px; 
-        background-color: #f9f9f9; 
-        color: #333;
-    }
+        .difficulty-select {
+            margin-top: 6px;
+            width: 100px; /* Aggiungi larghezza */
+            padding: 8px; /* Aggiungi padding */
+            border: 2px solid #ccc; /* Aggiungi bordo */
+            border-radius: 5px; /* Aggiungi bordi arrotondati */
+            margin-right: 5px;
+            margin-left: 5px;
+        }
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin-top: 20px;
+            border: 2px solid #ccc; /* Bordo simile a quello usato per i dropdown */
+            border-radius: 5px; /* Bordi arrotondati come i menu a tendina */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Ombra per dare profondità, simile al container */
+        }
+        /* Stile del modale */
+        .modal {
+            display: none; /* Nascosto di default */
+            position: fixed; /* Rimane fermo in posizione */
+            z-index: 1; /* Sopra tutto */
+            left: 0;
+            top: 0;
+            width: 100%; /* Larghezza */
+            height: 100%; /* Altezza piena */
+            overflow: auto; /* Abilita lo scroll se necessario */
+            background-color: rgb(0,0,0); /* Colore di sfondo */
+            background-color: rgba(0,0,0,0.4); /* Colore di sfondo con opacità */
+        }
 
-    input[type="checkbox"] {
-        border-radius: 25%;
-        transform: scale(1.5); 
-    }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% dal top e centrato orizzontalmente */
+            padding: 20px;
+            border: 1px solid #888;
+            width: fit-content; /* Puoi regolare questa larghezza come preferisci */
+        }
 
-    .table-container {
-        display: inline-block;
-        flex-wrap: nowrap;
-        margin: 10px 5px 0px 5px;
-        font-size: small;
-        justify-content: center;
-        font-weight: bold;
-    }
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
 
-    table {
-        display: inline-table;
-        border-collapse: collapse;
-    }
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
 
-    th, td {
-        border: 1px solid #ddd; 
-        padding: 5px; 
-    }
+        .update-container { 
+            height: 100%;
+            width: 90%;
+            padding: 20px;
+            background-color: #fff;
+            display: block;
+            flex-wrap: wrap;
+            justify-content: center; /* Centra i contenitori delle tabelle orizzontalmente */
+            align-items: flex-start; /* Opzionale, allinea i contenitori delle tabelle in alto */
+        }
+        .title{
+            font-size: 28px; 
+            font-weight: bold;
+            color: rgb(0, 0, 0);
+            text-shadow: 2px 2px 4px rgba(76, 76, 76, 0.5);
+        }
+        #testContainer {
+            display: flex;
+            flex-direction: row; /* Imposta le tabelle in orizzontale */
+            flex-wrap: wrap; /* Permette agli elementi di andare a capo quando necessario */
+            width: 90%;
+            padding: 20px;
+            margin: auto;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            align-items: flex-start; /* Allinea le tabelle all'inizio del contenitore in verticale */
+            justify-content: flex-start; /* Allinea le tabelle all'inizio del contenitore in orizzontale */
+        }
 
-    td {
-        font-weight: normal;
-        background-color: #fff; 
-    }
 
-    th {
-        background-color: #868686; 
-    }
+        .tableContainer-test {
+            background-color: #cdcdcdad;
+            margin: 10px; /* Aggiunge un margine tra le tabelle */
+            width: auto; /* Imposta la larghezza automaticamente in base al contenuto interno */
+        }
 
-    .title-row th {
-        border: none; 
-        background-color: #c2c2c2; 
-        font-weight: bold;
-        text-align: center; 
-    }
-
-    .difficulty-select {
-        margin-top: 6px;
-        width: 100px;
-        padding: 8px;
-        border: 2px solid #ccc;
-        border-radius: 5px;
-        margin-right: 5px;
-        margin-left: 5px;
-    }
-
-    .image-preview {
-        max-width: 200px;
-        max-height: 200px;
-        margin-top: 20px;
-        border: 2px solid #ccc;
-        border-radius: 5px; 
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
-    }
-
-    .modal {
-        display: none; 
-        position: fixed; 
-        z-index: 1; 
-        left: 0;
-        top: 0;
-        width: 100%; 
-        height: 100%; 
-        overflow: auto; 
-        background-color: rgb(0, 0, 0); 
-        background-color: rgba(0, 0, 0, 0.4); 
-    }
-
-    .modal-content {
-        background-color: #fefefe;
-        margin: 15% auto; 
-        padding: 20px;
-        border: 1px solid #888;
-        width: fit-content; 
-    }
-
-    .close-button {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-    }
-
-    .close-button:hover,
-    .close-button:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    .update-container { 
-        height: 100%;
-        width: 90%;
-        padding: 20px;
-        background-color: #fff;
-        display: block;
-        flex-wrap: wrap;
-        justify-content: center; 
-        align-items: flex-start; 
-    }
-
-    .title{
-        font-size: 28px; 
-        font-weight: bold;
-        color: rgb(0, 0, 0);
-        text-shadow: 2px 2px 4px rgba(76, 76, 76, 0.5);
-    }
-
-    #testContainer {
-        display: flex;
-        flex-direction: row; 
-        flex-wrap: wrap; 
-        width: 90%;
-        padding: 20px;
-        margin: auto;
-        border: 2px solid #ccc;
-        border-radius: 5px;
-        align-items: flex-start; 
-        justify-content: flex-start; 
-    }
-
-    .tableContainer-test {
-        background-color: #cdcdcdad;
-        margin: 10px; 
-        width: auto; 
-    }
-
-    .refContainer-test {
-        background-color: #00000069;
-        color: #ffffff;
-        font-weight: bold;
-        border-radius: 30%;
-        margin: 5px; 
-        padding: 0px 10px 0px 10px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
-        width: auto; 
-    }
-
-    .caption-table{
-        font-weight: bold;
-        margin-bottom: 5px;
-    }
-
-    .main-content{
-        display: flex;
-        align-items: center; 
-        margin-left: 3%;
-    }
-
-    .image-container {
-        border: 2px dashed #d3d3d3; 
-        padding: 0px;
-        margin: 0px;
-        width: fit-content;
-        text-align: center;
-        justify-content: center; 
-        align-items: center; 
-        margin-left: 10%;
-    }
-
-    .image-container img {
-        max-width: 150px;
-        height: auto;
-    }
-</style>
-
+        .refContainer-test {
+            background-color: #00000069;
+            color: #ffffff;
+            font-weight: bold;
+            border-radius: 30%;
+            margin: 5px; /* Aggiunge un margine tra le tabelle */
+            padding: 0px 10px 0px 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Opzionale: aggiunge un'ombra per un effetto sollevato */
+            width: auto; /* Imposta la larghezza automaticamente in base al contenuto interno */
+        }
+        .caption-table{
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .main-content{
+            display: flex;
+            align-items: center; /* Allinea verticalmente al centro */
+            margin-left: 3%;
+        }
+        .image-container {
+            border: 2px dashed #d3d3d3; /* Una bordatura tratteggiata che sembra leggera e meno invadente */
+            padding: 0px;
+            margin: 0px;
+            width: fit-content;
+            text-align: center;
+            justify-content: center; /* Allinea orizzontalmente al centro */
+            align-items: center; /* Allinea verticalmente al centro */
+            margin-left: 10%;
+        }
+        .image-container img {
+            max-width: 150px;
+            height: auto;
+        }
+    </style>
         
 </head>
 
@@ -341,11 +350,12 @@
                 <!-- Posto in cui inserire immagine -->
             </div>
         </div>
+        <!--il permesso di visualizzazione deve essere fuori da qui. (anche) quando vedo l'elenco dei test gia creati-->
         <p style="font-size: 18px; font-weight: bold; color: #484141b8;"> 
             <input type="checkbox" id="viewAnswersPermission" class="styled-checkbox">
-            <span class="checkmark">Permesso visualizzione risposte</span>
+            <span class="checkmark">Permesso visualizzazione risposte</span>
         </p>
-        <button id="submitTestButton" style="float: inline-end; margin: 0px">Salva</button> <!-- Bottone salvataggio -->
+        <button id="submitTestButton" style=" margin: 0px">Salva</button> <!-- Bottone salvataggio -->
     </div>
     <div id="testContainer">
         <!-- Qui -->
@@ -375,7 +385,7 @@
     <div id="modal" class="modal">
         <div class="modal-content">
             <span class="close-button">×</span>
-            <div id="tableContainer"></div>
+            <div id="tableContainer"></div> <!-- Contenitore per la tabella -->
         </div>
     </div>
  
@@ -410,7 +420,16 @@
                 data: { testId: testID },
                 success: function(response) {
                     console.log(response);
-
+                    if(response.canViewResponses){
+                        var checkbox = document.getElementById("viewAnswersPermission");
+                        console.log(response.canViewResponses[0].VisualizzaRisposte);
+                        if(response.canViewResponses[0].VisualizzaRisposte === '1'){
+                            checkbox.checked = true;
+                        }
+                        else {
+                            checkbox.checked = false;
+                        }
+                    }
                     // Estrai l'array 'tables' dalla risposta
                     var usedTables = response.tables;
                     
@@ -497,7 +516,7 @@
                                             alert('Errore durante la verifica del codice.');
                                         }
                                     },
-                                    dataType: 'json'
+                                    dataType: 'json' // Tipo di dati attesi dalla risposta
                                 });
                                 var difficultyQuestion = $("<p></p>").text("Difficolta: " + quest.Difficolta);
                                 container.append(difficultyQuestion);
@@ -508,8 +527,9 @@
                                 container.append(textQuestion);
                                 $.each(quest.answers, function(index, ans) {
                                     //console.log(ans.Testo)
-                                    // Crea un elemento di lista per ogni risposta
+                                // Crea un elemento di lista per ogni risposta
                                     var option = $('<p></p>').text(ans.Testo);
+                                    ///////////each per itinerare le opzioni delle risposte
                                     // Se la risposta è corretta, aggiungi una spunta verde e la classe per lo stile
                                     if (ans.IsCorretta === 1) {
                                         option.append(' ✔').addClass('correct-answer');
@@ -544,7 +564,435 @@
             return null; // Restituisce null se non viene trovato nessun ID corrispondente
         }
     </script>
+
     <script>
+        // Variabile per memorizzare il nome della tabella selezionata
+        var selectedTable = "";
+        //var tables = []; // Array per tenere traccia delle tabelle scelte
+        //in update è necessario memorizzarlo prima.
+        function addMenuTable() {
+            // Effettua una richiesta AJAX per ottenere i nomi delle tabelle dal file PHP
+            $.ajax({
+                type: "GET",
+                url: "../controllers/table/TableController.php?action=get_tables",
+                data: { },
+                success: function(data) {
+                    //console.log("Successo:", data);
+                    // Agisci qui con i dati ricevuti
+                    // Crea il menu a tendina con lo stesso stile di addConstraints
+                    var select = $("<select class='dropdown-table' name='tabelle'></select>"); // Usa 'dropdown-table' per il primo menu
+                    // Aggiungi un'opzione di placeholder disabilitata e selezionata di default
+                    select.append("<option value='' disabled selected>Sel.Tabella</option>");
+                    // Itera attraverso l'array ricevuto e aggiungi le opzioni al menu a tendina
+                    $.each(data, function(index, value) {
+                        select.append("<option value='" + value.IDTabella + "'>" + value.Nome + "</option>");
+                    });
+                    $.each(tables, function(index, v) {
+                        // Rimuove l'opzione dal select con l'ID corrispondente
+                        select.find("option[value='" + v.id + "']").remove();
+                    });
+
+                    // Inserisci il menu a tendina nel contenitore
+                    $("#menuContainer").append(select);
+
+                    // Aggiungi un gestore per l'evento di cambio al menu a tendina
+                    select.change(function() {
+                        // Nasconde il menu a tendina dopo la selezione
+                        $(this).hide();
+                        // Esegue le azioni necessarie in base alla selezione
+                        var selectedTable = {
+                            id: $(this).val(),
+                            name: $(this).find("option:selected").text()
+                        };
+                        // Rimuovi l'opzione selezionata dal menu a tendina
+                        //$(".dropdown-table option[value='" + selectedTable.id + "']").remove();
+                        tables.push(selectedTable); // Memorizza le tabelle selezionate
+                        updateMenuTable1();
+                        console.log("Tabella selezionata: ", selectedTable);
+                        requestData(selectedTable.id,selectedTable.name); // Invia i dati della tabella selezionata
+                        // Crea e aggiungi il bottone di eliminazione per questa specifica tabella selezionata
+                        //deleteTable(selectedTable.id);
+                    });
+                },
+                dataType: "json"
+            }).fail(function(jqxhr, textStatus, error) {
+                var err = textStatus + ", " + error;
+                var data = JSON.parse(jqxhr.responseText);
+                console.log("Parsed response data: ", data);
+                console.log("Request Failed: " + err);
+            });
+        }
+        
+        function deleteTable(tableId) {
+            const deleteButton = $("<button class='delete-button'>Elimina Tabella</button>");
+            deleteButton.click(function() {
+                // Rimuovi la tabella dall'array tables
+                tables = tables.filter(table => table.id !== tableId);
+                // Aggiorna il menu a tendina delle tabelle
+                updateMenuTable1();
+
+                // Rimuovi la rappresentazione visiva della tabella dal DOM
+                $("#table-" + tableId).remove(); // Usa l'ID univoco per rimuovere la tabella
+                $(this).remove(); // Assumendo che il bottone sia all'interno di un contenitore parent
+                
+            });
+
+            $("#menuContainer").append(deleteButton);
+        }
+
+        // Funzione per inviare la variabile selectedTable al file PHP
+        function requestData(selectedID,selectedName) {
+            // AJAX request to send data to the PHP file and receive table data
+            $.ajax({
+                type: "GET", // Metodo HTTP utilizzato
+                url: "../controllers/table/TableController.php?action=get_full_table", // URL a cui viene fatta la richiesta
+                data: { tableId: selectedID }, // Dati inviati al server
+                success: function(response) {
+                    console.log("Data received from the server: ", response);
+
+                    // Crea un contenitore per la tabella e il bottone di eliminazione
+                    var tableContainer = $("<div class='table-container'></div>").attr("id", "container-" + selectedID);
+            
+                    // Crea il bottone di eliminazione
+                    var deleteButton = $("<button class='delete-button'>Elimina</button>");
+                    deleteButton.click(function() {
+                        // Rimuovi la tabella e il bottone dall'array tables e dal DOM
+                        tables = tables.filter(table => table.id !== selectedID);
+                        tableContainer.remove(); // Rimuovi il contenitore che include la tabella e il bottone
+                        updateMenuTable1();// Aggiorna il menu a tendina delle tabelle
+                    });
+                    
+                    // Aggiungi il bottone di eliminazione al contenitore della tabella
+                    tableContainer.append(selectedName, deleteButton);
+                    tableContainer.append($("<br>"));
+                    // Assuming the response is an array of objects, where each object represents a table row
+                    // Create a table element
+                    //console.log(response);
+                    const col = response.length > 1 ? Object.keys(response[1]) : [];
+                    //ultimo paramentro il nome è null perche preferisco inserirlo vicino al bottone
+                    tableContainer.append(createTableMain(response.slice(1),col,null));
+                    $("#menuContainer").append(tableContainer);
+                    // Expecting response in JSON format
+                },
+                dataType: "json" // Specifica il tipo di dati attesi in risposta
+            }).fail(function(jqxhr, textStatus, error) {
+                var err = textStatus + ", " + error;
+                console.log("Request Failed: " + err);
+            });
+        }
+
+        function addConstraints() {
+            const container = document.getElementById('constraintsContainer');
+            const dropdownsDiv = document.createElement('div');
+            dropdownsDiv.classList.add('flex-container');
+
+            // Genera un identificativo unico per questo gruppo di dropdown
+            const uniqueId = 'group-' + document.querySelectorAll('.flex-container').length;
+            dropdownsDiv.id = uniqueId; // Assegna un ID univoco al container dei dropdown
+
+            let optionsForMenuTable1 = tables.map(table => `<option value="${table.id}">${table.name}</option>`).join('');
+
+            const menuTable1 = document.createElement('select');
+            menuTable1.id = uniqueId + '-menuTable1';
+            menuTable1.classList.add('dropdown-table');
+            menuTable1.innerHTML = `<option value="" disabled selected>Sel.Tabella</option>` + optionsForMenuTable1;
+            dropdownsDiv.appendChild(menuTable1);
+
+            // Crea gli altri menu a tendina
+            const menuAttribute1 = document.createElement('select');
+            menuAttribute1.id = uniqueId + '-menuAttribute1';
+            menuAttribute1.classList.add('dropdown-attribute');
+            dropdownsDiv.appendChild(menuAttribute1); // Aggiunto al DOM qui
+
+            const arrow = document.createElement('span');
+            arrow.id = uniqueId + '-arrow';
+            arrow.style.display = 'none';
+            arrow.classList.add('separator');
+            dropdownsDiv.appendChild(arrow);     // Assicurati che la freccia sia aggiunta al container
+
+            const menuTable2 = document.createElement('select');
+            menuTable2.id = uniqueId + '-menuTable2';
+            menuTable2.classList.add('dropdown-table');
+            dropdownsDiv.appendChild(menuTable2); // Aggiunto al DOM qui
+
+            const menuAttribute2 = document.createElement('select');
+            menuAttribute2.id = uniqueId + '-menuAttribute2';
+            menuAttribute2.classList.add('dropdown-attribute');
+            dropdownsDiv.appendChild(menuAttribute2); // Aggiunto al DOM qui
+
+            // Gestore dell'evento onchange per menu1
+            menuTable1.onchange = function() {
+                const selectedTableId = this.value;
+                const otherTablesOptions = tables
+                    .filter(table => table.id !== selectedTableId)
+                    .map(table => `<option value="${table.id}">${table.name}</option>`)
+                    .join('');
+
+                $.ajax({
+                    type: "GET", // Imposta il metodo HTTP su GET
+                    url: "../controllers/table/TableController.php?action=get_table_columns", // URL a cui fare la richiesta
+                    data: { tableId: selectedTableId }, // Dati inviati al server come parte della richiesta
+                    success: function(columns) {
+                        // Costruisci le opzioni del menu a tendina usando i dati ricevuti
+                        menuAttribute1.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>` + columns.map(col => `<option value="${col.Nome}">${col.Nome}</option>`).join('');
+                        menuAttribute1.style.display = 'block'; // Mostra il menu a tendina
+                        arrow.style.display = 'inline-block'; // Mostra la freccia (assumendo che sia un elemento del tuo DOM)
+                    },
+                    dataType: "json" // Aspettati una risposta in formato JSON
+                });
+                menuTable2.innerHTML = `<option value="" disabled selected>Sel.Tabella</option>` + otherTablesOptions;
+                menuTable2.style.display = 'block';
+            };
+
+            // Ora, poiché menuTable2 è già parte del DOM, puoi aggiungere il gestore dell'evento onchange direttamente
+            menuTable2.onchange = function() {
+                const selectedTableId = this.value;
+
+                $.ajax({
+                    type: "GET", // Imposta il metodo HTTP su GET
+                    url: "../controllers/table/TableController.php?action=get_table_columns", // URL a cui fare la richiesta
+                    data: {tableId: selectedTableId},
+                    success: function(columns) {
+                        menuAttribute2.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>` + columns.map(col => `<option value="${col.Nome}">${col.Nome}</option>`).join('');
+                        menuAttribute2.style.display = 'block';
+                    },
+                    dataType: "json" // Aspettati una risposta in formato JSON
+                });
+            };
+            // Aggiunta del bottone di eliminazione al DIV contenitore dei dropdown
+            deleteConstraint(uniqueId, dropdownsDiv, container);
+            // Infine, aggiungi il div dei menu a tendina al container
+            container.appendChild(dropdownsDiv);
+        }
+
+        function updateMenuTable1() {
+            // Trova il container del menu 1 e lo svuota
+            const menuTable1 = document.getElementById('group-0-menuTable1');
+            if (!menuTable1) return; // Se il menu 1 non esiste, esce dalla funzione
+            menuTable1.innerHTML = "<option value='' disabled selected>Sel.Tabella</option>"; // Reset
+
+            // Popola di nuovo il menu con le tabelle aggiornate
+            tables.forEach(table => {
+                const option = document.createElement('option');
+                option.value = table.id;
+                option.textContent = table.name;
+                menuTable1.appendChild(option);
+            });
+        }
+
+        function deleteConstraint(uniqueId, dropdownsDiv, container) {
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Elimina Vincolo';
+            deleteButton.className = 'delete-button';
+            deleteButton.onclick = function() {
+                // Rimuovi la riga/menu dal DOM
+                container.removeChild(dropdownsDiv);
+                // Assumi che ogni vincolo corrisponda a una tabella e voglia rimuovere quella tabella dall'array tables
+                // Questo passaggio richiede che tu abbia una corrispondenza tra l'ID del gruppo di vincoli e l'ID della tabella
+                // Qui manca la logica per identificare la tabella corrispondente, quindi adattalo alle tue esigenze
+                // tables = tables.filter(t => t.id !== someId);
+                updateMenuTable1(); // Aggiorna il menu delle tabelle dopo la rimozione
+            };
+
+            dropdownsDiv.appendChild(deleteButton); // Aggiunge il bottone di eliminazione al div dei dropdown
+        }
+
+    </script>
+
+
+    <script>
+        let questionMCCount = 0;
+        let questionCodeCount = 0;
+        function addMCQuestion() {
+            questionMCCount++;
+
+            const container = document.getElementById('questionsContainer');
+
+            const questionDiv = document.createElement('div');
+            questionDiv.classList.add('question');
+            questionDiv.setAttribute('data-question-type', 'mc');
+
+            const questionLabel = document.createElement('label');
+            questionDiv.appendChild(questionLabel);
+
+            const questionInput = document.createElement('input');
+            questionInput.type = 'text';
+            questionInput.name = 'question' + questionMCCount;
+            questionInput.placeholder = 'Scrivi la Domanda';
+            questionInput.classList.add('question-input');
+            questionDiv.appendChild(questionInput);
+
+            const deleteQuestionButton = document.createElement('button');
+            deleteQuestionButton.textContent = 'Elimina Quesito';
+            deleteQuestionButton.classList.add('delete-question-button');
+            deleteQuestionButton.onclick = function() {
+                container.removeChild(questionDiv);
+            };
+            questionDiv.appendChild(deleteQuestionButton);
+
+            const answersContainer = document.createElement('div');
+            answersContainer.classList.add('answers-container');
+            questionDiv.appendChild(answersContainer);
+
+            const addAnswerButton = document.createElement('button');
+            addAnswerButton.textContent = 'Aggiungi Risposta';
+            addAnswerButton.classList.add('add-answer-button');
+            addAnswerButton.onclick = function() {
+                addAnswer(answersContainer);
+            };
+            questionDiv.appendChild(addAnswerButton);
+
+            // Crea il menu a tendina per la difficoltà
+            const difficultySelect = document.createElement('select');
+            difficultySelect.name = 'difficulty' + questionMCCount;
+            difficultySelect.classList.add('difficulty-select');
+            // Opzione non selezionabile come etichetta
+            const defaultOption = document.createElement('option');
+            defaultOption.value = "";
+            defaultOption.textContent = "Difficoltà:";
+            defaultOption.disabled = true; // la rende non selezionabile
+            defaultOption.selected = true; // la seleziona fino a che non si cambia dall utende
+            difficultySelect.appendChild(defaultOption);
+            // Opzioni per il menu a tendina
+            const difficultyLevels = ["Basso", "Medio", "Alto"];
+            difficultyLevels.forEach(level => {
+                const option = document.createElement('option');
+                option.value = level.toLowerCase();
+                option.textContent = level;
+                difficultySelect.appendChild(option);
+            });
+            // Aggiungi listener per cambiare il colore in base alla selezione
+            difficultySelect.addEventListener('change', function() {
+                switch(this.value) {
+                    case 'basso':
+                        this.style.backgroundColor = '#77dd77'; // Verde
+                        break;
+                    case 'medio':
+                        this.style.backgroundColor = '#fbdc52'; // Giallo
+                        break;
+                    case 'alto':
+                        this.style.backgroundColor = '#ff6961'; // Rosso
+                        break;
+                    default:
+                        this.style.backgroundColor = ''; // Resetta allo stile di default se necessario
+                }
+            });
+            questionDiv.appendChild(difficultySelect);
+
+            container.appendChild(questionDiv);
+        }
+
+        function addAnswer(container) {
+            const answerDiv = document.createElement('div');
+            answerDiv.classList.add('answer');
+
+            const answerInput = document.createElement('input');
+            answerInput.type = 'text';
+            answerInput.name = 'answer' + questionMCCount + '_' + (container.children.length + 1);
+            answerInput.placeholder = 'Inserisci Risposta';
+            answerInput.classList.add('answer-input');
+            answerDiv.appendChild(answerInput);
+
+            const correctCheckbox = document.createElement('input');
+            correctCheckbox.type = 'checkbox';
+            correctCheckbox.name = 'correct' + questionMCCount + '_' + (container.children.length + 1);
+            correctCheckbox.classList.add('correct-checkbox');
+            answerDiv.appendChild(correctCheckbox);
+
+            const deleteAnswerButton = document.createElement('button');
+            deleteAnswerButton.textContent = 'Elimina';
+            deleteAnswerButton.classList.add('delete-answer-button');
+            deleteAnswerButton.onclick = function() {
+                container.removeChild(answerDiv);
+            };
+            answerDiv.appendChild(deleteAnswerButton);
+
+            container.appendChild(answerDiv);
+        }
+
+         function addCodeQuestion() {
+            questionCodeCount++;
+
+            const container = document.getElementById('questionsContainer');
+
+            const questionDiv = document.createElement('div');
+            questionDiv.classList.add('question');
+            questionDiv.setAttribute('data-question-type', 'code'); // Identifica il tipo di domanda
+
+            const questionLabel = document.createElement('label');
+            //questionLabel.textContent = 'D.' + questionCodeCount + ' Code: ';
+            questionDiv.appendChild(questionLabel);
+
+            const questionInput = document.createElement('input');
+            questionInput.type = 'text';
+            questionInput.name = 'question' + questionCodeCount;
+            questionInput.placeholder = 'Scrivi la Domanda';
+            questionInput.classList.add('question-input');
+            questionDiv.appendChild(questionInput);
+
+            const deleteQuestionButton = document.createElement('button');
+            deleteQuestionButton.textContent = 'Elimina Quesito';
+            deleteQuestionButton.classList.add('delete-question-button');
+            deleteQuestionButton.onclick = function() {
+                container.removeChild(questionDiv);
+            };
+            questionDiv.appendChild(deleteQuestionButton);
+            
+
+           // Adding MySQL code textarea
+            const codeTextarea = document.createElement('textarea');
+            codeTextarea.name = 'code' + questionCodeCount;
+            codeTextarea.placeholder = 'Inserisci codice MySQL';
+            codeTextarea.classList.add('code-textarea');
+            questionDiv.appendChild(codeTextarea);
+            
+            const addCodeAnswerButton = document.createElement('button');
+            addCodeAnswerButton.textContent = 'Verifica Codice';
+            addCodeAnswerButton.classList.add('add-check-button');
+            addCodeAnswerButton.onclick = function() {
+                codeCheck(this);
+            };
+            questionDiv.appendChild(addCodeAnswerButton);
+
+            // Crea il menu a tendina per la difficoltà
+            const difficultySelect = document.createElement('select');
+            difficultySelect.name = 'difficulty' + questionMCCount;
+            difficultySelect.classList.add('difficulty-select');
+            // Opzione non selezionabile come etichetta
+            const defaultOption = document.createElement('option');
+            defaultOption.value = "";
+            defaultOption.textContent = "Difficoltà:";
+            defaultOption.disabled = true; // la rende non selezionabile
+            defaultOption.selected = true; // la seleziona fino a che non si cambia dall utende
+            difficultySelect.appendChild(defaultOption);
+            // Opzioni per il menu a tendina
+            const difficultyLevels = ["Basso", "Medio", "Alto"];
+            difficultyLevels.forEach(level => {
+                const option = document.createElement('option');
+                option.value = level.toLowerCase();
+                option.textContent = level;
+                difficultySelect.appendChild(option);
+            });
+            // Aggiungi listener per cambiare il colore in base alla selezione
+            difficultySelect.addEventListener('change', function() {
+                switch(this.value) {
+                    case 'basso':
+                        this.style.backgroundColor = '#77dd77'; // Verde
+                        break;
+                    case 'medio':
+                        this.style.backgroundColor = '#fbdc52'; // Giallo
+                        break;
+                    case 'alto':
+                        this.style.backgroundColor = '#ff6961'; // Rosso
+                        break;
+                    default:
+                        this.style.backgroundColor = ''; // Resetta allo stile di default se necessario
+                }
+            });
+            questionDiv.appendChild(difficultySelect);
+            container.appendChild(questionDiv);
+        }
+
         function codeCheck(buttonElement) {
             // Trova il contenitore della domanda relativo al bottone
             const questionDiv = buttonElement.closest('.question');
@@ -582,6 +1030,35 @@
         }
     </script>
     <script>
+        function showTableModal(response) {
+            console.log(response);
+            // Creazione della tabella come prima
+            const col = response.length > 0 ? Object.keys(response[0]) : [];
+            const table = createTableMain(response, col, null);
+
+            // Trova il contenitore della tabella nel modale e aggiungi la tabella
+            const tableContainer = document.getElementById('tableContainer');
+            tableContainer.innerHTML = ''; // Pulisce vecchie tabelle se presenti
+            tableContainer.appendChild(table);
+
+            // Mostra il modale
+            const modal = document.getElementById('modal');
+            modal.style.display = 'block';
+
+            // Imposta l'evento per chiudere il modale
+            const closeButton = document.querySelector('.close-button');
+            closeButton.onclick = function() {
+                modal.style.display = 'none';
+            };
+
+            // Chiude il modale anche quando si clicca fuori dal suo contenuto
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            };
+        }
+
         function createTableMain(resp,columns,tName) {
             const table = document.createElement('table');
             table.className = 'custom-table';
@@ -615,24 +1092,84 @@
                 tbody.appendChild(tr);
             });
             table.appendChild(tbody);
+
+            // Restituisce l'elemento <table> creato
             return table;
         }
     </script>
     <script>
         function pickupData() {
             var sendDataTest = {
-                testId: testID,
+                testId: testID, // VOLENDO POSSO PASSARE ANCHE L'ID----------------------------------------------------------------------------
+                questions: [], // Questo sarà riempito con le domande
+                tables: excludeElements(tables, elements), // Assumo che 'tables' sia già un array di oggetti come mostrato
+                constraints: [], // Questo dovrà essere riempito con i vincoli definiti
                 viewAnswersPermission: $('#viewAnswersPermission').is(':checked') // Raccoglie il valore del checkbox
             };
+            // Raccoglie tutte le domande
+            let questionId = QID + 1;
+            $('#questionsContainer .question').each(function() {
+                const questionType = $(this).data('question-type'); // Legge il tipo di domanda
+                const questionText = $(this).find('.question-input').val();
+                const difficultyLevel = $(this).find('.difficulty-select').val(); // Raccoglie il livello di difficoltà selezionato
+
+                if (questionType === 'mc') {
+                    var answers = [];
+                    let answerId = 1;
+                    $(this).find('.answer').each(function() {
+                        var answerText = $(this).find('.answer-input').val();
+                        var isCorrect = $(this).find('.correct-checkbox').is(':checked');
+                        answers.push({ id: answerId, text: answerText, isCorrect: isCorrect });
+                        answerId++;
+                    });
+                    sendDataTest.questions.push({ type: "mc", id: questionId, questionText: questionText, answers: answers, difficulty: difficultyLevel });
+                } else if (questionType === 'code') {
+                    var sqlCode = $(this).find('.code-textarea').val();
+                    sendDataTest.questions.push({ type: "code", id: questionId, questionText: questionText, sqlCode: sqlCode, difficulty: difficultyLevel });
+                }
+                questionId++;
+            });
+            // Raccogliere dati dei vincoli  
+            $('.flex-container').each(function(index) {
+                // Utilizzo l'index per costruire l'ID unico, basandomi sul tuo schema di naming
+                var uniqueId = 'group-' + index; // Assicurati che questo corrisponda a come hai generato l'ID
+                var table1Id = $('#' + uniqueId + '-menuTable1').val();
+                var attribute1Id = $('#' + uniqueId + '-menuAttribute1').val();
+                var table2Id = $('#' + uniqueId + '-menuTable2').val();
+                var attribute2Id = $('#' + uniqueId + '-menuAttribute2').val();
+
+                var constraintData = {
+                    tab1: table1Id,
+                    att1: attribute1Id,
+                    tab2: table2Id,
+                    att2: attribute2Id
+                };
+                sendDataTest.constraints.push(constraintData);
+                //console.log(sendDataTest.constraints);
+            });
             console.log(sendDataTest);
             return sendDataTest;
         }
+        // Funzione per filtrare 'tables' escludendo gli oggetti presenti in 'elements'.
+function excludeElements(tables, elements) {
+    return tables.filter(table => !elements.some(element => element.id === table.id));
+}
 
         function submitFormTest() {
             var sendDataTest = pickupData();
             var formData = new FormData();
+
+            // Aggiunge i dati testuali al FormData
             formData.append("data", JSON.stringify(sendDataTest));
 
+
+            // Aggiunge il file immagine al FormData
+            /*var imageFile = document.getElementById('testImage').files[0];
+            if (imageFile) {
+                formData.append("testImage", imageFile);
+            }*/
+
+            // Aggiunge l'action al FormData
             formData.append("action" , "update_test");
             // Invio dei dati al file PHP tramite AJAX
             $.ajax({
@@ -642,8 +1179,14 @@
                 contentType: false, // Importante per il corretto invio di FormData
                 processData: false,
                 success: function(response) {
+                    let object = {};
+                    formData.forEach(function(value, key){
+                        object[key] = value;
+                    });
+                    console.log(JSON.stringify(sendDataTest));
+                    //console.log(JSON.stringify(object, null, 2));
                     alert(response); //risposta del server
-                    window.history.back();
+                    //window.location.reload(); // ricarica pagina
                 },
                 error: function(xhr, status, error) {
                     console.error("Errore durante l'invio dei dati:", status, error);

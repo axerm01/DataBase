@@ -13,21 +13,21 @@
 <style>
     .question {
         margin-top: 20px;
-        border: 1px solid #ccc; 
-        border-radius: 5px; 
-        padding: 15px; 
-        background-color: #f9f9f9; 
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 15px;
+        background-color: #f9f9f9;
         margin-right: 10px;
     }
 
     .question-input {
-        padding: 10px; 
-        margin-top: 15px; 
-        border: 1px solid #ccc; 
-        border-radius: 5px; 
-        box-sizing: border-box; 
+        padding: 10px;
+        margin-top: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
         font-size: 16px;
-        background-color: #f9f9f9; 
+        background-color: #f9f9f9;
         color: #333;
     }
     .question input[type="text"] {
@@ -50,7 +50,7 @@
 
     .answer input[type="checkbox"] {
         margin-right: 5px;
-        transform: scale(1.5); 
+        transform: scale(1.5);
         margin-left: 10px;
     }
 
@@ -67,7 +67,7 @@
 
     .add-check-button {
         background-color: #15c11e;
-        cursor: pointer; 
+        cursor: pointer;
         font-size: 12px;
         color: #fff;
         border: none;
@@ -114,20 +114,20 @@
 
     .code-textarea {
         width: 100%;
-        height: 100px; 
-        padding: 10px; 
-        margin-top: 15px; 
-        border: 1px solid #ccc; 
+        height: 100px;
+        padding: 10px;
+        margin-top: 15px;
+        border: 1px solid #ccc;
         border-radius: 5px;
         box-sizing: border-box;
-        font-size: 16px; 
-        background-color: #f9f9f9; 
+        font-size: 16px;
+        background-color: #f9f9f9;
         color: #333;
     }
 
     input[type="checkbox"] {
         border-radius: 25%;
-        transform: scale(1.5); 
+        transform: scale(1.5);
     }
 
     .table-container {
@@ -144,8 +144,8 @@
     }
 
     th, td {
-        border: 1px solid #ddd; 
-        padding: 5px; 
+        border: 1px solid #ddd;
+        padding: 5px;
     }
 
     td {
@@ -153,7 +153,7 @@
     }
 
     th {
-        background-color: #f2f2f2; 
+        background-color: #f2f2f2;
     }
 
     .difficulty-select {
@@ -202,8 +202,8 @@
     }
 
     .image-container {
-        background-color: #f3f3f3; 
-        border: 2px dashed #d3d3d3; 
+        background-color: #f3f3f3;
+        border: 2px dashed #d3d3d3;
         padding: 10px;
         margin: 0px 0px 10px 20px;
         width: 70%;
@@ -221,7 +221,7 @@
     }
 
     .file-input-label {
-        background-color: #3a8e3d; 
+        background-color: #3a8e3d;
         color: white;
         padding: 8px 15px;
         border-radius: 5px;
@@ -251,14 +251,14 @@
         margin-right: auto;
         border-radius: 5px;
         display: none;
-        border: 2px solid #ccc; 
-        border-radius: 5px;  
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
     .main-content {
         display: flex;
-        align-items: center; 
+        align-items: center;
     }
 </style>
 </head>
@@ -416,9 +416,9 @@
         function requestData(selectedID,selectedName) {
             // AJAX request to send data to the PHP file and receive table data
             $.ajax({
-                type: "GET", 
+                type: "GET",
                 url: "../controllers/table/TableController.php?action=get_full_table",
-                data: { tableId: selectedID }, 
+                data: { tableId: selectedID },
                 success: function(response) {
                     console.log("Data received from the server: ", response);
 
@@ -433,7 +433,7 @@
                     tableContainer.remove(); // Rimuovi il contenitore che include la tabella e il bottone
                     updateMenuTable1();// Aggiorna il menu a tendina delle tabelle
                 });
-                
+
                 tableContainer.append(selectedName, deleteButton);
                 tableContainer.append($("<br>"));
                 // Create a table element
@@ -442,7 +442,7 @@
                     tableContainer.append(createTableMain(response.slice(1),col,null));
                 $("#menuContainer").append(tableContainer);
             },
-                dataType: "json" 
+                dataType: "json"
             }).fail(function(jqxhr, textStatus, error) {
                 var err = textStatus + ", " + error;
                 console.log("Request Failed: " + err);
@@ -486,7 +486,7 @@
             const menuAttribute2 = document.createElement('select');
             menuAttribute2.id = uniqueId + '-menuAttribute2';
             menuAttribute2.classList.add('dropdown-attribute');
-            dropdownsDiv.appendChild(menuAttribute2); 
+            dropdownsDiv.appendChild(menuAttribute2);
 
             // Gestore dell'evento onchange per menu1
             menuTable1.onchange = function() {
@@ -504,7 +504,7 @@
                         // Costruisci le opzioni del menu a tendina usando i dati ricevuti
                         menuAttribute1.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>` + columns.map(col => `<option value="${col.Nome}">${col.Nome}</option>`).join('');
                         menuAttribute1.style.display = 'block';
-                        arrow.style.display = 'inline-block'; 
+                        arrow.style.display = 'inline-block';
                     },
                     dataType: "json"
                 });
@@ -516,7 +516,7 @@
 
                 $.ajax({
                     type: "GET", // Imposta il metodo HTTP su GET
-                    url: "../controllers/table/TableController.php?action=get_table_columns", 
+                    url: "../controllers/table/TableController.php?action=get_table_columns",
                     data: {tableId: selectedTableId},
                     success: function(columns) {
                         menuAttribute2.innerHTML = `<option value="" disabled selected>Seleziona Attributo</option>` + columns.map(col => `<option value="${col.Nome}">${col.Nome}</option>`).join('');
@@ -630,7 +630,7 @@
                         this.style.backgroundColor = '#ff6961'; // Rosso
                         break;
                     default:
-                        this.style.backgroundColor = ''; 
+                        this.style.backgroundColor = '';
                 }
             });
             questionDiv.appendChild(difficultySelect);
@@ -766,7 +766,7 @@
                     // Converti la risposta in stringa se è un oggetto JSON
                     response = typeof response === 'object' ? JSON.stringify(response) : response;
 
-                    if (response.startsWith('Forbidden')) {
+                    if (response.startsWith('Forbidden') || response.startsWith('Errore')) {
                         alert(response);
                     } else {
                         if (response.length > 0) {
@@ -857,9 +857,11 @@
         }
     </script>
     <script>
-        
+
+        var allOk = true;
 
         function pickupData() {
+            allOk = true;
             var sendDataTest = {
                 title: $('#title').val(),
                 questions: [], // Questo sarà riempito con le domande
@@ -890,6 +892,7 @@
                         }
                     });
                     if(questionText === "" || answers.length === 0 || difficultyLevel === null || !check){
+                        allOk = false;
                         alert("Attenzione dati o spunte mancanti");
                     }
                     else {
@@ -900,6 +903,7 @@
                 else if (questionType === 'code') {
                     var sqlCode = $(this).find('.code-textarea').val();
                     if(questionText === "" || sqlCode === "" || difficultyLevel === null){
+                        allOk = false;
                         alert("Attenzione dati mancanti");
                     }
                     else {
@@ -941,19 +945,19 @@
             if (sendDataTest.questions.length === 0) {
                 alert("Per creare un test devi inserire almeno una domanda");
             }
-            else {
+            else if(allOk){
 
                 $.ajax({
                     type: 'GET', // Cambiato in GET
-                    url: '../controllers/test/TestController.php?action=check_name&name=' + name, 
-                    data: {}, 
+                    url: '../controllers/test/TestController.php?action=check_name&name=' + name,
+                    data: {},
                     success: function (data) {
                         if (data) {
                             alert("Il titolo inserito esiste già. Scegline un altro.");
                         } else {
                             var formData = new FormData();
                             formData.append("data", JSON.stringify(sendDataTest));
-                            
+
                             // Aggiunge il file immagine al FormData
                             var imageFile = document.getElementById('testImage').files[0];
                             if (imageFile) {
@@ -976,7 +980,7 @@
                                         object[key] = value;
                                     });
                                     console.log(JSON.stringify(sendDataTest));
-                                    alert(response); 
+                                    alert(response);
                                     window.location.reload();
                                 },
                                 error: function (xhr, status, error) {

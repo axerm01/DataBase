@@ -276,9 +276,15 @@
                                     contentType: false,
                                     processData: false,
                                     success: function(response) {
-                                        console.log(response);
-                                        alert(response);
-                                        window.location.reload();
+                                        response = typeof response === 'object' ? JSON.stringify(response) : response;
+                                        if(response.startsWith('Errore')){
+                                            console.log(response);
+                                            alert(response);
+                                        }
+                                        else {
+                                            alert(response);
+                                            window.location.reload();
+                                        }
                                     },
                                     error: function(xhr, status, error) {
                                         console.error('Errore:', error);

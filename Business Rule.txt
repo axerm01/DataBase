@@ -1,9 +1,0 @@
-Business Rule:
-1- Difficoltà è un attributo che può assumere solo i seguenti valori["Basso", "Medio", "Alto"].
-2- Stato è un attributo che può assumere solo i seguenti valori["Aperto", "InCompletamento", "Chiuso"].
-3- Se Visualizza è "TRUE" compare un tasto 'Correggi' che permette allo studente di vedere se la sua risposta è corretta o sbagliata. 
-4- Se Visualizza è "FALSE" le risposte sono sempre nascoste fino alla consegna.
-5- Uno studente può inserire più risposte, finche il test non è in stato "Concluso".
-6- I quesiti di tipo 'Codice' sono corretti se l'OUTPUT del codice dello studente risulata uguale all'OUTPUT del codice del docente.
-7- I Vincoli di integrità inseriti dai docenti sono collegamenti tra tabelle.
-8- 

@@ -31,8 +31,7 @@ switch ($method) {
 
                     case 'check_name':
                         $name = filter_input(INPUT_GET, 'name');
-                        $prof_email = $_SESSION['email'];
-                        $data = Test::checkIfTestNameExists($name, $prof_email);
+                        $data = Test::checkIfTestNameExists($name);
                         break;
                 }
             }
@@ -182,8 +181,12 @@ function saveTest($data, $image) {
 function updateTest($decodedData, $testId) {
     try {
         if ($decodedData['viewAnswersPermission'] == true){
-            Test::updateVisualizzaRisposte($testId);
+            Test::updateVisualizzaRisposte($testId, true);
         }
+        else if ($decodedData['viewAnswersPermission'] == false){
+            Test::updateVisualizzaRisposte($testId, false);
+        }
+
 
         //per ora non possibile da frontend
         /*if (array_key_exists('title', $decodedData) && !empty($decodedData['title'])) {

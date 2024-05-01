@@ -114,7 +114,7 @@ class Table {
             $response = "Tutti i valori sono stati inseriti. ";
         } catch (Exception $e) {
             mysqli_rollback($con);
-            $response = "Errore: " . $e->getMessage();
+            throw $e;
         }
         logMongo('Righe aggiunte a tabella '.$name.' :'.json_encode($rows));
         return $response;
