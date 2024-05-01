@@ -96,19 +96,6 @@
             cursor: pointer;
             font-size: 12px;
         }
-        /* Styles for MySQL code textarea */
-        .code-textarea {
-            width: 100%;
-            height: 100px; 
-            padding: 10px;
-            margin-top: 15px; 
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-            font-size: 16px; 
-            background-color: #f9f9f9; 
-            color: #333;
-        }
         /* Styles for inizial checkbox */
         input[type="checkbox"] {
             border-radius: 25%;
@@ -368,28 +355,6 @@
     </div>
 
     <script>
-        $(document).ready(function() {
-            // Setup listeners dopo che il DOM è completamente caricato
-            //setupListeners();
-            // Prevengo il comportamento di sottomissione standard del form per il bottone del submit
-            /*$('#submitTestButton').click(function(e) {
-                e.preventDefault(); 
-                submitFormTest();
-            });*/
-        });
-        /*function setupListeners() {
-            // Aggiungi listener a tutti i radio e textarea presenti ora e futuri nel DOM
-            $(document).on('change', '.answer input[type="radio"]', recordAnswerTime);
-            $(document).on('input', '.code-textarea', recordAnswerTime);
-             // Ascolta i cambiamenti nei radio buttons e textarea per impostare il flag di cambiamento
-            $(document).on('change', '.question input[type="radio"], .question .code-textarea', function() {
-                var $questionContainer = $(this).closest('.question');
-                $questionContainer.data('changed', true);
-            });
-        }*/
-    </script>
-
-    <script>
         var tables = []; //contine le tabelle usate
         let firstAnswerTime = null;
         let lastAnswerTime = null;
@@ -502,15 +467,13 @@
 
                                 var textQuestion = $("<strong></strong>").text("Quesito: " + quest.Descrizione + " ");
                                 container.append(textQuestion);
-                                const codeTextarea = document.createElement('p');
-                                    codeTextarea.classList.add('code-textarea');
+                                const code = document.createElement('p');
                                 responses.forEach(resp => {
                                     if(resp.IDDomanda == containerId){
-                                        codeTextarea.value = resp.CodiceRisposta;
-                                        codeCheck(resp.CodiceRisposta);
+                                        code.value = resp.CodiceRisposta;
+                                        container.append(code, codeCheck(resp.CodiceRisposta));
                                     }
                                 });
-                                container.append(codeTextarea);
 
                                 var difficultyQuestion = $("<p></p>").text("Difficolta: " + quest.Difficolta);
                                 container.append(difficultyQuestion);
@@ -668,9 +631,7 @@
                     // Analizzare la risposta (con jQuery, la risposta è già un oggetto JS se il server risponde con JSON)
                     if (response.length > 0) {
                         const col = response.length > 0 ? Object.keys(response[0]) : [];
-                        createTableMain(response, col, null);
-                        // Il codice è valido
-                        //alert('Il codice è valido!');
+                        return createTableMain(response, col, null);
                     } else {
                         // Il codice non è valido
                         alert('Il codice non è valido!');
@@ -684,7 +645,7 @@
                         alert('Errore durante la verifica del codice.');
                     }
                 },
-                dataType: 'json' // Tipo di dati attesi dalla risposta
+                dataType: 'json'
             });
         }
     </script>
